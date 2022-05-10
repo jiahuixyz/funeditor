@@ -23,10 +23,10 @@ public class TextPane extends JScrollPane implements ActionListener {
     private UndoAction undoAction;
     private RedoAction redoAction;
 
-    public TextPane(MultiKeyPressListener multiKeyPressListener) {
+    public TextPane(ShortcutKeyListener shortcutKeyListener) {
         super();
         initAction();
-        textPane = createTextPane(multiKeyPressListener);
+        textPane = createTextPane(shortcutKeyListener);
         setViewportView(textPane);
     }
 
@@ -39,7 +39,7 @@ public class TextPane extends JScrollPane implements ActionListener {
         redoAction.setUndoAction(undoAction);
     }
 
-    private JTextPane createTextPane(MultiKeyPressListener multiKeyPressListener) {
+    private JTextPane createTextPane(ShortcutKeyListener shortcutKeyListener) {
         JTextPane textPane = new JTextPane();
         textPane.setFont(DEFAULT_FONT);
 
@@ -51,7 +51,7 @@ public class TextPane extends JScrollPane implements ActionListener {
         });
         // 注册键盘监听器
         textPane.setFocusable(true);
-        textPane.addKeyListener(multiKeyPressListener);
+        textPane.addKeyListener(shortcutKeyListener);
 
         return textPane;
     }
@@ -71,6 +71,9 @@ public class TextPane extends JScrollPane implements ActionListener {
         }
     }
 
+    public JTextPane getTextPane() {
+        return textPane;
+    }
 
     public UndoAction getUndoAction() {
         return undoAction;

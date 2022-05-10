@@ -1,6 +1,7 @@
 package redcoder.texteditor;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,6 +13,7 @@ public class MainPane extends JTabbedPane {
     private TextPane selectedTextPane;
 
     public MainPane() {
+        setFont(new Font(null, Font.PLAIN, 16));
         addChangeListener(e -> selectedTextPane = (TextPane) getSelectedComponent());
     }
 

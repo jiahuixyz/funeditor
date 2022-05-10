@@ -1,25 +1,28 @@
 package redcoder.texteditor;
 
-import redcoder.texteditor.action.ZoomInAction;
-import redcoder.texteditor.action.ZoomOutAction;
+import redcoder.texteditor.action.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class MultiKeyPressListener extends KeyAdapter {
+/**
+ * 快捷键监听器
+ */
+public class ShortcutKeyListener extends KeyAdapter {
 
     private final Set<Integer> pressedKeys = new HashSet<>();
-    private final AtomicInteger counter = new AtomicInteger(1);
 
     private MainPane mainPane;
     private ZoomInAction zoomInAction;
     private ZoomOutAction zoomOutAction;
+    private NewFileAction newFileAction;
+    private OpenFileAction openFileAction;
+    private SaveFileAction saveFileAction;
 
-    public MultiKeyPressListener(MainPane mainPane) {
+    public ShortcutKeyListener(MainPane mainPane) {
         this.mainPane = mainPane;
     }
 
@@ -49,11 +52,16 @@ public class MultiKeyPressListener extends KeyAdapter {
                     System.currentTimeMillis(), 0));
         } else if (pressedKeys.contains(KeyEvent.VK_CONTROL)
                 && pressedKeys.contains(KeyEvent.VK_N)) {
-            TextPane textPane = new TextPane(this);
-            int i = counter.incrementAndGet();
-            mainPane.addActionListener(textPane);
-            mainPane.addTab("new-" + i, textPane);
-            mainPane.setSelectedComponent(textPane);
+            newFileAction.actionPerformed(new ActionEvent(e.getSource(), 0, "New File",
+                    System.currentTimeMillis(), 0));
+        } else if (pressedKeys.contains(KeyEvent.VK_CONTROL)
+                && pressedKeys.contains(KeyEvent.VK_O)) {
+            openFileAction.actionPerformed(new ActionEvent(e.getSource(), 0, "Open File",
+                    System.currentTimeMillis(), 0));
+        } else if (pressedKeys.contains(KeyEvent.VK_CONTROL)
+                && pressedKeys.contains(KeyEvent.VK_S)) {
+            saveFileAction.actionPerformed(new ActionEvent(e.getSource(), 0, "Save File",
+                    System.currentTimeMillis(), 0));
         }
     }
 
@@ -78,5 +86,17 @@ public class MultiKeyPressListener extends KeyAdapter {
 
     public void setZoomOutAction(ZoomOutAction zoomOutAction) {
         this.zoomOutAction = zoomOutAction;
+    }
+
+    public void setNewFileAction(NewFileAction newFileAction) {
+        this.newFileAction = newFileAction;
+    }
+
+    public void setOpenFileAction(OpenFileAction openFileAction) {
+        this.openFileAction = openFileAction;
+    }
+
+    public void setSaveFileAction(SaveFileAction saveFileAction) {
+        this.saveFileAction = saveFileAction;
     }
 }
