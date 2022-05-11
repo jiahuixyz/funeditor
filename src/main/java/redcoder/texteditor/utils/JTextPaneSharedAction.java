@@ -1,7 +1,6 @@
 package redcoder.texteditor.utils;
 
 import javax.swing.*;
-import javax.swing.undo.UndoManager;
 import java.util.HashMap;
 import java.util.Map;
 

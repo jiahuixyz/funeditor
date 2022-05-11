@@ -1,11 +1,9 @@
 package redcoder.texteditor;
 
-import redcoder.texteditor.action.*;
-import redcoder.texteditor.shortcut.*;
+import redcoder.texteditor.action.ActionName;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.Map;
 
 import static redcoder.texteditor.action.ActionName.*;
@@ -23,7 +21,6 @@ public class EditorFrame extends JFrame {
         init();
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // setUndecorated(true);
         setVisible(true);
     }
 
@@ -31,59 +28,17 @@ public class EditorFrame extends JFrame {
         // 创建文本主面板
         MainPane mainPane = new MainPane();
 
-        // 快捷键处理器链
-        ShortcutKeyHandlerChain handlerChain = new ShortcutKeyHandlerChain();
-
-        // 快捷键监听器
-        ShortcutKeyListener shortcutKeyListener = new ShortcutKeyListener(handlerChain);
-
-        // 文件选择器
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-        // 创建默认的Action
-        Map<ActionName, Action> defaultActions = createDefaultActions(mainPane, shortcutKeyListener, fileChooser);
-
-        // 添加默认的ShortcutKeyHandler
-        addDefaultShortHandlerKey(mainPane, handlerChain, defaultActions);
-
         // 创建默认的文本窗
-        ScrollTextPane scrollTextPane = new ScrollTextPane(shortcutKeyListener);
+        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane);
         mainPane.addTab("* new-1", scrollTextPane);
         mainPane.addActionListener(scrollTextPane);
 
         // 添加菜单
-        addMenu(defaultActions);
+        addMenu(mainPane.getDefaultActions());
         // 添加主窗格
         getContentPane().add(mainPane);
     }
 
-    private Map<ActionName, Action> createDefaultActions(MainPane mainPane, ShortcutKeyListener shortcutKeyListener, JFileChooser fileChooser) {
-        Map<ActionName, Action> actions = new HashMap<>();
-        actions.put(UNDO, new UndoActionWrapper(mainPane));
-        actions.put(REDO, new RedoActionWrapper(mainPane));
-        actions.put(ZOOM_IN, new ZoomInAction(mainPane));
-        actions.put(ZOOM_OUT, new ZoomOutAction(mainPane));
-        actions.put(NEW_FILE, new NewFileAction(mainPane, shortcutKeyListener));
-        actions.put(OPEN_FILE, new OpenFileAction(mainPane, shortcutKeyListener, fileChooser));
-        actions.put(SAVE_FILE, new SaveFileAction(mainPane, shortcutKeyListener, fileChooser));
-        actions.put(CUT, new CutAction());
-        actions.put(COPY, new CopyAction());
-        actions.put(PASTE, new PasteAction());
-        return actions;
-    }
-
-    private void addDefaultShortHandlerKey(MainPane mainPane,
-                                           ShortcutKeyHandlerChain handlerChain,
-                                           Map<ActionName, Action> defaultActions) {
-        handlerChain.addHandler(new RedoHandler(mainPane));
-        handlerChain.addHandler(new UndoHandler(mainPane));
-        handlerChain.addHandler(new ZoomInHandler(defaultActions.get(ZOOM_IN)));
-        handlerChain.addHandler(new ZoomOutHandler(defaultActions.get(ZOOM_OUT)));
-        handlerChain.addHandler(new NewFileHandler(defaultActions.get(NEW_FILE)));
-        handlerChain.addHandler(new OpenFileHandler(defaultActions.get(OPEN_FILE)));
-        handlerChain.addHandler(new SaveFileHandler(defaultActions.get(SAVE_FILE)));
-    }
 
     // ---------- 添加菜单
     private void addMenu(Map<ActionName, Action> defaultActions) {

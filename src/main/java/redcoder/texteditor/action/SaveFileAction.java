@@ -1,7 +1,6 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.MainPane;
-import redcoder.texteditor.shortcut.ShortcutKeyListener;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -11,13 +10,11 @@ import java.io.File;
 public class SaveFileAction extends AbstractAction {
 
     private MainPane mainPane;
-    private ShortcutKeyListener shortcutKeyListener;
     private JFileChooser fileChooser;
 
-    public SaveFileAction(MainPane mainPane, ShortcutKeyListener shortcutKeyListener, JFileChooser fileChooser) {
+    public SaveFileAction(MainPane mainPane, JFileChooser fileChooser) {
         super("Save File");
         this.mainPane = mainPane;
-        this.shortcutKeyListener = shortcutKeyListener;
         this.fileChooser = fileChooser;
     }
 
