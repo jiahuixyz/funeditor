@@ -64,8 +64,11 @@ public class EditorFrame extends JFrame {
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        addMenuItem(menu, actions.get(NEW_FILE), actions.get(OPEN_FILE), actions.get(SAVE_FILE),
-                actions.get(CLOSE), actions.get(CLOSE_ALL));
+        addMenuItem(menu, actions.get(NEW_FILE), actions.get(OPEN_FILE));
+        menu.addSeparator();
+        addMenuItem(menu, actions.get(SAVE_FILE), actions.get(SAVE_ALL));
+        menu.addSeparator();
+        addMenuItem(menu, actions.get(CLOSE), actions.get(CLOSE_ALL));
 
         return menu;
     }

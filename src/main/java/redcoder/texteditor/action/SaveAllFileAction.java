@@ -5,12 +5,12 @@ import redcoder.texteditor.MainPane;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class SaveFileAction extends AbstractAction {
+public class SaveAllFileAction extends AbstractAction {
 
     private MainPane mainPane;
 
-    public SaveFileAction(MainPane mainPane) {
-        super("Save File");
+    public SaveAllFileAction(MainPane mainPane) {
+        super("Save All");
         this.mainPane = mainPane;
     }
 
@@ -18,7 +18,7 @@ public class SaveFileAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            mainPane.saveSelectedFile();
+            mainPane.saveAllFile();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

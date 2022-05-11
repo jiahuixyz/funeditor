@@ -10,12 +10,12 @@ public class CloseFileAction extends AbstractAction {
     private MainPane mainPane;
 
     public CloseFileAction(MainPane mainPane){
-        super("Close");
+        super("Close File");
         this.mainPane = mainPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.closeFile();
+        mainPane.closeSelectedFile();
     }
 }
