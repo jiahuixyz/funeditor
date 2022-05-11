@@ -1,8 +1,8 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.MainPane;
-import redcoder.texteditor.ShortcutKeyListener;
-import redcoder.texteditor.TextPane;
+import redcoder.texteditor.shortcut.ShortcutKeyListener;
+import redcoder.texteditor.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -32,11 +32,11 @@ public class OpenFileAction extends AbstractAction {
     }
 
     private void openFile(String filename, String fileContent) {
-        TextPane textPane = new TextPane(shortcutKeyListener);
-        textPane.getTextPane().setText(fileContent);
+        ScrollTextPane scrollTextPane = new ScrollTextPane(shortcutKeyListener);
+        scrollTextPane.getTextPane().setText(fileContent);
 
-        mainPane.addActionListener(textPane);
-        mainPane.addTab(filename, textPane);
-        mainPane.setSelectedComponent(textPane);
+        mainPane.addActionListener(scrollTextPane);
+        mainPane.addTab(filename, scrollTextPane);
+        mainPane.setSelectedComponent(scrollTextPane);
     }
 }

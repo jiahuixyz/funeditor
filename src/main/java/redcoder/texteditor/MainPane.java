@@ -10,11 +10,11 @@ import java.awt.event.ActionListener;
  */
 public class MainPane extends JTabbedPane {
 
-    private TextPane selectedTextPane;
+    private ScrollTextPane selectedScrollTextPane;
 
     public MainPane() {
         setFont(new Font(null, Font.PLAIN, 16));
-        addChangeListener(e -> selectedTextPane = (TextPane) getSelectedComponent());
+        addChangeListener(e -> selectedScrollTextPane = (ScrollTextPane) getSelectedComponent());
     }
 
     public synchronized void addActionListener(ActionListener listener) {
@@ -32,7 +32,7 @@ public class MainPane extends JTabbedPane {
         }
     }
 
-    public TextPane getSelectedTextPane() {
-        return selectedTextPane;
+    public ScrollTextPane getSelectedTextPane() {
+        return selectedScrollTextPane;
     }
 }

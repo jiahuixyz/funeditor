@@ -1,8 +1,8 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.MainPane;
-import redcoder.texteditor.ShortcutKeyListener;
-import redcoder.texteditor.TextPane;
+import redcoder.texteditor.shortcut.ShortcutKeyListener;
+import redcoder.texteditor.ScrollTextPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,10 +22,10 @@ public class NewFileAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TextPane textPane = new TextPane(shortcutKeyListener);
+        ScrollTextPane scrollTextPane = new ScrollTextPane(shortcutKeyListener);
         int i = counter.incrementAndGet();
-        mainPane.addActionListener(textPane);
-        mainPane.addTab("* new-" + i, textPane);
-        mainPane.setSelectedComponent(textPane);
+        mainPane.addActionListener(scrollTextPane);
+        mainPane.addTab("* new-" + i, scrollTextPane);
+        mainPane.setSelectedComponent(scrollTextPane);
     }
 }

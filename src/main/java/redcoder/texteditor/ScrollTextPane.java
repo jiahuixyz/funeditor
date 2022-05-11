@@ -2,6 +2,7 @@ package redcoder.texteditor;
 
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
+import redcoder.texteditor.shortcut.ShortcutKeyListener;
 
 import javax.swing.*;
 import javax.swing.text.StyledDocument;
@@ -14,7 +15,7 @@ import java.util.Objects;
 /**
  * 支持滚动的文本窗格
  */
-public class TextPane extends JScrollPane implements ActionListener {
+public class ScrollTextPane extends JScrollPane implements ActionListener {
 
     private static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 16);
 
@@ -23,7 +24,7 @@ public class TextPane extends JScrollPane implements ActionListener {
     private UndoAction undoAction;
     private RedoAction redoAction;
 
-    public TextPane(ShortcutKeyListener shortcutKeyListener) {
+    public ScrollTextPane(ShortcutKeyListener shortcutKeyListener) {
         super();
         initAction();
         textPane = createTextPane(shortcutKeyListener);

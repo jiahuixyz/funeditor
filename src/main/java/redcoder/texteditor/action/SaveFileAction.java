@@ -1,7 +1,7 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.MainPane;
-import redcoder.texteditor.ShortcutKeyListener;
+import redcoder.texteditor.shortcut.ShortcutKeyListener;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
