@@ -3,6 +3,7 @@ package redcoder.texteditor;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
+import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -25,6 +26,8 @@ import static redcoder.texteditor.action.ActionName.UNDO;
  */
 public class ScrollTextPane extends JScrollPane implements ActionListener {
 
+    private static final Object[] CLOSE_OPTIONS = {"Save", "Don't Save", "Cancel"};
+
     private String filename;
     // 表示文本内容是否被修改
     private boolean modified;
@@ -39,6 +42,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     private UndoManager undoManager;
     private UndoAction undoAction;
     private RedoAction redoAction;
+    private final MainPane mainPane;
     private ButtonTabComponent buttonTabComponent;
     private int index;
 
@@ -52,6 +56,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
 
     public ScrollTextPane(MainPane mainPane, String filename, boolean modified, boolean modifyAware, File file) {
         super();
+        this.mainPane = mainPane;
         this.filename = filename;
         this.modified = modified;
         this.modifyAware = modifyAware;
@@ -81,21 +86,91 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         this.index = index;
     }
 
+    // ----------------------- operation about file
+
+    /**
+     * 保存当前窗格中的文本
+     *
+     * @return true-保存成功，false-保存失败
+     */
+    public boolean saveTextPane() {
+        boolean saved = false;
+        if (local) {
+            saveToFile(this.file);
+            saved = true;
+        } else {
+            int state = mainPane.getFileChooser().showSaveDialog(this);
+            if (state == JFileChooser.APPROVE_OPTION) {
+                File file = mainPane.getFileChooser().getSelectedFile();
+                if (file.exists()) {
+                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
+                    int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
+                    if (n == JOptionPane.YES_OPTION) {
+                        saveToFile(file);
+                        saved = true;
+                    }
+                } else {
+                    saveToFile(file);
+                    saved = true;
+                }
+                if (saved) {
+                    this.file = file;
+                    this.local = true;
+                }
+            }
+        }
+
+        if (saved) {
+            modified = false;
+        }
+        return saved;
+    }
+
+    private void saveToFile(File file) {
+        FileUtils.writeFile(textPane.getText(), file);
+
+        // update tab title and filename
+        buttonTabComponent.updateTabbedTitle(file.getName());
+        filename = file.getName();
+    }
+
+    /**
+     * 关闭当前窗格
+     *
+     * @param index 当前窗格在主窗口中的位置
+     * @return true：关闭成功，false：关闭失败
+     */
+    public boolean closeTextPane(int index) {
+        boolean closed = false;
+        if (modified) {
+            String message = String.format("Do you want to save the changes you made to %s?\n"
+                    + "Your changes will be lost if you don't save them.", file.getName());
+            int state = JOptionPane.showOptionDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
+            if (state == JOptionPane.YES_OPTION) {
+                // save file firstly, then close it.
+                if (saveTextPane()) {
+                    mainPane.removeTabAt(index);
+                    closed = true;
+                }
+            } else if (state == JOptionPane.NO_OPTION) {
+                // close file directly
+                mainPane.removeTabAt(index);
+                closed = true;
+            }
+            // user cancel operation, don't close it.
+        } else {
+            mainPane.removeTabAt(index);
+            closed = true;
+        }
+
+        return closed;
+    }
+
+
     // ---------- getter, setter
     public String getFilename() {
         return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public void setModified(boolean modified) {
-        this.modified = modified;
-    }
-
-    public boolean isModified() {
-        return modified;
     }
 
     public JTextPane getTextPane() {
@@ -110,36 +185,12 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         return redoAction;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public ButtonTabComponent getButtonTabComponent() {
-        return buttonTabComponent;
-    }
-
     public void setButtonTabComponent(ButtonTabComponent buttonTabComponent) {
         this.buttonTabComponent = buttonTabComponent;
     }
 
     public void setModifyAware(boolean modifyAware) {
         this.modifyAware = modifyAware;
-    }
-
-    public boolean isLocal() {
-        return local;
-    }
-
-    public void setLocal(boolean local) {
-        this.local = local;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
     }
 
     // ------------------- init

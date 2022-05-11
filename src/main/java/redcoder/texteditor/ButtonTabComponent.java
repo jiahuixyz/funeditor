@@ -62,7 +62,11 @@ public class ButtonTabComponent extends JPanel {
         public void actionPerformed(ActionEvent e) {
             int index = mainPane.indexOfTabComponent(ButtonTabComponent.this);
             if (index != -1) {
-                mainPane.closeFile(index);
+                Component component = mainPane.getComponentAt(index);
+                if (component instanceof ScrollTextPane) {
+                    ScrollTextPane scrollTextPane = (ScrollTextPane) component;
+                    scrollTextPane.closeTextPane(index);
+                }
             }
         }
 

@@ -7,12 +7,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class NewFileAction extends AbstractAction {
+public class NewAction extends AbstractAction {
 
     private final AtomicInteger counter = new AtomicInteger(1);
     private MainPane mainPane;
 
-    public NewFileAction(MainPane mainPane) {
+    public NewAction(MainPane mainPane) {
         super("New File");
         this.mainPane = mainPane;
     }

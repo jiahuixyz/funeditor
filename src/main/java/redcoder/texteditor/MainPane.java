@@ -1,7 +1,6 @@
 package redcoder.texteditor;
 
 import redcoder.texteditor.action.*;
-import redcoder.texteditor.exception.UnSupportedComponentOperationException;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -23,7 +22,6 @@ public class MainPane extends JTabbedPane {
     private static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 16);
     private static final int FONT_SIZE_MINIMUM = 10;
     private static final int FONT_SIZE_MAXIMUM = 1000;
-    private static final Object[] CLOSE_OPTIONS = {"Save", "Don't Save", "Cancel"};
 
     private ScrollTextPane selectedScrollTextPane;
     private JFileChooser fileChooser;
@@ -63,15 +61,15 @@ public class MainPane extends JTabbedPane {
         actions.put(REDO, new RedoActionWrapper(this));
         actions.put(ZOOM_IN, new ZoomInAction(this));
         actions.put(ZOOM_OUT, new ZoomOutAction(this));
-        actions.put(NEW_FILE, new NewFileAction(this));
-        actions.put(OPEN_FILE, new OpenFileAction(this));
-        actions.put(SAVE_FILE, new SaveFileAction(this));
-        actions.put(SAVE_ALL, new SaveAllFileAction(this));
+        actions.put(NEW_FILE, new NewAction(this));
+        actions.put(OPEN_FILE, new OpenAction(this));
+        actions.put(SAVE_FILE, new SaveAction(this));
+        actions.put(SAVE_ALL, new SaveAllAction(this));
         actions.put(CUT, new CutAction());
         actions.put(COPY, new CopyAction());
         actions.put(PASTE, new PasteAction());
-        actions.put(CLOSE, new CloseFileAction(this));
-        actions.put(CLOSE_ALL, new CloseAllFileAction(this));
+        actions.put(CLOSE, new CloseAction(this));
+        actions.put(CLOSE_ALL, new CloseAllAction(this));
         return actions;
     }
 
@@ -166,139 +164,38 @@ public class MainPane extends JTabbedPane {
     }
 
     /**
-     * 保存当前tab下的文件
+     * 保存所有文本窗格内的文件。
      *
-     * @return true：保存成功，false：保存失败
+     * @return 只有全部保存成功才返回true，否则返回false。
      */
-    public boolean saveSelectedFile() {
-        return saveFile(getSelectedIndex());
-    }
-
-    public boolean saveFile(int index) {
-        Component component = this.getComponentAt(index);
-        if (!(component instanceof ScrollTextPane)) {
-            throw new UnSupportedComponentOperationException("Can't save tab at '" + index + "', it's not of type ScrollTextPane");
-        }
-        ScrollTextPane scrollTextPane = (ScrollTextPane) component;
-
-        boolean saved = false;
-        if (scrollTextPane.isLocal()) {
-            saveFile(scrollTextPane.getFile(), scrollTextPane);
-            saved = true;
-        } else {
-            int state = fileChooser.showSaveDialog(this);
-            if (state == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                if (file.exists()) {
-                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
-                    int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
-                    if (n == JOptionPane.YES_OPTION) {
-                        saveFile(file, scrollTextPane);
-                        saved = true;
-                    }
-                } else {
-                    saveFile(file, scrollTextPane);
-                    saved = true;
-                }
-                if (saved) {
-                    scrollTextPane.setFile(file);
-                    scrollTextPane.setLocal(true);
-                }
-            }
-        }
-
-        if (saved) {
-            scrollTextPane.setModified(false);
-        }
-        return saved;
-    }
-
-    private void saveFile(File file, ScrollTextPane scrollTextPane) {
-        JTextPane textPane = scrollTextPane.getTextPane();
-        FileUtils.writeFile(textPane.getText(), file);
-
-        // update tab title and filename
-        scrollTextPane.getButtonTabComponent().updateTabbedTitle(file.getName());
-        scrollTextPane.setFilename(file.getName());
-    }
-
-    /**
-     * 保存所有tab下的文件。
-     *
-     * @return 只有所有的文件都保存成功才返回true，否则返回false。
-     */
-    public boolean saveAllFile() {
+    public boolean saveAllTextPane() {
         for (int i = this.getTabCount() - 1; i >= 0; i--) {
             // switch to tab i
             this.setSelectedIndex(i);
-            if (!saveFile(i)) {
-                return false;
+            Component component = this.getComponentAt(i);
+            if (component instanceof ScrollTextPane) {
+                if (!((ScrollTextPane) component).saveTextPane()) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     /**
-     * 关闭当前tab下的文件
+     * 关闭所有的文本窗格。
      *
-     * @return true：关闭成功，false：关闭失败
+     * @return 只有全部关闭成功才返回true，否则返回false。
      */
-    public boolean closeSelectedFile() {
-        return closeFile(getSelectedIndex());
-    }
-
-    /**
-     * 关闭指定位置的tab
-     *
-     * @param index 位置
-     * @return true：关闭成功，false：关闭失败
-     */
-    public boolean closeFile(int index) {
-        Component component = this.getComponentAt(index);
-        if (!(component instanceof ScrollTextPane)) {
-            throw new UnSupportedComponentOperationException("Can't close tab at '" + index + "', it's not of type ScrollTextPane");
-        }
-        ScrollTextPane scrollTextPane = (ScrollTextPane) component;
-        boolean closed = false;
-        if (scrollTextPane.isModified()) {
-            String message = String.format("Do you want to save the changes you made to %s?\n"
-                    + "Your changes will be lost if you don't save them.", scrollTextPane.getFilename());
-            int state = JOptionPane.showOptionDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
-            if (state == JOptionPane.YES_OPTION) {
-                // save file firstly, then close it.
-                if (saveFile(index)) {
-                    this.removeTabAt(this.getSelectedIndex());
-                    closed = true;
-                }
-            } else if (state == JOptionPane.NO_OPTION) {
-                // close file directly
-                this.removeTabAt(this.getSelectedIndex());
-                closed = true;
-            }
-            // user cancel operation, don't close it.
-        } else {
-            this.removeTabAt(this.getSelectedIndex());
-            closed = true;
-        }
-
-        if (!closed) {
-            System.err.println("Failed to close file " + scrollTextPane.getFilename());
-        }
-        return closed;
-    }
-
-    /**
-     * 关闭所有tab下的文件。
-     *
-     * @return 只有所有的文件都关闭成功才返回true，否则返回false。
-     */
-    public boolean closeAllFile() {
+    public boolean closeAllTextPane() {
         for (int i = this.getTabCount() - 1; i >= 0; i--) {
             // switch to tab i
             this.setSelectedIndex(i);
-            if (!closeFile(i)) {
-                return false;
+            Component component = this.getComponentAt(i);
+            if (component instanceof ScrollTextPane) {
+                if (!((ScrollTextPane) component).closeTextPane(i)) {
+                    return false;
+                }
             }
         }
         return true;

@@ -116,15 +116,15 @@ public class EditorFrame extends JFrame {
         actions.put(REDO, new RedoActionWrapper(mainPane));
         actions.put(ZOOM_IN, new ZoomInAction(mainPane));
         actions.put(ZOOM_OUT, new ZoomOutAction(mainPane));
-        actions.put(NEW_FILE, new NewFileAction(mainPane));
-        actions.put(OPEN_FILE, new OpenFileAction(mainPane));
-        actions.put(SAVE_FILE, new SaveFileAction(mainPane));
-        actions.put(SAVE_ALL, new SaveAllFileAction(mainPane));
+        actions.put(NEW_FILE, new NewAction(mainPane));
+        actions.put(OPEN_FILE, new OpenAction(mainPane));
+        actions.put(SAVE_FILE, new SaveAction(mainPane));
+        actions.put(SAVE_ALL, new SaveAllAction(mainPane));
         actions.put(CUT, new CutAction());
         actions.put(COPY, new CopyAction());
         actions.put(PASTE, new PasteAction());
-        actions.put(CLOSE, new CloseFileAction(mainPane));
-        actions.put(CLOSE_ALL, new CloseAllFileAction(mainPane));
+        actions.put(CLOSE, new CloseAction(mainPane));
+        actions.put(CLOSE_ALL, new CloseAllAction(mainPane));
         return actions;
     }
 
