@@ -33,8 +33,6 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     private boolean modified;
     // ModifyAwareDocumentListener的文本内容变化感知功能是否开启
     private boolean modifyAware;
-    // 文本内容来自于本地文件
-    private boolean local;
     // 本地文件
     private File file;
 
@@ -44,7 +42,6 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     private RedoAction redoAction;
     private final MainPane mainPane;
     private ButtonTabComponent buttonTabComponent;
-    private int index;
 
     public ScrollTextPane(MainPane mainPane, String filename) {
         this(mainPane, filename, false, true, null);
@@ -60,7 +57,6 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         this.filename = filename;
         this.modified = modified;
         this.modifyAware = modifyAware;
-        this.local = (file != null);
         this.file = file;
 
         initAction();
@@ -82,10 +78,6 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         }
     }
 
-    public void updateIndex(int index) {
-        this.index = index;
-    }
-
     // ----------------------- operation about file
 
     /**
@@ -95,7 +87,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
      */
     public boolean saveTextPane() {
         boolean saved = false;
-        if (local) {
+        if (file != null) {
             saveToFile(this.file);
             saved = true;
         } else {
@@ -113,9 +105,9 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
                     saveToFile(file);
                     saved = true;
                 }
+
                 if (saved) {
                     this.file = file;
-                    this.local = true;
                 }
             }
         }

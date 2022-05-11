@@ -15,7 +15,7 @@ import java.util.Map;
 import static redcoder.texteditor.action.ActionName.*;
 
 /**
- * 编辑器主窗格，支持ActionListener机制
+ * 编辑器主窗格
  */
 public class MainPane extends JTabbedPane {
 
@@ -45,14 +45,10 @@ public class MainPane extends JTabbedPane {
 
         // create default action
         defaultActions = createDefaultActions();
-        // set font
+        // set main pane font
         setFont(new Font(null, Font.PLAIN, 16));
-        addChangeListener(e -> {
-            selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
-            if (selectedScrollTextPane != null) {
-                selectedScrollTextPane.updateIndex(this.getSelectedIndex());
-            }
-        });
+        // record selected text pane with change listener
+        addChangeListener(e -> selectedScrollTextPane = (ScrollTextPane) getSelectedComponent());
     }
 
     private Map<ActionName, Action> createDefaultActions() {
@@ -159,8 +155,6 @@ public class MainPane extends JTabbedPane {
         scrollTextPane.setModifyAware(false);
         scrollTextPane.getTextPane().setText(content);
         scrollTextPane.setModifyAware(true);
-
-        scrollTextPane.updateIndex(this.getSelectedIndex());
     }
 
     /**
