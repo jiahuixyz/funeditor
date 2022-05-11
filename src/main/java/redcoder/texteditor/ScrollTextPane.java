@@ -5,6 +5,8 @@ import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.StyledDocument;
 import javax.swing.undo.UndoManager;
 import java.awt.event.ActionEvent;
@@ -21,13 +23,24 @@ import static redcoder.texteditor.action.ActionName.*;
  */
 public class ScrollTextPane extends JScrollPane implements ActionListener {
 
+    private boolean modified;
+    private String filename;
     private JTextPane textPane;
     private UndoManager undoManager;
     private UndoAction undoAction;
     private RedoAction redoAction;
 
-    public ScrollTextPane(MainPane mainPane) {
+    private int index;
+
+    public ScrollTextPane(MainPane mainPane, String filename) {
+        this(mainPane, filename, false);
+    }
+
+    public ScrollTextPane(MainPane mainPane, String filename, boolean modified) {
         super();
+        this.filename = filename;
+        this.modified = modified;
+
         initAction();
         textPane = createTextPane(mainPane);
         setViewportView(textPane);
@@ -47,8 +60,27 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         }
     }
 
+    public void updateIndex(int index) {
+        this.index = index;
+    }
 
-    // ---------- getter
+    // ---------- getter, setter
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
     public JTextPane getTextPane() {
         return textPane;
     }
@@ -59,6 +91,10 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
 
     public RedoAction getRedoAction() {
         return redoAction;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     // ------------------- init
@@ -76,6 +112,25 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         textPane.setFont(mainPane.getStpFont());
 
         StyledDocument doc = textPane.getStyledDocument();
+        doc.addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                modified = true;
+                mainPane.updateTabbedTitle(index, "* " + getFilename());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                modified = true;
+                mainPane.updateTabbedTitle(index, "* " + getFilename());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                modified = true;
+                mainPane.updateTabbedTitle(index, "* " + getFilename());
+            }
+        });
         doc.addUndoableEditListener(e -> {
             undoManager.addEdit(e.getEdit());
             undoAction.updateUndoState();
@@ -104,5 +159,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK), NEW_FILE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK), OPEN_FILE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), SAVE_FILE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK), CLOSE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), CLOSE_ALL);
     }
 }

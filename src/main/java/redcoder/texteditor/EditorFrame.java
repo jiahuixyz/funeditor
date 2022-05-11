@@ -10,11 +10,13 @@ import static redcoder.texteditor.action.ActionName.*;
 
 public class EditorFrame extends JFrame {
 
+    public static final String TITLE = "A Simple Text Editor";
+
     private static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
     private static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
 
     public EditorFrame() {
-        super("简单的文本编辑器");
+        super(TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 900, 600);
 
@@ -29,8 +31,8 @@ public class EditorFrame extends JFrame {
         MainPane mainPane = new MainPane();
 
         // 创建默认的文本窗
-        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane);
-        mainPane.addTab("* new-1", scrollTextPane);
+        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
+        mainPane.addTab("new-1", scrollTextPane);
         mainPane.addActionListener(scrollTextPane);
 
         // 添加菜单
@@ -58,11 +60,12 @@ public class EditorFrame extends JFrame {
     }
 
     private JMenu createFileMenu(Map<ActionName, Action> actions) {
-        // New File, Open File
+        // New File, Open File, Close File, Close All File
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        addMenuItem(menu, actions.get(NEW_FILE), actions.get(OPEN_FILE), actions.get(SAVE_FILE));
+        addMenuItem(menu, actions.get(NEW_FILE), actions.get(OPEN_FILE), actions.get(SAVE_FILE),
+                actions.get(CLOSE), actions.get(CLOSE_ALL));
 
         return menu;
     }

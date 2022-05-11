@@ -19,10 +19,12 @@ public class NewFileAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane);
         int i = counter.incrementAndGet();
+        String filename = "new-" + i;
+
+        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, filename);
         mainPane.addActionListener(scrollTextPane);
-        mainPane.addTab("* new-" + i, scrollTextPane);
+        mainPane.addTab(filename, scrollTextPane);
         mainPane.setSelectedComponent(scrollTextPane);
     }
 }

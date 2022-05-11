@@ -1,11 +1,13 @@
 package redcoder.texteditor;
 
 import redcoder.texteditor.action.*;
+import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,27 +34,37 @@ public class MainPane extends JTabbedPane {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         // 创建默认的Action
-        defaultActions = createDefaultActions(fileChooser);
-        
+        defaultActions = createDefaultActions();
+
         setFont(new Font(null, Font.PLAIN, 16));
-        addChangeListener(e -> selectedScrollTextPane = (ScrollTextPane) getSelectedComponent());
+        addChangeListener(e -> {
+            selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
+            selectedScrollTextPane.updateIndex(this.getSelectedIndex());
+        });
     }
 
-    private Map<ActionName, Action> createDefaultActions(JFileChooser fileChooser) {
+    private Map<ActionName, Action> createDefaultActions() {
         Map<ActionName, Action> actions = new HashMap<>();
         actions.put(UNDO, new UndoActionWrapper(this));
         actions.put(REDO, new RedoActionWrapper(this));
         actions.put(ZOOM_IN, new ZoomInAction(this));
         actions.put(ZOOM_OUT, new ZoomOutAction(this));
         actions.put(NEW_FILE, new NewFileAction(this));
-        actions.put(OPEN_FILE, new OpenFileAction(this, fileChooser));
-        actions.put(SAVE_FILE, new SaveFileAction(this, fileChooser));
+        actions.put(OPEN_FILE, new OpenFileAction(this));
+        actions.put(SAVE_FILE, new SaveFileAction(this));
         actions.put(CUT, new CutAction());
         actions.put(COPY, new CopyAction());
         actions.put(PASTE, new PasteAction());
+        actions.put(CLOSE, new CloseFileAction(this));
+        actions.put(CLOSE_ALL, new CloseAllFileAction(this));
         return actions;
     }
 
+    public void updateTabbedTitle(int index, String title) {
+        this.setTitleAt(index, title);
+    }
+
+    // --------- operation about ActionListener
     public synchronized void addActionListener(ActionListener listener) {
         listenerList.add(ActionListener.class, listener);
     }
@@ -68,6 +80,7 @@ public class MainPane extends JTabbedPane {
         }
     }
 
+    // ------------ operation about font
     public void zoomInFont() {
         int newSize = Math.min(stpFont.getSize() + 2, FONT_SIZE_MAXIMUM);
         stpFont = new Font(stpFont.getName(), stpFont.getStyle(), newSize);
@@ -87,6 +100,111 @@ public class MainPane extends JTabbedPane {
                 scrollTextPane.getTextPane().setFont(stpFont);
             }
         }
+    }
+
+    // -------------  operation about file
+    public boolean openFile() {
+        int state = fileChooser.showOpenDialog(this);
+        if (state == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            openFile(file.getName(), FileUtils.readFile(file));
+            return true;
+        }
+        return false;
+    }
+
+    private void openFile(String filename, String fileContent) {
+        ScrollTextPane scrollTextPane = new ScrollTextPane(this, filename, false);
+        scrollTextPane.getTextPane().setText(fileContent);
+
+        this.addActionListener(scrollTextPane);
+        this.addTab(filename, scrollTextPane);
+        this.setSelectedComponent(scrollTextPane);
+
+        scrollTextPane.updateIndex(this.getSelectedIndex());
+    }
+
+    public boolean saveFile() {
+        boolean saved = false;
+        int i = fileChooser.showOpenDialog(this);
+        if (i == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (file.exists()) {
+                String message = String.format("%s already exist, would you like overwriting it?", file.getName());
+                int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
+                if (n == JOptionPane.YES_OPTION) {
+                    saveFile(file);
+                    saved = true;
+                }
+            } else {
+                saveFile(file);
+                saved = true;
+            }
+
+            if (saved) {
+                this.getSelectedTextPane().setModified(false);
+            } else {
+                System.err.println("Failed to save file " + file.getName());
+            }
+        }
+        return saved;
+    }
+
+    private void saveFile(File file) {
+        ScrollTextPane selectedTextPane = this.getSelectedTextPane();
+        JTextPane textPane = selectedTextPane.getTextPane();
+        FileUtils.writeFile(textPane.getText(), file);
+
+        // update tab title and filename
+        int selectedIndex = this.getSelectedIndex();
+        this.setTitleAt(selectedIndex, file.getName());
+        selectedTextPane.setFilename(file.getName());
+    }
+
+    public boolean closeFile() {
+        ScrollTextPane selectedTextPane = this.getSelectedTextPane();
+        if (closeFile(selectedTextPane)) {
+            return true;
+        } else {
+            System.err.println("Failed to close file " + selectedTextPane.getFilename());
+            return false;
+        }
+    }
+
+    private boolean closeFile(ScrollTextPane scrollTextPane) {
+        boolean closed = false;
+        if (scrollTextPane.isModified()) {
+            String message = String.format("Do you want to save the changes you made to %s?\n"
+                    + "Your changes will be lost if you don't save them.", scrollTextPane.getFilename());
+            int state = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION);
+            if (state == JOptionPane.YES_OPTION) {
+                // save file firstly, then close it.
+                if (saveFile()) {
+                    this.removeTabAt(this.getSelectedIndex());
+                    closed = true;
+                }
+            } else if (state == JOptionPane.NO_OPTION) {
+                // close file directly
+                this.removeTabAt(this.getSelectedIndex());
+                closed = true;
+            }
+            // user cancel operation, don't close it.
+        } else {
+            this.removeTabAt(this.getSelectedIndex());
+            closed = true;
+        }
+        return closed;
+    }
+
+    public boolean closeAllFile() {
+        for (Component component : this.getComponents()) {
+            if (component instanceof ScrollTextPane) {
+                if (!closeFile((ScrollTextPane) component)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // ----------- getter

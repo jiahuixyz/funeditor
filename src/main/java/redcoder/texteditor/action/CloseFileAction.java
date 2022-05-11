@@ -5,23 +5,17 @@ import redcoder.texteditor.MainPane;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class OpenFileAction extends AbstractAction {
+public class CloseFileAction extends AbstractAction {
 
     private MainPane mainPane;
 
-    public OpenFileAction(MainPane mainPane) {
-        super("Open File");
+    public CloseFileAction(MainPane mainPane){
+        super("Close");
         this.mainPane = mainPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
-            mainPane.openFile();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        mainPane.closeFile();
     }
-
-
 }
