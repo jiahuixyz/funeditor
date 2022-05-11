@@ -29,6 +29,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     private UndoManager undoManager;
     private UndoAction undoAction;
     private RedoAction redoAction;
+    private ButtonTabComponent buttonTabComponent;
 
     private int index;
 
@@ -97,6 +98,14 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         return index;
     }
 
+    public ButtonTabComponent getButtonTabComponent() {
+        return buttonTabComponent;
+    }
+
+    public void setButtonTabComponent(ButtonTabComponent buttonTabComponent) {
+        this.buttonTabComponent = buttonTabComponent;
+    }
+
     // ------------------- init
     private void initAction() {
         undoManager = new UndoManager();
@@ -116,19 +125,19 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 modified = true;
-                mainPane.updateTabbedTitle(index, "* " + getFilename());
+                buttonTabComponent.updateTabbedTitle("* " + getFilename());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 modified = true;
-                mainPane.updateTabbedTitle(index, "* " + getFilename());
+                buttonTabComponent.updateTabbedTitle("* " + getFilename());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 modified = true;
-                mainPane.updateTabbedTitle(index, "* " + getFilename());
+                buttonTabComponent.updateTabbedTitle("* " + getFilename());
             }
         });
         doc.addUndoableEditListener(e -> {
@@ -151,7 +160,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     }
 
     private void addKeyBinding(JTextPane textPane) {
-        InputMap inputMap = textPane.getInputMap();
+        InputMap inputMap = textPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), UNDO);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), REDO);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK), ZOOM_IN);

@@ -1,6 +1,7 @@
 package redcoder.texteditor;
 
 import redcoder.texteditor.action.*;
+import redcoder.texteditor.exception.UnSupportedComponentOperationException;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -27,7 +28,7 @@ public class MainPane extends JTabbedPane {
     private ScrollTextPane selectedScrollTextPane;
     private JFileChooser fileChooser;
     private Map<ActionName, Action> defaultActions;
-    // ScrollTextPane font
+    // font used by ScrollTextPane's all instance
     private Font stpFont = DEFAULT_FONT;
 
     public MainPane() {
@@ -51,7 +52,9 @@ public class MainPane extends JTabbedPane {
         setFont(new Font(null, Font.PLAIN, 16));
         addChangeListener(e -> {
             selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
-            selectedScrollTextPane.updateIndex(this.getSelectedIndex());
+            if (selectedScrollTextPane != null) {
+                selectedScrollTextPane.updateIndex(this.getSelectedIndex());
+            }
         });
     }
 
@@ -73,8 +76,16 @@ public class MainPane extends JTabbedPane {
         return actions;
     }
 
-    public void updateTabbedTitle(int index, String title) {
-        this.setTitleAt(index, title);
+    @Override
+    public void insertTab(String title, Icon icon, Component component, String tip, int index) {
+        super.insertTab(title, icon, component, tip, index);
+        // 设置自定义的TabComponent
+        ButtonTabComponent buttonTabComponent = new ButtonTabComponent(this, title);
+        this.setTabComponentAt(index, buttonTabComponent);
+        if (component instanceof ScrollTextPane) {
+            ScrollTextPane scrollTextPane = (ScrollTextPane) component;
+            scrollTextPane.setButtonTabComponent(buttonTabComponent);
+        }
     }
 
     // --------- operation about ActionListener
@@ -156,11 +167,16 @@ public class MainPane extends JTabbedPane {
      * @return true：保存成功，false：保存失败
      */
     public boolean saveSelectedFile() {
-        ScrollTextPane scrollTextPane = this.getSelectedTextPane();
-        return saveFile(scrollTextPane);
+        return saveFile(getSelectedIndex());
     }
 
-    private boolean saveFile(ScrollTextPane scrollTextPane) {
+    public boolean saveFile(int index) {
+        Component component = this.getComponentAt(index);
+        if (!(component instanceof ScrollTextPane)) {
+            throw new UnSupportedComponentOperationException("Can't save tab at '" + index + "', it's not of type ScrollTextPane");
+        }
+        ScrollTextPane scrollTextPane = (ScrollTextPane) component;
+
         boolean saved = false;
         int i = fileChooser.showSaveDialog(this);
         if (i == JFileChooser.APPROVE_OPTION) {
@@ -191,8 +207,7 @@ public class MainPane extends JTabbedPane {
         FileUtils.writeFile(textPane.getText(), file);
 
         // update tab title and filename
-        int selectedIndex = this.getSelectedIndex();
-        this.setTitleAt(selectedIndex, file.getName());
+        scrollTextPane.getButtonTabComponent().updateTabbedTitle(file.getName());
         scrollTextPane.setFilename(file.getName());
     }
 
@@ -205,8 +220,7 @@ public class MainPane extends JTabbedPane {
         for (int i = this.getTabCount() - 1; i >= 0; i--) {
             // switch to tab i
             this.setSelectedIndex(i);
-            Component component = this.getComponentAt(i);
-            if (!saveFile((ScrollTextPane) component)) {
+            if (!saveFile(i)) {
                 return false;
             }
         }
@@ -219,10 +233,21 @@ public class MainPane extends JTabbedPane {
      * @return true：关闭成功，false：关闭失败
      */
     public boolean closeSelectedFile() {
-        return closeFile(getSelectedTextPane());
+        return closeFile(getSelectedIndex());
     }
 
-    private boolean closeFile(ScrollTextPane scrollTextPane) {
+    /**
+     * 关闭指定位置的tab
+     *
+     * @param index 位置
+     * @return true：关闭成功，false：关闭失败
+     */
+    public boolean closeFile(int index) {
+        Component component = this.getComponentAt(index);
+        if (!(component instanceof ScrollTextPane)) {
+            throw new UnSupportedComponentOperationException("Can't close tab at '" + index + "', it's not of type ScrollTextPane");
+        }
+        ScrollTextPane scrollTextPane = (ScrollTextPane) component;
         boolean closed = false;
         if (scrollTextPane.isModified()) {
             String message = String.format("Do you want to save the changes you made to %s?\n"
@@ -231,7 +256,7 @@ public class MainPane extends JTabbedPane {
                     JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
             if (state == JOptionPane.YES_OPTION) {
                 // save file firstly, then close it.
-                if (saveFile(scrollTextPane)) {
+                if (saveFile(index)) {
                     this.removeTabAt(this.getSelectedIndex());
                     closed = true;
                 }
@@ -259,8 +284,7 @@ public class MainPane extends JTabbedPane {
      */
     public boolean closeAllFile() {
         for (int i = 0; i < this.getTabCount(); i++) {
-            Component component = this.getComponentAt(i);
-            if (!closeFile((ScrollTextPane) component)) {
+            if (!closeFile(i)) {
                 return false;
             }
         }
