@@ -4,6 +4,7 @@ import redcoder.texteditor.action.*;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,17 @@ public class MainPane extends JTabbedPane {
     public MainPane() {
         // 文件选择器
         fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return !f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Select File Only";
+            }
+        });
 
         // 创建默认的Action
         defaultActions = createDefaultActions();
