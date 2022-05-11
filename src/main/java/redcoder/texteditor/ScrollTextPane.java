@@ -13,34 +13,50 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 
-import static redcoder.texteditor.action.ActionName.*;
+import static redcoder.texteditor.action.ActionName.REDO;
+import static redcoder.texteditor.action.ActionName.UNDO;
 
 /**
  * 支持滚动的文本窗格
  */
 public class ScrollTextPane extends JScrollPane implements ActionListener {
 
-    private boolean modified;
     private String filename;
-    private JTextPane textPane;
+    // 表示文本内容是否被修改
+    private boolean modified;
+    // ModifyAwareDocumentListener的文本内容变化感知功能是否开启
+    private boolean modifyAware;
+    // 文本内容来自于本地文件
+    private boolean local;
+    // 本地文件
+    private File file;
+
+    private final JTextPane textPane;
     private UndoManager undoManager;
     private UndoAction undoAction;
     private RedoAction redoAction;
     private ButtonTabComponent buttonTabComponent;
-
     private int index;
 
     public ScrollTextPane(MainPane mainPane, String filename) {
-        this(mainPane, filename, false);
+        this(mainPane, filename, false, true, null);
     }
 
-    public ScrollTextPane(MainPane mainPane, String filename, boolean modified) {
+    public ScrollTextPane(MainPane mainPane, File file) {
+        this(mainPane, file.getName(), false, true, file);
+    }
+
+    public ScrollTextPane(MainPane mainPane, String filename, boolean modified, boolean modifyAware, File file) {
         super();
         this.filename = filename;
         this.modified = modified;
+        this.modifyAware = modifyAware;
+        this.local = (file != null);
+        this.file = file;
 
         initAction();
         textPane = createTextPane(mainPane);
@@ -106,6 +122,26 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         this.buttonTabComponent = buttonTabComponent;
     }
 
+    public void setModifyAware(boolean modifyAware) {
+        this.modifyAware = modifyAware;
+    }
+
+    public boolean isLocal() {
+        return local;
+    }
+
+    public void setLocal(boolean local) {
+        this.local = local;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     // ------------------- init
     private void initAction() {
         undoManager = new UndoManager();
@@ -121,55 +157,56 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         textPane.setFont(mainPane.getStpFont());
 
         StyledDocument doc = textPane.getStyledDocument();
-        doc.addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                modified = true;
-                buttonTabComponent.updateTabbedTitle("* " + getFilename());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                modified = true;
-                buttonTabComponent.updateTabbedTitle("* " + getFilename());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                modified = true;
-                buttonTabComponent.updateTabbedTitle("* " + getFilename());
-            }
-        });
+        doc.addDocumentListener(new ModifyAwareDocumentListener());
         doc.addUndoableEditListener(e -> {
             undoManager.addEdit(e.getEdit());
             undoAction.updateUndoState();
             redoAction.updateRedoState();
         });
 
-        registerActionMap(mainPane.getDefaultActions(), textPane);
-        addKeyBinding(textPane);
+        // add key-binding
+        addKeyBinding(mainPane.getDefaultActions(), textPane);
 
         return textPane;
     }
 
-    private void registerActionMap(Map<ActionName, Action> defaultActions, JTextPane textPane) {
+
+    private void addKeyBinding(Map<ActionName, Action> defaultActions, JTextPane textPane) {
         ActionMap actionMap = textPane.getActionMap();
         for (Map.Entry<ActionName, Action> entry : defaultActions.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
-    }
 
-    private void addKeyBinding(JTextPane textPane) {
         InputMap inputMap = textPane.getInputMap();
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), UNDO);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), REDO);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK), ZOOM_IN);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK), ZOOM_OUT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK), NEW_FILE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK), OPEN_FILE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), SAVE_FILE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), SAVE_ALL);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK), CLOSE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), CLOSE_ALL);
+    }
+
+    /**
+     * 感知文本变化的文档监听器
+     */
+    private class ModifyAwareDocumentListener implements DocumentListener {
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            doAware();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            doAware();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            doAware();
+        }
+
+        private void doAware() {
+            if (modifyAware) {
+                modified = true;
+                buttonTabComponent.updateTabbedTitle("* " + getFilename());
+            }
+        }
     }
 }

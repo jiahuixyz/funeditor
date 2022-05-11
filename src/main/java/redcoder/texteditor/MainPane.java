@@ -9,8 +9,6 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +32,8 @@ public class MainPane extends JTabbedPane {
     private Font stpFont = DEFAULT_FONT;
 
     public MainPane() {
-        // 文件选择器
-        fileChooser = new JFileChooser();
-        fileChooser.addChoosableFileFilter(new FileFilter() {
+        this.fileChooser = new JFileChooser();
+        this.fileChooser.addChoosableFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return !f.isDirectory();
@@ -48,9 +45,9 @@ public class MainPane extends JTabbedPane {
             }
         });
 
-        // 创建默认的Action
+        // create default action
         defaultActions = createDefaultActions();
-
+        // set font
         setFont(new Font(null, Font.PLAIN, 16));
         addChangeListener(e -> {
             selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
@@ -146,19 +143,24 @@ public class MainPane extends JTabbedPane {
         int state = fileChooser.showOpenDialog(this);
         if (state == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            openFile(file.getName(), FileUtils.readFile(file));
+            openFile(file);
             return true;
         }
         return false;
     }
 
-    private void openFile(String filename, String fileContent) {
-        ScrollTextPane scrollTextPane = new ScrollTextPane(this, filename, false);
-        scrollTextPane.getTextPane().setText(fileContent);
+    private void openFile(File file) {
+        String filename = file.getName();
+        String content = FileUtils.readFile(file);
 
+        ScrollTextPane scrollTextPane = new ScrollTextPane(this, file);
         this.addActionListener(scrollTextPane);
         this.addTab(filename, scrollTextPane);
         this.setSelectedComponent(scrollTextPane);
+
+        scrollTextPane.setModifyAware(false);
+        scrollTextPane.getTextPane().setText(content);
+        scrollTextPane.setModifyAware(true);
 
         scrollTextPane.updateIndex(this.getSelectedIndex());
     }
@@ -180,26 +182,33 @@ public class MainPane extends JTabbedPane {
         ScrollTextPane scrollTextPane = (ScrollTextPane) component;
 
         boolean saved = false;
-        int i = fileChooser.showSaveDialog(this);
-        if (i == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            if (file.exists()) {
-                String message = String.format("%s already exist, would you like overwriting it?", file.getName());
-                int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
-                if (n == JOptionPane.YES_OPTION) {
+        if (scrollTextPane.isLocal()) {
+            saveFile(scrollTextPane.getFile(), scrollTextPane);
+            saved = true;
+        } else {
+            int state = fileChooser.showSaveDialog(this);
+            if (state == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                if (file.exists()) {
+                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
+                    int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
+                    if (n == JOptionPane.YES_OPTION) {
+                        saveFile(file, scrollTextPane);
+                        saved = true;
+                    }
+                } else {
                     saveFile(file, scrollTextPane);
                     saved = true;
                 }
-            } else {
-                saveFile(file, scrollTextPane);
-                saved = true;
+                if (saved) {
+                    scrollTextPane.setFile(file);
+                    scrollTextPane.setLocal(true);
+                }
             }
+        }
 
-            if (saved) {
-                scrollTextPane.setModified(false);
-            } else {
-                System.err.println("Failed to save file " + file.getName());
-            }
+        if (saved) {
+            scrollTextPane.setModified(false);
         }
         return saved;
     }
