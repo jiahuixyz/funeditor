@@ -9,6 +9,8 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -283,7 +285,9 @@ public class MainPane extends JTabbedPane {
      * @return 只有所有的文件都关闭成功才返回true，否则返回false。
      */
     public boolean closeAllFile() {
-        for (int i = 0; i < this.getTabCount(); i++) {
+        for (int i = this.getTabCount() - 1; i >= 0; i--) {
+            // switch to tab i
+            this.setSelectedIndex(i);
             if (!closeFile(i)) {
                 return false;
             }
