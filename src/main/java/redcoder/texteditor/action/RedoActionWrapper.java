@@ -16,6 +16,6 @@ public class RedoActionWrapper extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.getSelectedTextPane().getRedoAction().actionPerformed(e);
+        mainPane.getSelectedTextPane().redo(e);
     }
 }

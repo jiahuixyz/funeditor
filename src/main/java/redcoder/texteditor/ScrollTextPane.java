@@ -3,6 +3,9 @@ package redcoder.texteditor;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
+import redcoder.texteditor.linenumber.JTextAreaBasedLineNumberModel;
+import redcoder.texteditor.linenumber.LineNumberComponent;
+import redcoder.texteditor.linenumber.LineNumberModel;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -10,11 +13,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Map;
-import java.util.Objects;
 
 import static redcoder.texteditor.action.ActionName.REDO;
 import static redcoder.texteditor.action.ActionName.UNDO;
@@ -22,7 +24,7 @@ import static redcoder.texteditor.action.ActionName.UNDO;
 /**
  * 支持滚动的文本窗格
  */
-public class ScrollTextPane extends JScrollPane implements ActionListener {
+public class ScrollTextPane extends JScrollPane {
 
     private static final Object[] CLOSE_OPTIONS = {"Save", "Don't Save", "Cancel"};
 
@@ -34,12 +36,13 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     // 本地文件
     private File file;
 
-    private final JTextArea textArea;
+    private JTextArea textArea;
     private UndoManager undoManager;
     private UndoAction undoAction;
     private RedoAction redoAction;
     private final MainPane mainPane;
     private ButtonTabComponent buttonTabComponent;
+    private LineNumberComponent lineNumberComponent;
 
     public ScrollTextPane(MainPane mainPane, String filename) {
         this(mainPane, filename, false, true, null);
@@ -57,22 +60,36 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         this.modifyAware = modifyAware;
         this.file = file;
 
-        initAction();
-        textArea = createTextArea(mainPane);
-        setViewportView(textArea);
+        init(mainPane);
+    }
+
+    /**
+     * 执行undo操作
+     */
+    public void undo(ActionEvent e) {
+        undoAction.actionPerformed(e);
+    }
+
+    /**
+     * 执行redo操作
+     */
+    public void redo(ActionEvent e) {
+        redoAction.actionPerformed(e);
+    }
+
+    public void setText(String text) {
+        this.textArea.setText(text);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() != textArea) {
-            return;
-        }
+    public void setFont(Font font) {
+        super.setFont(font);
 
-        String command = e.getActionCommand();
-        if (Objects.equals("Undo", command)) {
-            undoAction.actionPerformed(e);
-        } else if (Objects.equals("Redo", command)) {
-            redoAction.actionPerformed(e);
+        if (textArea != null) {
+            textArea.setFont(font);
+        }
+        if (lineNumberComponent != null) {
+            lineNumberComponent.setLineNumberFont(font);
         }
     }
 
@@ -159,22 +176,6 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
 
 
     // ---------- getter, setter
-    public String getFilename() {
-        return filename;
-    }
-
-    public JTextArea getTextArea() {
-        return textArea;
-    }
-
-    public UndoAction getUndoAction() {
-        return undoAction;
-    }
-
-    public RedoAction getRedoAction() {
-        return redoAction;
-    }
-
     public void setButtonTabComponent(ButtonTabComponent buttonTabComponent) {
         this.buttonTabComponent = buttonTabComponent;
     }
@@ -183,7 +184,14 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         this.modifyAware = modifyAware;
     }
 
-    // ------------------- init
+    // ------------------- init ScrollTextPane
+
+    private void init(MainPane mainPane) {
+        initAction();
+        this.textArea = createTextArea(mainPane);
+        this.setViewportView(textArea);
+    }
+
     private void initAction() {
         undoManager = new UndoManager();
         undoAction = new UndoAction(undoManager);
@@ -198,19 +206,64 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         jTextArea.setFont(mainPane.getStpFont());
 
         Document doc = jTextArea.getDocument();
-        doc.addDocumentListener(new ModifyAwareDocumentListener());
+        // 处理文本内容变化的监听器
+        doc.addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                doAware();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                doAware();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                doAware();
+            }
+
+            private void doAware() {
+                if (modifyAware) {
+                    modified = true;
+                    buttonTabComponent.updateTabbedTitle("* " + filename);
+                }
+            }
+        });
+
+        // 添加渲染行号的组件
+        this.lineNumberComponent = createLineNumComponent(jTextArea);
+        this.setRowHeaderView(lineNumberComponent);
+
+        // 渲染文本行号的监听器
+        doc.addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                lineNumberComponent.adjustWidth();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                lineNumberComponent.adjustWidth();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                lineNumberComponent.adjustWidth();
+            }
+        });
         doc.addUndoableEditListener(e -> {
             undoManager.addEdit(e.getEdit());
             undoAction.updateUndoState();
             redoAction.updateRedoState();
         });
 
-        // add key-binding
+        // 绑定快捷键
         addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), jTextArea);
 
         return jTextArea;
     }
-
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,
                                Map<ActionName, Action> actions,
@@ -225,31 +278,10 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         inputMap.put(keyStrokes.get(REDO), REDO);
     }
 
-    /**
-     * 感知文本变化的文档监听器
-     */
-    private class ModifyAwareDocumentListener implements DocumentListener {
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            doAware();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            doAware();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            doAware();
-        }
-
-        private void doAware() {
-            if (modifyAware) {
-                modified = true;
-                buttonTabComponent.updateTabbedTitle("* " + getFilename());
-            }
-        }
+    private LineNumberComponent createLineNumComponent(JTextArea textArea) {
+        LineNumberModel lineNumberModel = new JTextAreaBasedLineNumberModel(textArea);
+        LineNumberComponent lineNumberComponent = new LineNumberComponent(lineNumberModel);
+        lineNumberComponent.setAlignment(LineNumberComponent.CENTER_ALIGNMENT);
+        return lineNumberComponent;
     }
 }

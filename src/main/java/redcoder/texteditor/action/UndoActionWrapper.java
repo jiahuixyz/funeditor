@@ -16,6 +16,6 @@ public class UndoActionWrapper extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.getSelectedTextPane().getUndoAction().actionPerformed(e);
+        mainPane.getSelectedTextPane().undo(e);
     }
 }
