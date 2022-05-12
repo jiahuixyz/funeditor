@@ -280,8 +280,6 @@ public class ScrollTextPane extends JScrollPane {
 
     private LineNumberComponent createLineNumComponent(JTextArea textArea) {
         LineNumberModel lineNumberModel = new JTextAreaBasedLineNumberModel(textArea);
-        LineNumberComponent lineNumberComponent = new LineNumberComponent(lineNumberModel);
-        lineNumberComponent.setAlignment(LineNumberComponent.CENTER_ALIGNMENT);
-        return lineNumberComponent;
+        return new LineNumberComponent(lineNumberModel, LineNumberComponent.RIGHT_ALIGNMENT);
     }
 }

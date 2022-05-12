@@ -6,14 +6,10 @@ import redcoder.texteditor.utils.FileUtils;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
-import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
 import static java.awt.event.KeyEvent.*;
 import static redcoder.texteditor.action.ActionName.*;
 
@@ -25,7 +21,7 @@ public class MainPane extends JTabbedPane {
     public static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 16);
 
     private static final int FONT_SIZE_MINIMUM = 10;
-    private static final int FONT_SIZE_MAXIMUM = 1000;
+    private static final int FONT_SIZE_MAXIMUM = 100;
 
     private ScrollTextPane selectedScrollTextPane;
     private JFileChooser fileChooser;

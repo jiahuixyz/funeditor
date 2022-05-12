@@ -29,23 +29,16 @@ public class LineNumberComponent extends JComponent {
     private LineNumberModel lineNumberModel;
     private Font lineNumberFont = MainPane.DEFAULT_FONT;
 
-    /**
-     * Constructs a new Component with no model
-     */
-    public LineNumberComponent() {
-        this(null);
-    }
-
 
     /**
      * Constructs a new Component based upon the parameter model
      *
      * @param model LineNumberModel
      */
-    public LineNumberComponent(LineNumberModel model) {
+    public LineNumberComponent(LineNumberModel model, int alignment) {
         super();
         setLineNumberModel(model);
-        // setPreferredSize(new Dimension(30, 30));
+        setAlignment(alignment);
     }
 
 

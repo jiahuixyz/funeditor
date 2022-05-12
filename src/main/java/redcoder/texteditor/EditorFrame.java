@@ -4,8 +4,6 @@ import redcoder.texteditor.action.ActionName;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.util.Map;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
