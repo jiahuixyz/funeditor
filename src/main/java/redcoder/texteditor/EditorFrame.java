@@ -30,6 +30,10 @@ public class EditorFrame extends JFrame {
     private void init() {
         // 创建文本主面板
         MainPane mainPane = new MainPane();
+        // 创建底部状态栏
+        JPanel statusPanel = new JPanel(new GridBagLayout());
+        statusPanel.add(CaretStatusLabel.getInstance(), new GridBagConstraints(0, 0, 1, 1,
+                0.2, 1, GridBagConstraints.LINE_START, 0, new Insets(0, 20, 0, 0), 0, 0));
 
         // 创建默认的文本窗
         ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
@@ -37,9 +41,10 @@ public class EditorFrame extends JFrame {
 
         // 添加菜单
         addMenu(mainPane.getKeyStrokes(), mainPane.getActions());
-        // 添加主窗格
+        // 添加主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(mainPane, BorderLayout.CENTER);
+        rootPane.add(statusPanel, BorderLayout.SOUTH);
         setContentPane(rootPane);
         // add key bindings
         addDefaultKeyBinding(rootPane, mainPane.getKeyStrokes(), mainPane.getActions());
@@ -76,6 +81,8 @@ public class EditorFrame extends JFrame {
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(CLOSE), actions.get(CLOSE),
                 keyStrokes.get(CLOSE_ALL), actions.get(CLOSE_ALL));
+        menu.addSeparator();
+        addMenuItem(menu, actions.get(EXIT));
 
         return menu;
     }
@@ -113,6 +120,13 @@ public class EditorFrame extends JFrame {
 
             JMenuItem menuItem = menu.add(action);
             menuItem.setAccelerator(keyStroke);
+            menuItem.setFont(MENU_ITEM_DEFAULT_FONT);
+        }
+    }
+
+    private void addMenuItem(JMenu menu, Action... actions) {
+        for (Action action : actions) {
+            JMenuItem menuItem = menu.add(action);
             menuItem.setFont(MENU_ITEM_DEFAULT_FONT);
         }
     }

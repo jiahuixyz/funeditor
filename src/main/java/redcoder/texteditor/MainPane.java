@@ -206,7 +206,10 @@ public class MainPane extends JTabbedPane {
         // set main pane font
         setFont(new Font(null, Font.PLAIN, 16));
         // record selected text pane with change listener
-        addChangeListener(e -> selectedScrollTextPane = (ScrollTextPane) getSelectedComponent());
+        addChangeListener(e -> {
+            selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
+            CaretStatusLabel.getInstance().resetStatus();
+        });
     }
 
     private Map<ActionName, KeyStroke> createDefaultKeyStrokes() {
@@ -242,6 +245,7 @@ public class MainPane extends JTabbedPane {
         actions.put(PASTE, new PasteAction());
         actions.put(CLOSE, new CloseAction(this));
         actions.put(CLOSE_ALL, new CloseAllAction(this));
+        actions.put(EXIT, new ExitAction());
         return actions;
     }
 }

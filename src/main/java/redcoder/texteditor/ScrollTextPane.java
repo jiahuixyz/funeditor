@@ -262,6 +262,9 @@ public class ScrollTextPane extends JScrollPane {
         // 绑定快捷键
         addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), jTextArea);
 
+        // 注册caretListener
+        jTextArea.addCaretListener(CaretStatusLabel.getInstance());
+
         return jTextArea;
     }
 
