@@ -1,12 +1,11 @@
 package redcoder.texteditor;
 
-import redcoder.texteditor.action.*;
+import redcoder.texteditor.action.ActionName;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
 import java.util.Map;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
@@ -40,24 +39,24 @@ public class EditorFrame extends JFrame {
         mainPane.addActionListener(scrollTextPane);
 
         // 添加菜单
-        addMenu(mainPane.getDefaultActions());
+        addMenu(mainPane.getKeyStrokes(), mainPane.getActions());
         // 添加主窗格
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(mainPane, BorderLayout.CENTER);
         setContentPane(rootPane);
         // add key bindings
-        addDefaultKeyBinding(rootPane, mainPane.getDefaultActions());
+        addDefaultKeyBinding(rootPane, mainPane.getKeyStrokes(), mainPane.getActions());
     }
 
 
-    // ---------- 添加菜单
-    private void addMenu(Map<ActionName, Action> defaultActions) {
+    // ---------- 创建菜单
+    private void addMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
         // create 'File' menu
-        JMenu fileMenu = createFileMenu(defaultActions);
+        JMenu fileMenu = createFileMenu(keyStrokes, actions);
         // create 'Edit' menu
-        JMenu editMenu = createEditMenu(defaultActions);
+        JMenu editMenu = createEditMenu(keyStrokes, actions);
         // create 'View' menu
-        JMenu viewMenu = createViewMenu(defaultActions);
+        JMenu viewMenu = createViewMenu(keyStrokes, actions);
 
         // set menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -67,81 +66,74 @@ public class EditorFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private JMenu createFileMenu(Map<ActionName, Action> actions) {
+    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
         // New File, Open File, Close File, Close All File
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        addMenuItem(menu, actions.get(NEW_FILE), actions.get(OPEN_FILE));
+        addMenuItem(menu, keyStrokes.get(NEW_FILE), actions.get(NEW_FILE),
+                keyStrokes.get(OPEN_FILE), actions.get(OPEN_FILE));
         menu.addSeparator();
-        addMenuItem(menu, actions.get(SAVE_FILE), actions.get(SAVE_ALL));
+        addMenuItem(menu, keyStrokes.get(SAVE_FILE), actions.get(SAVE_FILE),
+                keyStrokes.get(SAVE_ALL), actions.get(SAVE_ALL));
         menu.addSeparator();
-        addMenuItem(menu, actions.get(CLOSE), actions.get(CLOSE_ALL));
+        addMenuItem(menu, keyStrokes.get(CLOSE), actions.get(CLOSE),
+                keyStrokes.get(CLOSE_ALL), actions.get(CLOSE_ALL));
 
         return menu;
     }
 
-    private JMenu createEditMenu(Map<ActionName, Action> actions) {
+    private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
         // undo, redo, cut, copy, paste
         JMenu menu = new JMenu("Edit");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        addMenuItem(menu, actions.get(UNDO), actions.get(REDO));
+        addMenuItem(menu, keyStrokes.get(UNDO), actions.get(UNDO),
+                keyStrokes.get(REDO), actions.get(REDO));
         menu.addSeparator();
-        addMenuItem(menu, actions.get(CUT), actions.get(COPY), actions.get(PASTE));
+        addMenuItem(menu, keyStrokes.get(CUT), actions.get(CUT),
+                keyStrokes.get(COPY), actions.get(COPY),
+                keyStrokes.get(PASTE), actions.get(PASTE));
 
         return menu;
     }
 
-    private JMenu createViewMenu(Map<ActionName, Action> actions) {
+    private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
         // zoom in, zoom out
         JMenu menu = new JMenu("View");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        addMenuItem(menu, actions.get(ZOOM_IN), actions.get(ZOOM_OUT));
+        addMenuItem(menu, keyStrokes.get(ZOOM_IN), actions.get(ZOOM_IN),
+                keyStrokes.get(ZOOM_OUT), actions.get(ZOOM_OUT));
 
         return menu;
     }
 
-    private void addMenuItem(JMenu menu, Action... actions) {
-        for (Action action : actions) {
+    private void addMenuItem(JMenu menu, Object... objs) {
+        for (int i = 0; i < objs.length; i++) {
+            KeyStroke keyStroke = (KeyStroke) objs[i++];
+            Action action = (Action) objs[i];
+
             JMenuItem menuItem = menu.add(action);
+            menuItem.setAccelerator(keyStroke);
             menuItem.setFont(MENU_ITEM_DEFAULT_FONT);
         }
     }
 
-    private Map<ActionName, Action> createDefaultActions(MainPane mainPane) {
-        Map<ActionName, Action> actions = new HashMap<>();
-        actions.put(UNDO, new UndoActionWrapper(mainPane));
-        actions.put(REDO, new RedoActionWrapper(mainPane));
-        actions.put(ZOOM_IN, new ZoomInAction(mainPane));
-        actions.put(ZOOM_OUT, new ZoomOutAction(mainPane));
-        actions.put(NEW_FILE, new NewAction(mainPane));
-        actions.put(OPEN_FILE, new OpenAction(mainPane));
-        actions.put(SAVE_FILE, new SaveAction(mainPane));
-        actions.put(SAVE_ALL, new SaveAllAction(mainPane));
-        actions.put(CUT, new CutAction());
-        actions.put(COPY, new CopyAction());
-        actions.put(PASTE, new PasteAction());
-        actions.put(CLOSE, new CloseAction(mainPane));
-        actions.put(CLOSE_ALL, new CloseAllAction(mainPane));
-        return actions;
-    }
-
-    private void addDefaultKeyBinding(JPanel rootPane, Map<ActionName, Action> defaultActions) {
+    private void addDefaultKeyBinding(JPanel rootPane, Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
         ActionMap actionMap = rootPane.getActionMap();
-        for (Map.Entry<ActionName, Action> entry : defaultActions.entrySet()) {
+        for (Map.Entry<ActionName, Action> entry : actions.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
 
         InputMap inputMap = rootPane.getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK), ZOOM_IN);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK), ZOOM_OUT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK), NEW_FILE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK), OPEN_FILE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), SAVE_FILE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), SAVE_ALL);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK), CLOSE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), CLOSE_ALL);
+        inputMap.put(keyStrokes.get(ZOOM_IN), ZOOM_IN);
+        inputMap.put(keyStrokes.get(ZOOM_OUT), ZOOM_OUT);
+        inputMap.put(keyStrokes.get(NEW_FILE), NEW_FILE);
+        inputMap.put(keyStrokes.get(OPEN_FILE), OPEN_FILE);
+        inputMap.put(keyStrokes.get(SAVE_FILE), SAVE_FILE);
+        inputMap.put(keyStrokes.get(SAVE_ALL), SAVE_ALL);
+        inputMap.put(keyStrokes.get(CLOSE), CLOSE);
+        inputMap.put(keyStrokes.get(CLOSE_ALL), CLOSE_ALL);
     }
 }

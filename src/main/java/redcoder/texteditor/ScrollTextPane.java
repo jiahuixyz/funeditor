@@ -12,8 +12,6 @@ import javax.swing.text.StyledDocument;
 import javax.swing.undo.UndoManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Map;
 import java.util.Objects;
@@ -208,21 +206,23 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         });
 
         // add key-binding
-        addKeyBinding(mainPane.getDefaultActions(), textPane);
+        addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), textPane);
 
         return textPane;
     }
 
 
-    private void addKeyBinding(Map<ActionName, Action> defaultActions, JTextPane textPane) {
+    private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,
+                               Map<ActionName, Action> actions,
+                               JTextPane textPane) {
         ActionMap actionMap = textPane.getActionMap();
-        for (Map.Entry<ActionName, Action> entry : defaultActions.entrySet()) {
+        for (Map.Entry<ActionName, Action> entry : actions.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
 
         InputMap inputMap = textPane.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), UNDO);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), REDO);
+        inputMap.put(keyStrokes.get(UNDO), UNDO);
+        inputMap.put(keyStrokes.get(REDO), REDO);
     }
 
     /**

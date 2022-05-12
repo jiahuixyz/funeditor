@@ -12,6 +12,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
+import static java.awt.event.KeyEvent.*;
 import static redcoder.texteditor.action.ActionName.*;
 
 /**
@@ -25,7 +28,8 @@ public class MainPane extends JTabbedPane {
 
     private ScrollTextPane selectedScrollTextPane;
     private JFileChooser fileChooser;
-    private Map<ActionName, Action> defaultActions;
+    private Map<ActionName, KeyStroke> keyStrokes;
+    private Map<ActionName, Action> actions;
     // font used by ScrollTextPane's all instance
     private Font stpFont = DEFAULT_FONT;
 
@@ -43,12 +47,32 @@ public class MainPane extends JTabbedPane {
             }
         });
 
+        // create default key strokes
+        keyStrokes = createDefaultKeyStrokes();
         // create default action
-        defaultActions = createDefaultActions();
+        actions = createDefaultActions();
         // set main pane font
         setFont(new Font(null, Font.PLAIN, 16));
         // record selected text pane with change listener
         addChangeListener(e -> selectedScrollTextPane = (ScrollTextPane) getSelectedComponent());
+    }
+
+    private Map<ActionName, KeyStroke> createDefaultKeyStrokes() {
+        Map<ActionName, KeyStroke> keyStrokes = new HashMap<>();
+        keyStrokes.put(UNDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK));
+        keyStrokes.put(REDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
+        keyStrokes.put(ZOOM_IN, KeyStroke.getKeyStroke(VK_ADD, CTRL_DOWN_MASK));
+        keyStrokes.put(ZOOM_OUT, KeyStroke.getKeyStroke(VK_SUBTRACT, CTRL_DOWN_MASK));
+        keyStrokes.put(NEW_FILE, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK));
+        keyStrokes.put(OPEN_FILE, KeyStroke.getKeyStroke(VK_O, CTRL_DOWN_MASK));
+        keyStrokes.put(SAVE_FILE, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK));
+        keyStrokes.put(SAVE_ALL, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
+        keyStrokes.put(CLOSE, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK));
+        keyStrokes.put(CLOSE_ALL, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
+        keyStrokes.put(CUT, KeyStroke.getKeyStroke(VK_X, CTRL_DOWN_MASK));
+        keyStrokes.put(COPY, KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
+        keyStrokes.put(PASTE, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));
+        return keyStrokes;
     }
 
     private Map<ActionName, Action> createDefaultActions() {
@@ -211,11 +235,15 @@ public class MainPane extends JTabbedPane {
         return fileChooser;
     }
 
+    public Map<ActionName, KeyStroke> getKeyStrokes() {
+        return keyStrokes;
+    }
+
     /**
      * 返回所有默认使用的Action
      */
-    public Map<ActionName, Action> getDefaultActions() {
-        return defaultActions;
+    public Map<ActionName, Action> getActions() {
+        return actions;
     }
 
     /**
