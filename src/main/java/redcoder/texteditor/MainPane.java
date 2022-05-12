@@ -105,21 +105,7 @@ public class MainPane extends JTabbedPane {
         }
     }
 
-    // --------- operation about ActionListener
-    public synchronized void addActionListener(ActionListener listener) {
-        listenerList.add(ActionListener.class, listener);
-    }
 
-    public synchronized void remove(ActionListener listener) {
-        listenerList.remove(ActionListener.class, listener);
-    }
-
-    public void fireActionEvent(ActionEvent event) {
-        ActionListener[] listeners = listenerList.getListeners(ActionListener.class);
-        for (ActionListener listener : listeners) {
-            listener.actionPerformed(event);
-        }
-    }
 
     // ------------ operation about font
 
@@ -145,10 +131,12 @@ public class MainPane extends JTabbedPane {
         for (Component component : getComponents()) {
             if (component instanceof ScrollTextPane) {
                 ScrollTextPane scrollTextPane = (ScrollTextPane) component;
-                scrollTextPane.getTextPane().setFont(stpFont);
+                scrollTextPane.getTextArea().setFont(stpFont);
             }
         }
     }
+
+
 
     // -------------  operation about file
 
@@ -172,12 +160,11 @@ public class MainPane extends JTabbedPane {
         String content = FileUtils.readFile(file);
 
         ScrollTextPane scrollTextPane = new ScrollTextPane(this, file);
-        this.addActionListener(scrollTextPane);
         this.addTab(filename, scrollTextPane);
         this.setSelectedComponent(scrollTextPane);
 
         scrollTextPane.setModifyAware(false);
-        scrollTextPane.getTextPane().setText(content);
+        scrollTextPane.getTextArea().setText(content);
         scrollTextPane.setModifyAware(true);
     }
 
@@ -218,6 +205,8 @@ public class MainPane extends JTabbedPane {
         }
         return true;
     }
+
+
 
     // ----------- getter
 

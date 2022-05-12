@@ -36,7 +36,6 @@ public class EditorFrame extends JFrame {
         // 创建默认的文本窗
         ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
         mainPane.addTab("new-1", scrollTextPane);
-        mainPane.addActionListener(scrollTextPane);
 
         // 添加菜单
         addMenu(mainPane.getKeyStrokes(), mainPane.getActions());

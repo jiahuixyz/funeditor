@@ -8,7 +8,7 @@ import redcoder.texteditor.utils.FileUtils;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +34,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     // 本地文件
     private File file;
 
-    private final JTextPane textPane;
+    private final JTextArea textArea;
     private UndoManager undoManager;
     private UndoAction undoAction;
     private RedoAction redoAction;
@@ -58,13 +58,13 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         this.file = file;
 
         initAction();
-        textPane = createTextPane(mainPane);
-        setViewportView(textPane);
+        textArea = createTextArea(mainPane);
+        setViewportView(textArea);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() != textPane) {
+        if (e.getSource() != textArea) {
             return;
         }
 
@@ -117,7 +117,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
     }
 
     private void saveToFile(File file) {
-        FileUtils.writeFile(textPane.getText(), file);
+        FileUtils.writeFile(textArea.getText(), file);
 
         // update tab title and filename
         buttonTabComponent.updateTabbedTitle(file.getName());
@@ -134,7 +134,7 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         boolean closed = false;
         if (modified) {
             String message = String.format("Do you want to save the changes you made to %s?\n"
-                    + "Your changes will be lost if you don't save them.", file.getName());
+                    + "Your changes will be lost if you don't save them.", filename);
             int state = JOptionPane.showOptionDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
             if (state == JOptionPane.YES_OPTION) {
@@ -163,8 +163,8 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         return filename;
     }
 
-    public JTextPane getTextPane() {
-        return textPane;
+    public JTextArea getTextArea() {
+        return textArea;
     }
 
     public UndoAction getUndoAction() {
@@ -193,11 +193,11 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         redoAction.setUndoAction(undoAction);
     }
 
-    private JTextPane createTextPane(MainPane mainPane) {
-        JTextPane textPane = new JTextPane();
-        textPane.setFont(mainPane.getStpFont());
+    private JTextArea createTextArea(MainPane mainPane) {
+        JTextArea jTextArea = new JTextArea();
+        jTextArea.setFont(mainPane.getStpFont());
 
-        StyledDocument doc = textPane.getStyledDocument();
+        Document doc = jTextArea.getDocument();
         doc.addDocumentListener(new ModifyAwareDocumentListener());
         doc.addUndoableEditListener(e -> {
             undoManager.addEdit(e.getEdit());
@@ -206,15 +206,15 @@ public class ScrollTextPane extends JScrollPane implements ActionListener {
         });
 
         // add key-binding
-        addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), textPane);
+        addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), jTextArea);
 
-        return textPane;
+        return jTextArea;
     }
 
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,
                                Map<ActionName, Action> actions,
-                               JTextPane textPane) {
+                               JTextArea textPane) {
         ActionMap actionMap = textPane.getActionMap();
         for (Map.Entry<ActionName, Action> entry : actions.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
