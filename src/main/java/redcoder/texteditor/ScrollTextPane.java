@@ -105,6 +105,16 @@ public class ScrollTextPane extends JScrollPane {
         }
     }
 
+    public void lineWrapSwitch() {
+        if (textArea.getLineWrap()) {
+            textArea.setLineWrap(false);
+            textArea.setWrapStyleWord(false);
+        } else {
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+        }
+    }
+
     // ----------------------- operation about file
 
     /**

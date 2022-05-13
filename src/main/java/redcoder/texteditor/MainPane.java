@@ -238,6 +238,8 @@ public class MainPane extends JTabbedPane {
         keyStrokes.put(CUT, KeyStroke.getKeyStroke(VK_X, CTRL_DOWN_MASK));
         keyStrokes.put(COPY, KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
         keyStrokes.put(PASTE, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));
+        keyStrokes.put(EXIT, KeyStroke.getKeyStroke(VK_F4, CTRL_DOWN_MASK));
+        keyStrokes.put(LINE_WRAP, KeyStroke.getKeyStroke(VK_Z, ALT_DOWN_MASK));
         return keyStrokes;
     }
 
@@ -257,6 +259,7 @@ public class MainPane extends JTabbedPane {
         actions.put(CLOSE, new CloseAction(this));
         actions.put(CLOSE_ALL, new CloseAllAction(this));
         actions.put(EXIT, new ExitAction());
+        actions.put(LINE_WRAP, new LineWrapAction(this));
         return actions;
     }
 }

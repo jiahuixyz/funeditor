@@ -108,6 +108,8 @@ public class EditorFrame extends JFrame {
 
         addMenuItem(menu, keyStrokes.get(ZOOM_IN), actions.get(ZOOM_IN),
                 keyStrokes.get(ZOOM_OUT), actions.get(ZOOM_OUT));
+        menu.addSeparator();
+        addMenuItem(menu, keyStrokes.get(LINE_WRAP), actions.get(LINE_WRAP));
 
         return menu;
     }
@@ -145,5 +147,7 @@ public class EditorFrame extends JFrame {
         inputMap.put(keyStrokes.get(SAVE_ALL), SAVE_ALL);
         inputMap.put(keyStrokes.get(CLOSE), CLOSE);
         inputMap.put(keyStrokes.get(CLOSE_ALL), CLOSE_ALL);
+        inputMap.put(keyStrokes.get(EXIT), EXIT);
+        inputMap.put(keyStrokes.get(LINE_WRAP), LINE_WRAP);
     }
 }
