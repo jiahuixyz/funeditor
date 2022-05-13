@@ -1,4 +1,4 @@
-package redcoder.texteditor;
+package redcoder.texteditor.openrecently;
 
 import org.apache.commons.lang3.SystemUtils;
 import redcoder.texteditor.utils.FileUtils;

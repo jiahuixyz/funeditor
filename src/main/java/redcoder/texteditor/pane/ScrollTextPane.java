@@ -1,4 +1,4 @@
-package redcoder.texteditor;
+package redcoder.texteditor.pane;
 
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;

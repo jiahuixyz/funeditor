@@ -1,6 +1,8 @@
-package redcoder.texteditor;
+package redcoder.texteditor.openrecently;
 
 import redcoder.texteditor.action.OpenRecentlyAction;
+import redcoder.texteditor.pane.EditorFrame;
+import redcoder.texteditor.pane.MainPane;
 
 import javax.swing.*;
 import java.util.Objects;

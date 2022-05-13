@@ -1,5 +1,7 @@
-package redcoder.texteditor;
+package redcoder.texteditor.pane;
 
+import redcoder.texteditor.openrecently.OpenRecentlyMenu;
+import redcoder.texteditor.openrecently.OpenedFilesRecently;
 import redcoder.texteditor.action.*;
 import redcoder.texteditor.statusbar.CaretStatusIndicator;
 import redcoder.texteditor.statusbar.StatusBar;

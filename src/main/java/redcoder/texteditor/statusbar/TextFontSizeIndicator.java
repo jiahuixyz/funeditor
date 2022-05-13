@@ -1,6 +1,6 @@
 package redcoder.texteditor.statusbar;
 
-import redcoder.texteditor.MainPane;
+import redcoder.texteditor.pane.MainPane;
 
 import javax.swing.*;
 import java.awt.*;
