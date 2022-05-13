@@ -23,11 +23,15 @@ public class OpenedFilesRecently {
     public OpenedFilesRecently() {
         target = new File(SystemUtils.getUserDir(), FILENAME);
         ScheduledUtils.scheduleAtFixedRate(() -> {
-            if (!recentlyFiles.isEmpty()) {
-                ArrayList<File> copyList = new ArrayList<>(recentlyFiles);
-                recentlyFiles.clear();
-                String content = extract(copyList);
-                FileUtils.writeFile(content, target, false);
+            try {
+                if (!recentlyFiles.isEmpty()) {
+                    ArrayList<File> copyList = new ArrayList<>(recentlyFiles);
+                    recentlyFiles.clear();
+                    String content = extract(copyList);
+                    FileUtils.writeFile(content, target, false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, 1, 5, TimeUnit.MINUTES);
     }

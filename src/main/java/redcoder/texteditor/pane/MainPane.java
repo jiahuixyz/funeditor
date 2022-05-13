@@ -1,8 +1,9 @@
 package redcoder.texteditor.pane;
 
+import redcoder.texteditor.UnsavedNewFile;
+import redcoder.texteditor.action.*;
 import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.openrecently.OpenedFilesRecently;
-import redcoder.texteditor.action.*;
 import redcoder.texteditor.statusbar.CaretStatusIndicator;
 import redcoder.texteditor.statusbar.StatusBar;
 import redcoder.texteditor.statusbar.TextFontSizeIndicator;
@@ -41,9 +42,17 @@ public class MainPane extends JTabbedPane {
     private OpenedFilesRecently ofr;
     private OpenRecentlyMenu openRecentlyMenu;
     private Map<String, ScrollTextPane> addedFileTabbedIndex = new HashMap<>();
+    private UnsavedNewFile unsavedNewFile;
 
     public MainPane() {
         init();
+    }
+
+    public void addTab(String filename, ScrollTextPane scrollTextPane, boolean isNew) {
+        if (isNew) {
+            unsavedNewFile.addTextPanes(scrollTextPane);
+        }
+        addTab(filename, scrollTextPane);
     }
 
     @Override
@@ -58,6 +67,9 @@ public class MainPane extends JTabbedPane {
         }
     }
 
+    public boolean loadUnSavedNewFile() {
+        return unsavedNewFile.load();
+    }
 
     // ------------ operation about font
 
@@ -98,11 +110,10 @@ public class MainPane extends JTabbedPane {
      * @return true：打开成功，false：打开失败
      */
     public boolean openFile() {
-        // FIXME: 2022/5/13 打开相同的文件
         int state = fileChooser.showOpenDialog(this);
         if (state == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            openFile(file);
+            openFile(file, false);
             return true;
         }
         return false;
@@ -119,11 +130,15 @@ public class MainPane extends JTabbedPane {
         if (!file.exists()) {
             return false;
         }
-        openFile(file);
+        openFile(file, false);
         return true;
     }
 
-    private void openFile(File file) {
+    public void openUnsavedNewFile(File file) {
+        openFile(file,true);
+    }
+
+    private void openFile(File file, boolean unsavedNewFile) {
         ScrollTextPane scrollTextPane = addedFileTabbedIndex.get(file.getAbsolutePath());
         if (scrollTextPane != null) {
             // 文件已打开，切换到文件所在的tab即可
@@ -146,14 +161,15 @@ public class MainPane extends JTabbedPane {
         } else {
             scrollTextPane = new ScrollTextPane(this, file);
             scrollTextPane.setText(content);
-            addTab(filename, scrollTextPane);
+            addTab(filename, scrollTextPane, false);
             setSelectedComponent(scrollTextPane);
         }
 
-
-        // 添加最近打开列表中
-        ofr.addFile(file);
-        openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
+        if (!unsavedNewFile) {
+            // 添加最近打开列表中
+            ofr.addFile(file);
+            openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
+        }
     }
 
     /**
@@ -237,6 +253,10 @@ public class MainPane extends JTabbedPane {
         this.openRecentlyMenu = openRecentlyMenu;
     }
 
+    public UnsavedNewFile getUnsavedNewFile() {
+        return unsavedNewFile;
+    }
+
     // ----------------- init MainPane
     private void init() {
         this.fileChooser = new JFileChooser();
@@ -252,6 +272,7 @@ public class MainPane extends JTabbedPane {
             }
         });
         this.ofr = new OpenedFilesRecently();
+        this.unsavedNewFile = new UnsavedNewFile(this);
 
         // create default key strokes
         keyStrokes = createDefaultKeyStrokes();

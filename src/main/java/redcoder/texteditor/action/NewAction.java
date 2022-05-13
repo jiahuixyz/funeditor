@@ -23,7 +23,7 @@ public class NewAction extends AbstractAction {
         String filename = "new-" + i;
 
         ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, filename);
-        mainPane.addTab(filename, scrollTextPane);
+        mainPane.addTab(filename, scrollTextPane, true);
         mainPane.setSelectedComponent(scrollTextPane);
     }
 }

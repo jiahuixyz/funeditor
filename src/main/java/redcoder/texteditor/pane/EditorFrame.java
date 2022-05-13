@@ -1,7 +1,7 @@
 package redcoder.texteditor.pane;
 
-import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;
@@ -35,10 +35,6 @@ public class EditorFrame extends JFrame {
         // 创建底部状态栏
         StatusBar statusBar = new StatusBar();
 
-        // 创建默认的文本窗
-        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
-        mainPane.addTab("new-1", scrollTextPane);
-
         // 添加菜单
         addMenu(mainPane);
         // 添加主窗格和状态栏
@@ -48,6 +44,13 @@ public class EditorFrame extends JFrame {
         setContentPane(rootPane);
         // add key bindings
         addDefaultKeyBinding(rootPane, mainPane.getKeyStrokes(), mainPane.getActions());
+
+        // 加载未保存的新建文件
+        if (!mainPane.loadUnSavedNewFile()) {
+            // 创建默认的文本窗
+            ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
+            mainPane.addTab("new-1", scrollTextPane, true);
+        }
     }
 
 

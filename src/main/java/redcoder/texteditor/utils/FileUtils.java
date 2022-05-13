@@ -20,7 +20,7 @@ public class FileUtils {
             }
             return content.toString();
         } catch (Exception e) {
-            throw new RuntimeException("Reading file contents failed");
+            throw new RuntimeException("Reading file contents failed", e);
         }
     }
 
@@ -35,7 +35,7 @@ public class FileUtils {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, append))) {
             writer.write(content);
         } catch (Exception e) {
-            throw new RuntimeException("Writing to file failed");
+            throw new RuntimeException("Writing to file failed", e);
         }
     }
 }

@@ -151,6 +151,8 @@ public class ScrollTextPane extends JScrollPane {
 
                 if (saved) {
                     this.file = file;
+                    // remove from UnsavedNewFile
+                    mainPane.getUnsavedNewFile().removeTextPane(this);
                 }
             }
         }
@@ -219,6 +221,10 @@ public class ScrollTextPane extends JScrollPane {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public boolean isModified() {
