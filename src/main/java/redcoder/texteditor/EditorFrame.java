@@ -24,6 +24,7 @@ public class EditorFrame extends JFrame {
 
         init();
 
+        setMinimumSize(new Dimension(700, 432));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
     }

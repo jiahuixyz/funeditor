@@ -12,7 +12,7 @@ public class StatusBar extends JPanel {
     public static final int STATUS_BAR_HEIGHT = 30;
 
     public StatusBar() {
-        super((new BorderLayout()));
+        super(new GridBagLayout());
         setPreferredSize(new Dimension(Short.MAX_VALUE, STATUS_BAR_HEIGHT));
         init();
     }
@@ -34,8 +34,12 @@ public class StatusBar extends JPanel {
         rightBox.add(TextFontSizeIndicator.INDICATOR);
         rightBox.add(Box.createRigidArea(new Dimension(50, STATUS_BAR_HEIGHT)));
 
-        add(leftBox, BorderLayout.CENTER);
-        add(rightBox, BorderLayout.EAST);
+        add(leftBox, new GridBagConstraints(0, 0, 1, 1,
+                0.2, 1, GridBagConstraints.LINE_START, GridBagConstraints.NONE,
+                new Insets(0, 0, 0, 0), 0, 0));
+        add(rightBox,  new GridBagConstraints(1, 0, 1, 1,
+                0.8, 1, GridBagConstraints.LINE_END, GridBagConstraints.NONE,
+                new Insets(0, 0, 0, 0), 0, 0));
     }
 
     public void hideStatusBar() {

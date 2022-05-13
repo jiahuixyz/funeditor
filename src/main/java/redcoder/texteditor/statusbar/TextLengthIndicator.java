@@ -9,7 +9,7 @@ import java.awt.*;
 public class TextLengthIndicator extends JPanel {
 
     public static final TextLengthIndicator INDICATOR = new TextLengthIndicator();
-    private static final String TEMPLATE_TEXT = "  length: %d  lines: %d";
+    private static final String TEMPLATE_TEXT = "  length: %d, lines: %d";
 
     private final JLabel label = new JLabel();
 
