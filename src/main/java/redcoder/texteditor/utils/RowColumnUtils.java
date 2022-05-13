@@ -20,9 +20,9 @@ public class RowColumnUtils {
         return row;
     }
 
-    public static int getColumn(int pos, JTextComponent editor) {
+    public static int getColumn(int caretDot, JTextComponent editor) {
         try {
-            return pos - Utilities.getRowStart(editor, pos) + 1;
+            return caretDot - Utilities.getRowStart(editor, caretDot) + 1;
         } catch (BadLocationException e) {
             e.printStackTrace();
         }

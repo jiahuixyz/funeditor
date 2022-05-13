@@ -1,6 +1,10 @@
 package redcoder.texteditor;
 
 import redcoder.texteditor.action.*;
+import redcoder.texteditor.statusbar.CaretStatusIndicator;
+import redcoder.texteditor.statusbar.StatusBar;
+import redcoder.texteditor.statusbar.TextFontSizeIndicator;
+import redcoder.texteditor.statusbar.TextLengthIndicator;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -18,7 +22,7 @@ import static redcoder.texteditor.action.ActionName.*;
  */
 public class MainPane extends JTabbedPane {
 
-    public static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 16);
+    public static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 20);
 
     private static final int FONT_SIZE_MINIMUM = 10;
     private static final int FONT_SIZE_MAXIMUM = 100;
@@ -45,7 +49,6 @@ public class MainPane extends JTabbedPane {
             scrollTextPane.setButtonTabComponent(buttonTabComponent);
         }
     }
-
 
 
     // ------------ operation about font
@@ -75,8 +78,8 @@ public class MainPane extends JTabbedPane {
                 scrollTextPane.setFont(stpFont);
             }
         }
+        TextFontSizeIndicator.INDICATOR.refresh(stpFont);
     }
-
 
 
     // -------------  operation about file
@@ -148,7 +151,6 @@ public class MainPane extends JTabbedPane {
     }
 
 
-
     // ----------- getter
 
     /**
@@ -185,7 +187,7 @@ public class MainPane extends JTabbedPane {
 
 
     // ----------------- init MainPane
-    private void init(){
+    private void init() {
         this.fileChooser = new JFileChooser();
         this.fileChooser.addChoosableFileFilter(new FileFilter() {
             @Override
@@ -207,15 +209,22 @@ public class MainPane extends JTabbedPane {
         setFont(new Font(null, Font.PLAIN, 16));
         // record selected text pane with change listener
         addChangeListener(e -> {
-            selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
-            CaretStatusLabel.getInstance().resetStatus();
+            if (this.getTabCount() == 0) {
+                StatusBar.INSTANCE.hideStatusBar();
+            } else {
+                if (this.getTabCount() == 1) {
+                    StatusBar.INSTANCE.displayStatusBar();
+                }
+                selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
+                JTextArea textArea = selectedScrollTextPane.getTextArea();
+                TextLengthIndicator.INDICATOR.refresh(textArea);
+                CaretStatusIndicator.INDICATOR.refresh(textArea);
+            }
         });
     }
 
     private Map<ActionName, KeyStroke> createDefaultKeyStrokes() {
         Map<ActionName, KeyStroke> keyStrokes = new HashMap<>();
-        keyStrokes.put(UNDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK));
-        keyStrokes.put(REDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
         keyStrokes.put(ZOOM_IN, KeyStroke.getKeyStroke(VK_ADD, CTRL_DOWN_MASK));
         keyStrokes.put(ZOOM_OUT, KeyStroke.getKeyStroke(VK_SUBTRACT, CTRL_DOWN_MASK));
         keyStrokes.put(NEW_FILE, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK));
@@ -224,6 +233,8 @@ public class MainPane extends JTabbedPane {
         keyStrokes.put(SAVE_ALL, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
         keyStrokes.put(CLOSE, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK));
         keyStrokes.put(CLOSE_ALL, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
+        keyStrokes.put(UNDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK));
+        keyStrokes.put(REDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
         keyStrokes.put(CUT, KeyStroke.getKeyStroke(VK_X, CTRL_DOWN_MASK));
         keyStrokes.put(COPY, KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
         keyStrokes.put(PASTE, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));

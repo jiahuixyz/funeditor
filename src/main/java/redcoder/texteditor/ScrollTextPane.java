@@ -6,6 +6,8 @@ import redcoder.texteditor.action.UndoAction;
 import redcoder.texteditor.linenumber.JTextAreaBasedLineNumberModel;
 import redcoder.texteditor.linenumber.LineNumberComponent;
 import redcoder.texteditor.linenumber.LineNumberModel;
+import redcoder.texteditor.statusbar.CaretStatusIndicator;
+import redcoder.texteditor.statusbar.TextLengthIndicator;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -36,13 +38,13 @@ public class ScrollTextPane extends JScrollPane {
     // 本地文件
     private File file;
 
-    private JTextArea textArea;
-    private UndoManager undoManager;
-    private UndoAction undoAction;
-    private RedoAction redoAction;
     private final MainPane mainPane;
+    private final JTextArea textArea;
+    private final UndoManager undoManager;
+    private final UndoAction undoAction;
+    private final RedoAction redoAction;
+    private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
-    private LineNumberComponent lineNumberComponent;
 
     public ScrollTextPane(MainPane mainPane, String filename) {
         this(mainPane, filename, false, true, null);
@@ -60,7 +62,17 @@ public class ScrollTextPane extends JScrollPane {
         this.modifyAware = modifyAware;
         this.file = file;
 
-        init(mainPane);
+        this.undoManager = new UndoManager();
+        this.undoAction = new UndoAction(undoManager);
+        this.redoAction = new RedoAction(undoManager);
+        this.undoAction.setRedoAction(redoAction);
+        this.redoAction.setUndoAction(undoAction);
+
+        this.textArea = new JTextArea();
+        this.lineNumberComponent = createLineNumComponent();
+        initTextArea(mainPane);
+        this.setRowHeaderView(lineNumberComponent);
+        this.setViewportView(textArea);
     }
 
     /**
@@ -176,6 +188,11 @@ public class ScrollTextPane extends JScrollPane {
 
 
     // ---------- getter, setter
+
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
     public void setButtonTabComponent(ButtonTabComponent buttonTabComponent) {
         this.buttonTabComponent = buttonTabComponent;
     }
@@ -185,27 +202,15 @@ public class ScrollTextPane extends JScrollPane {
     }
 
     // ------------------- init ScrollTextPane
+    private void initTextArea(MainPane mainPane) {
+        textArea.setFont(mainPane.getStpFont());
+        // 绑定快捷键
+        addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), textArea);
+        // 添加CaretListener，用于更新编辑器底部的状态栏
+        textArea.addCaretListener(CaretStatusIndicator.INDICATOR);
 
-    private void init(MainPane mainPane) {
-        initAction();
-        this.textArea = createTextArea(mainPane);
-        this.setViewportView(textArea);
-    }
-
-    private void initAction() {
-        undoManager = new UndoManager();
-        undoAction = new UndoAction(undoManager);
-        redoAction = new RedoAction(undoManager);
-
-        undoAction.setRedoAction(redoAction);
-        redoAction.setUndoAction(undoAction);
-    }
-
-    private JTextArea createTextArea(MainPane mainPane) {
-        JTextArea jTextArea = new JTextArea();
-        jTextArea.setFont(mainPane.getStpFont());
-
-        Document doc = jTextArea.getDocument();
+        // 添加几个文档监听器
+        Document doc = this.textArea.getDocument();
         // 处理文本内容变化的监听器
         doc.addDocumentListener(new DocumentListener() {
             @Override
@@ -230,11 +235,6 @@ public class ScrollTextPane extends JScrollPane {
                 }
             }
         });
-
-        // 添加渲染行号的组件
-        this.lineNumberComponent = createLineNumComponent(jTextArea);
-        this.setRowHeaderView(lineNumberComponent);
-
         // 渲染文本行号的监听器
         doc.addDocumentListener(new DocumentListener() {
 
@@ -253,19 +253,29 @@ public class ScrollTextPane extends JScrollPane {
                 lineNumberComponent.adjustWidth();
             }
         });
+        // 处理undo，redo的监听器
         doc.addUndoableEditListener(e -> {
             undoManager.addEdit(e.getEdit());
             undoAction.updateUndoState();
             redoAction.updateRedoState();
         });
+        // 用于更新编辑器底部的状态栏的监听器
+        doc.addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                TextLengthIndicator.INDICATOR.refresh(textArea);
+            }
 
-        // 绑定快捷键
-        addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), jTextArea);
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                TextLengthIndicator.INDICATOR.refresh(textArea);
+            }
 
-        // 注册caretListener
-        jTextArea.addCaretListener(CaretStatusLabel.getInstance());
-
-        return jTextArea;
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                TextLengthIndicator.INDICATOR.refresh(textArea);
+            }
+        });
     }
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,
@@ -281,7 +291,7 @@ public class ScrollTextPane extends JScrollPane {
         inputMap.put(keyStrokes.get(REDO), REDO);
     }
 
-    private LineNumberComponent createLineNumComponent(JTextArea textArea) {
+    private LineNumberComponent createLineNumComponent() {
         LineNumberModel lineNumberModel = new JTextAreaBasedLineNumberModel(textArea);
         return new LineNumberComponent(lineNumberModel, LineNumberComponent.RIGHT_ALIGNMENT);
     }

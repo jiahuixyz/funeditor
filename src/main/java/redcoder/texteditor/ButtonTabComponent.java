@@ -23,6 +23,7 @@ public class ButtonTabComponent extends JPanel {
 
         // make JLabel read titles from MainPane
         label = new JLabel(title);
+        label.setFont(MainPane.DEFAULT_FONT);
         add(label);
         //  add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));

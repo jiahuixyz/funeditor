@@ -1,6 +1,7 @@
 package redcoder.texteditor;
 
 import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,9 +32,7 @@ public class EditorFrame extends JFrame {
         // 创建文本主面板
         MainPane mainPane = new MainPane();
         // 创建底部状态栏
-        JPanel statusPanel = new JPanel(new GridBagLayout());
-        statusPanel.add(CaretStatusLabel.getInstance(), new GridBagConstraints(0, 0, 1, 1,
-                0.2, 1, GridBagConstraints.LINE_START, 0, new Insets(0, 20, 0, 0), 0, 0));
+        StatusBar statusBar = new StatusBar();
 
         // 创建默认的文本窗
         ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
@@ -44,7 +43,7 @@ public class EditorFrame extends JFrame {
         // 添加主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(mainPane, BorderLayout.CENTER);
-        rootPane.add(statusPanel, BorderLayout.SOUTH);
+        rootPane.add(statusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
         // add key bindings
         addDefaultKeyBinding(rootPane, mainPane.getKeyStrokes(), mainPane.getActions());

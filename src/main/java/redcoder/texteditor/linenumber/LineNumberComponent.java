@@ -23,7 +23,7 @@ public class LineNumberComponent extends JComponent {
     //pixel padding on left and right
     private static final int HORIZONTAL_PADDING = 3;
     //pixel padding on top and down
-    private static final int VERTICAL_PADDING = 4;
+    private static final int VERTICAL_PADDING = 5;
 
     private int alignment = LEFT_ALIGNMENT;
     private LineNumberModel lineNumberModel;
