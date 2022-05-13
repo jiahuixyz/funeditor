@@ -10,6 +10,8 @@ import redcoder.texteditor.utils.FileUtils;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,10 @@ public class MainPane extends JTabbedPane {
     private Map<ActionName, Action> actions;
     // font used by ScrollTextPane's all instance
     private Font stpFont = DEFAULT_FONT;
+
+    private OpenedFilesRecently ofr;
+    private OpenRecentlyMenu openRecentlyMenu;
+    private Map<String, ScrollTextPane> addedFileTabbedIndex = new HashMap<>();
 
     public MainPane() {
         init();
@@ -85,11 +91,12 @@ public class MainPane extends JTabbedPane {
     // -------------  operation about file
 
     /**
-     * 打开文件
+     * 打开用户选择的文件
      *
      * @return true：打开成功，false：打开失败
      */
     public boolean openFile() {
+        // FIXME: 2022/5/13 打开相同的文件
         int state = fileChooser.showOpenDialog(this);
         if (state == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
@@ -99,17 +106,52 @@ public class MainPane extends JTabbedPane {
         return false;
     }
 
+    /**
+     * 打开指定的文件
+     *
+     * @param filepath 文件路径
+     * @return true：打开成功，false：打开失败
+     */
+    public boolean openFile(String filepath) {
+        File file = new File(filepath);
+        if (!file.exists()) {
+            return false;
+        }
+        openFile(file);
+        return true;
+    }
+
     private void openFile(File file) {
+        ScrollTextPane scrollTextPane = addedFileTabbedIndex.get(file.getAbsolutePath());
+        if (scrollTextPane != null) {
+            // 文件已打开，切换到文件所在的tab即可
+            setSelectedComponent(scrollTextPane);
+            // for resort menu item
+            openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
+            return;
+        }
+
         String filename = file.getName();
         String content = FileUtils.readFile(file);
 
-        ScrollTextPane scrollTextPane = new ScrollTextPane(this, file);
-        this.addTab(filename, scrollTextPane);
-        this.setSelectedComponent(scrollTextPane);
+        if (selectedScrollTextPane != null
+                && selectedScrollTextPane.getFile() == null
+                && !selectedScrollTextPane.isModified()) {
+            scrollTextPane = selectedScrollTextPane;
+            scrollTextPane.setText(content);
+            scrollTextPane.setFile(file);
+            scrollTextPane.updateTabbedTitle(filename);
+        } else {
+            scrollTextPane = new ScrollTextPane(this, file);
+            scrollTextPane.setText(content);
+            addTab(filename, scrollTextPane);
+            setSelectedComponent(scrollTextPane);
+        }
 
-        scrollTextPane.setModifyAware(false);
-        scrollTextPane.setText(content);
-        scrollTextPane.setModifyAware(true);
+
+        // 添加最近打开列表中
+        ofr.addFile(file);
+        openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
     }
 
     /**
@@ -151,7 +193,7 @@ public class MainPane extends JTabbedPane {
     }
 
 
-    // ----------- getter
+    // ----------- getter setter
 
     /**
      * 返回当前tab下的文本窗
@@ -165,6 +207,10 @@ public class MainPane extends JTabbedPane {
      */
     public JFileChooser getFileChooser() {
         return fileChooser;
+    }
+
+    public OpenedFilesRecently getOfr() {
+        return ofr;
     }
 
     public Map<ActionName, KeyStroke> getKeyStrokes() {
@@ -185,6 +231,9 @@ public class MainPane extends JTabbedPane {
         return stpFont;
     }
 
+    public void setOpenRecentlyMenu(OpenRecentlyMenu openRecentlyMenu) {
+        this.openRecentlyMenu = openRecentlyMenu;
+    }
 
     // ----------------- init MainPane
     private void init() {
@@ -200,6 +249,7 @@ public class MainPane extends JTabbedPane {
                 return "Just Files";
             }
         });
+        this.ofr = new OpenedFilesRecently();
 
         // create default key strokes
         keyStrokes = createDefaultKeyStrokes();
@@ -219,6 +269,32 @@ public class MainPane extends JTabbedPane {
                 JTextArea textArea = selectedScrollTextPane.getTextArea();
                 TextLengthIndicator.INDICATOR.refresh(textArea);
                 CaretStatusIndicator.INDICATOR.refresh(textArea);
+            }
+        });
+        // 监听器，记录增加/移除的tab index
+        addContainerListener(new ContainerListener() {
+            @Override
+            public void componentAdded(ContainerEvent e) {
+                Component child = e.getChild();
+                if (child instanceof ScrollTextPane) {
+                    ScrollTextPane scrollTextPane = (ScrollTextPane) child;
+                    File file = scrollTextPane.getFile();
+                    if (file != null) {
+                        addedFileTabbedIndex.put(file.getAbsolutePath(), scrollTextPane);
+                    }
+                }
+            }
+
+            @Override
+            public void componentRemoved(ContainerEvent e) {
+                Component child = e.getChild();
+                if (child instanceof ScrollTextPane) {
+                    ScrollTextPane scrollTextPane = (ScrollTextPane) child;
+                    File file = scrollTextPane.getFile();
+                    if (file != null) {
+                        addedFileTabbedIndex.remove(file.getAbsolutePath());
+                    }
+                }
             }
         });
     }

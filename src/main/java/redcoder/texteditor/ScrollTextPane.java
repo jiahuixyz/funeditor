@@ -90,7 +90,9 @@ public class ScrollTextPane extends JScrollPane {
     }
 
     public void setText(String text) {
+        modifyAware = false;
         this.textArea.setText(text);
+        modifyAware = true;
     }
 
     @Override
@@ -113,6 +115,10 @@ public class ScrollTextPane extends JScrollPane {
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
         }
+    }
+
+    public void updateTabbedTitle(String newTitle){
+        buttonTabComponent.updateTabbedTitle(newTitle);
     }
 
     // ----------------------- operation about file
@@ -159,7 +165,7 @@ public class ScrollTextPane extends JScrollPane {
         FileUtils.writeFile(textArea.getText(), file);
 
         // update tab title and filename
-        buttonTabComponent.updateTabbedTitle(file.getName());
+        updateTabbedTitle(file.getName());
         filename = file.getName();
     }
 
@@ -207,8 +213,16 @@ public class ScrollTextPane extends JScrollPane {
         this.buttonTabComponent = buttonTabComponent;
     }
 
-    public void setModifyAware(boolean modifyAware) {
-        this.modifyAware = modifyAware;
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public boolean isModified() {
+        return modified;
     }
 
     // ------------------- init ScrollTextPane
@@ -241,7 +255,7 @@ public class ScrollTextPane extends JScrollPane {
             private void doAware() {
                 if (modifyAware) {
                     modified = true;
-                    buttonTabComponent.updateTabbedTitle("* " + filename);
+                    updateTabbedTitle("* " + filename);
                 }
             }
         });

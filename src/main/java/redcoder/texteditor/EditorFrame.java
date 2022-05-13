@@ -13,9 +13,8 @@ import static redcoder.texteditor.action.ActionName.*;
 public class EditorFrame extends JFrame {
 
     public static final String TITLE = "A Simple Text Editor";
-
-    private static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
-    private static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
+    public static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
+    public static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
 
     public EditorFrame() {
         super(TITLE);
@@ -40,7 +39,7 @@ public class EditorFrame extends JFrame {
         mainPane.addTab("new-1", scrollTextPane);
 
         // 添加菜单
-        addMenu(mainPane.getKeyStrokes(), mainPane.getActions());
+        addMenu(mainPane);
         // 添加主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(mainPane, BorderLayout.CENTER);
@@ -52,9 +51,12 @@ public class EditorFrame extends JFrame {
 
 
     // ---------- 创建菜单
-    private void addMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
+    private void addMenu(MainPane mainPane) {
+        Map<ActionName, KeyStroke> keyStrokes = mainPane.getKeyStrokes();
+        Map<ActionName, Action> actions = mainPane.getActions();
+
         // create 'File' menu
-        JMenu fileMenu = createFileMenu(keyStrokes, actions);
+        JMenu fileMenu = createFileMenu(keyStrokes, actions, mainPane);
         // create 'Edit' menu
         JMenu editMenu = createEditMenu(keyStrokes, actions);
         // create 'View' menu
@@ -68,19 +70,32 @@ public class EditorFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
-        // New File, Open File, Close File, Close All File
+    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions, MainPane mainPane) {
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        addMenuItem(menu, keyStrokes.get(NEW_FILE), actions.get(NEW_FILE),
-                keyStrokes.get(OPEN_FILE), actions.get(OPEN_FILE));
+        // new file
+        addMenuItem(menu, keyStrokes.get(NEW_FILE), actions.get(NEW_FILE));
+
+        // open file
+        menu.addSeparator();
+        addMenuItem(menu, keyStrokes.get(OPEN_FILE), actions.get(OPEN_FILE));
+        // open recently
+        OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainPane);
+        mainPane.setOpenRecentlyMenu(recentlyMenu);
+        menu.add(recentlyMenu);
+
+        // save & save all
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(SAVE_FILE), actions.get(SAVE_FILE),
                 keyStrokes.get(SAVE_ALL), actions.get(SAVE_ALL));
+
+        // close & close all
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(CLOSE), actions.get(CLOSE),
                 keyStrokes.get(CLOSE_ALL), actions.get(CLOSE_ALL));
+
+        // exit
         menu.addSeparator();
         addMenuItem(menu, actions.get(EXIT));
 
@@ -88,12 +103,14 @@ public class EditorFrame extends JFrame {
     }
 
     private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
-        // undo, redo, cut, copy, paste
         JMenu menu = new JMenu("Edit");
         menu.setFont(MENU_DEFAULT_FONT);
 
+        // undo & redo
         addMenuItem(menu, keyStrokes.get(UNDO), actions.get(UNDO),
                 keyStrokes.get(REDO), actions.get(REDO));
+
+        // cut, copy, paste
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(CUT), actions.get(CUT),
                 keyStrokes.get(COPY), actions.get(COPY),
@@ -103,12 +120,14 @@ public class EditorFrame extends JFrame {
     }
 
     private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
-        // zoom in, zoom out
         JMenu menu = new JMenu("View");
         menu.setFont(MENU_DEFAULT_FONT);
 
+        // zoom in
         addMenuItem(menu, keyStrokes.get(ZOOM_IN), actions.get(ZOOM_IN),
                 keyStrokes.get(ZOOM_OUT), actions.get(ZOOM_OUT));
+
+        // zoom out
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(LINE_WRAP), actions.get(LINE_WRAP));
 

@@ -25,10 +25,14 @@ public class FileUtils {
     }
 
     public static void writeFile(String content, File file) {
+        writeFile(content, file, false);
+    }
+
+    public static void writeFile(String content, File file, boolean append) {
         if (file.isDirectory()) {
             throw new IllegalArgumentException("Writing to directory is not supported");
         }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, append))) {
             writer.write(content);
         } catch (Exception e) {
             throw new RuntimeException("Writing to file failed");
