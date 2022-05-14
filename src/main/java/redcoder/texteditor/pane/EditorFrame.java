@@ -46,7 +46,7 @@ public class EditorFrame extends JFrame {
         addDefaultKeyBinding(rootPane, mainPane.getKeyStrokes(), mainPane.getActions());
 
         // 加载未保存的新建文件
-        if (!mainPane.loadUnSavedNewFile()) {
+        if (!mainPane.loadUnSavedNewTextPane()) {
             // 创建默认的文本窗
             ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
             mainPane.addTab("new-1", scrollTextPane, true);

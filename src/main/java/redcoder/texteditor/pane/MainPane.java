@@ -1,6 +1,6 @@
 package redcoder.texteditor.pane;
 
-import redcoder.texteditor.UnsavedNewFile;
+import redcoder.texteditor.UnsavedNewTextPane;
 import redcoder.texteditor.action.*;
 import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.openrecently.OpenedFilesRecently;
@@ -8,7 +8,6 @@ import redcoder.texteditor.statusbar.CaretStatusIndicator;
 import redcoder.texteditor.statusbar.StatusBar;
 import redcoder.texteditor.statusbar.TextFontSizeIndicator;
 import redcoder.texteditor.statusbar.TextLengthIndicator;
-import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -42,17 +41,24 @@ public class MainPane extends JTabbedPane {
     private OpenedFilesRecently ofr;
     private OpenRecentlyMenu openRecentlyMenu;
     private Map<String, ScrollTextPane> addedFileTabbedIndex = new HashMap<>();
-    private UnsavedNewFile unsavedNewFile;
+    private UnsavedNewTextPane unsavedNewTextPane;
 
     public MainPane() {
         init();
     }
 
-    public void addTab(String filename, ScrollTextPane scrollTextPane, boolean isNew) {
-        if (isNew) {
-            unsavedNewFile.addTextPanes(scrollTextPane);
+    /**
+     * 添加新的tab
+     *
+     * @param title              tab title
+     * @param scrollTextPane     文本窗格
+     * @param unsavedNewTextPane 未保存的且新建的文本窗格
+     */
+    public void addTab(String title, ScrollTextPane scrollTextPane, boolean unsavedNewTextPane) {
+        if (unsavedNewTextPane) {
+            this.unsavedNewTextPane.addTextPanes(scrollTextPane);
         }
-        addTab(filename, scrollTextPane);
+        addTab(title, scrollTextPane);
     }
 
     @Override
@@ -104,7 +110,7 @@ public class MainPane extends JTabbedPane {
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
             // remove from UnsavedNewFile
-            unsavedNewFile.removeTextPane(selectedScrollTextPane);
+            unsavedNewTextPane.removeTextPane(selectedScrollTextPane);
             return true;
         } else {
             return false;
@@ -123,7 +129,7 @@ public class MainPane extends JTabbedPane {
             ScrollTextPane scrollTextPane = (ScrollTextPane) component;
             if (scrollTextPane.closeTextPane()) {
                 removeTabAt(index);
-                unsavedNewFile.removeTextPane(scrollTextPane);
+                unsavedNewTextPane.removeTextPane(scrollTextPane);
                 return true;
             }
         } else {
@@ -148,8 +154,13 @@ public class MainPane extends JTabbedPane {
         return true;
     }
 
-    public boolean loadUnSavedNewFile() {
-        return unsavedNewFile.load();
+    /**
+     * 加载未保存的新建的文件窗格
+     *
+     * @return true - 存在未保存的新建文件且已被加载，false—没有这样的文件
+     */
+    public boolean loadUnSavedNewTextPane() {
+        return unsavedNewTextPane.load();
     }
 
     // ------------ font operation
@@ -219,7 +230,7 @@ public class MainPane extends JTabbedPane {
         openFile(file, true);
     }
 
-    private void openFile(File file, boolean unsavedNewFile) {
+    private void openFile(File file, boolean unsavedNewTextPane) {
         ScrollTextPane scrollTextPane = addedFileTabbedIndex.get(file.getAbsolutePath());
         if (scrollTextPane != null) {
             // 文件已打开，切换到文件所在的tab即可
@@ -230,23 +241,23 @@ public class MainPane extends JTabbedPane {
         }
 
         String filename = file.getName();
-        String content = FileUtils.readFile(file);
-
-        if (selectedScrollTextPane != null
-                && selectedScrollTextPane.getFile() == null
-                && !selectedScrollTextPane.isModified()) {
-            scrollTextPane = selectedScrollTextPane;
-            scrollTextPane.setText(content);
-            scrollTextPane.setFile(file);
-            scrollTextPane.updateTabbedTitle(filename);
+        if (unsavedNewTextPane) {
+            scrollTextPane = new ScrollTextPane(this, filename);
+            addTab(filename, scrollTextPane, true);
+            scrollTextPane.setText(file, false);
         } else {
-            scrollTextPane = new ScrollTextPane(this, file);
-            scrollTextPane.setText(content);
-            addTab(filename, scrollTextPane, false);
-            setSelectedComponent(scrollTextPane);
-        }
+            if (selectedScrollTextPane != null
+                    && selectedScrollTextPane.getFile() == null
+                    && !selectedScrollTextPane.isModified()) {
+                // 当前tab是新打开的且未写入任何内容，将文件放入改tab下
+                selectedScrollTextPane.setText(file, true);
+                selectedScrollTextPane.updateTabbedTitle(filename);
+            } else {
+                scrollTextPane = new ScrollTextPane(this, file);
+                addTab(filename, scrollTextPane, false);
+                // setSelectedComponent(scrollTextPane);
+            }
 
-        if (!unsavedNewFile) {
             // 添加最近打开列表中
             ofr.addFile(file);
             openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
@@ -310,7 +321,7 @@ public class MainPane extends JTabbedPane {
             }
         });
         this.ofr = new OpenedFilesRecently();
-        this.unsavedNewFile = new UnsavedNewFile(this);
+        this.unsavedNewTextPane = new UnsavedNewTextPane(this);
 
         // create default key strokes
         keyStrokes = createDefaultKeyStrokes();

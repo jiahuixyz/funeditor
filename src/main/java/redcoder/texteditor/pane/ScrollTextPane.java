@@ -73,6 +73,10 @@ public class ScrollTextPane extends JScrollPane {
         initTextArea(mainPane);
         this.setRowHeaderView(lineNumberComponent);
         this.setViewportView(textArea);
+
+        if (file != null) {
+            setText(file, true);
+        }
     }
 
     /**
@@ -89,9 +93,17 @@ public class ScrollTextPane extends JScrollPane {
         redoAction.actionPerformed(e);
     }
 
-    public void setText(String text) {
-        modifyAware = false;
-        this.textArea.setText(text);
+    /**
+     * 将文件内容写入文本窗格内
+     *
+     * @param file 文件
+     * @param disableModifyAware 是否文件修改感知功能（临时操作，仅限于该方法内）
+     */
+    public void setText(File file,boolean disableModifyAware) {
+        if (disableModifyAware) {
+            modifyAware = false;
+        }
+        this.textArea.setText(FileUtils.readFile(file));
         modifyAware = true;
     }
 

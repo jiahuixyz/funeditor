@@ -7,19 +7,18 @@ import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class UnsavedNewFile {
+public class UnsavedNewTextPane {
 
     private static final String FILENAME = "un-snf";
     private final Map<String, ScrollTextPane> textPanes = new HashMap<>();
     private final File targetDir;
     private final MainPane mainPane;
 
-    public UnsavedNewFile(MainPane mainPane) {
+    public UnsavedNewTextPane(MainPane mainPane) {
         this.mainPane = mainPane;
         targetDir = new File(SystemUtils.getUserDir(), FILENAME);
         if (!targetDir.exists()) {
