@@ -1,22 +1,21 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.MainPane;
-import redcoder.texteditor.pane.ScrollTextPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class CloseAction extends AbstractAction {
 
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public CloseAction(MainPane mainPane) {
+    public CloseAction(MainTabPane mainTabPane) {
         super("Close File");
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.closeSelectedTab();
+        mainTabPane.closeSelectedTab();
     }
 }

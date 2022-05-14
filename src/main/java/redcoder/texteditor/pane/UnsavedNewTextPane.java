@@ -1,8 +1,6 @@
-package redcoder.texteditor;
+package redcoder.texteditor.pane;
 
 import org.apache.commons.lang3.SystemUtils;
-import redcoder.texteditor.pane.MainPane;
-import redcoder.texteditor.pane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
 
@@ -16,10 +14,8 @@ public class UnsavedNewTextPane {
     private static final String FILENAME = "un-snf";
     private final Map<String, ScrollTextPane> textPanes = new HashMap<>();
     private final File targetDir;
-    private final MainPane mainPane;
 
-    public UnsavedNewTextPane(MainPane mainPane) {
-        this.mainPane = mainPane;
+    public UnsavedNewTextPane() {
         targetDir = new File(SystemUtils.getUserDir(), FILENAME);
         if (!targetDir.exists()) {
             targetDir.mkdir();
@@ -49,14 +45,20 @@ public class UnsavedNewTextPane {
         f.delete();
     }
 
-    public boolean load() {
+    /**
+     * 加载未保存的新建text pane
+     *
+     * @param mainTabPane 主窗格
+     * @return 加载的text pane数量
+     */
+    public int load(MainTabPane mainTabPane) {
         File[] files = targetDir.listFiles(pathname -> !pathname.isDirectory());
         if (files == null || files.length == 0) {
-            return false;
+            return 0;
         }
         for (File file : files) {
-            mainPane.openUnsavedNewFile(file);
+            mainTabPane.openUnsavedNewFile(file);
         }
-        return true;
+        return files.length;
     }
 }

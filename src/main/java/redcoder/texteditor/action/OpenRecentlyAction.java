@@ -1,21 +1,21 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class OpenRecentlyAction extends AbstractAction {
 
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public OpenRecentlyAction(String filepath,MainPane mainPane){
+    public OpenRecentlyAction(String filepath, MainTabPane mainTabPane){
         super(filepath);
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.openFile(e.getActionCommand());
+        mainTabPane.openFile(e.getActionCommand());
     }
 }

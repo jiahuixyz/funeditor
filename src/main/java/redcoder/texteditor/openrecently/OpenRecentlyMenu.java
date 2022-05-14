@@ -2,25 +2,25 @@ package redcoder.texteditor.openrecently;
 
 import redcoder.texteditor.action.OpenRecentlyAction;
 import redcoder.texteditor.pane.EditorFrame;
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.util.Objects;
 
 public class OpenRecentlyMenu extends JMenu {
 
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public OpenRecentlyMenu(MainPane mainPane){
+    public OpenRecentlyMenu(MainTabPane mainTabPane){
         super("Open Recently");
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
         setFont(EditorFrame.MENU_ITEM_DEFAULT_FONT);
-        initMenuItem(mainPane);
+        initMenuItem(mainTabPane);
     }
 
-    private void initMenuItem(MainPane mainPane) {
-        for (String filepath : mainPane.getOfr().getRecentlyFile()) {
-            add(new OpenRecentlyAction(filepath, mainPane));
+    private void initMenuItem(MainTabPane mainTabPane) {
+        for (String filepath : mainTabPane.getOfr().getRecentlyFile()) {
+            add(new OpenRecentlyAction(filepath, mainTabPane));
         }
     }
 
@@ -36,7 +36,7 @@ public class OpenRecentlyMenu extends JMenu {
         }
 
         // insert to first
-        JMenuItem menuItem = new JMenuItem(new OpenRecentlyAction(filepath, mainPane));
+        JMenuItem menuItem = new JMenuItem(new OpenRecentlyAction(filepath, mainTabPane));
         add(menuItem, 0);
     }
 }

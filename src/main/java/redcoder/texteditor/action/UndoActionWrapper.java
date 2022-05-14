@@ -1,21 +1,21 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class UndoActionWrapper extends AbstractAction {
 
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public UndoActionWrapper(MainPane mainPane) {
+    public UndoActionWrapper(MainTabPane mainTabPane) {
         super("Undo");
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.getSelectedTextPane().undo(e);
+        mainTabPane.getSelectedTextPane().undo(e);
     }
 }

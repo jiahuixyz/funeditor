@@ -12,18 +12,17 @@ import java.awt.event.*;
  */
 public class ButtonTabComponent extends JPanel {
 
-    private final MainPane mainPane;
+    private final MainTabPane mainTabPane;
     private final JLabel label;
 
-    public ButtonTabComponent(MainPane mainPane,String title) {
+    public ButtonTabComponent(MainTabPane mainTabPane, String title) {
         // unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
         setOpaque(false);
 
-        // make JLabel read titles from MainPane
         label = new JLabel(title);
-        label.setFont(MainPane.DEFAULT_FONT);
+        label.setFont(MainTabPane.DEFAULT_FONT);
         add(label);
         //  add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
@@ -61,9 +60,9 @@ public class ButtonTabComponent extends JPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            int index = mainPane.indexOfTabComponent(ButtonTabComponent.this);
+            int index = mainTabPane.indexOfTabComponent(ButtonTabComponent.this);
             if (index != -1) {
-                mainPane.closeTab(index);
+                mainTabPane.closeTab(index);
             }
         }
 

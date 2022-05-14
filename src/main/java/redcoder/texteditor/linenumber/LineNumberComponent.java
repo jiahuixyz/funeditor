@@ -1,6 +1,6 @@
 package redcoder.texteditor.linenumber;
 
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +27,7 @@ public class LineNumberComponent extends JComponent {
 
     private int alignment = LEFT_ALIGNMENT;
     private LineNumberModel lineNumberModel;
-    private Font lineNumberFont = MainPane.DEFAULT_FONT;
+    private Font lineNumberFont = MainTabPane.DEFAULT_FONT;
 
 
     /**

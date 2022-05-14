@@ -1,6 +1,6 @@
 package redcoder.texteditor.statusbar;
 
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class TextFontSizeIndicator extends JPanel {
         super(new GridLayout(1, 1));
         setBorder(StatusBarBorder.BORDER);
 
-        refresh(MainPane.DEFAULT_FONT);
+        refresh(MainTabPane.DEFAULT_FONT);
         add(label);
     }
 

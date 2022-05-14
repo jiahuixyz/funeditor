@@ -38,7 +38,7 @@ public class ScrollTextPane extends JScrollPane {
     // 本地文件
     private File file;
 
-    private final MainPane mainPane;
+    private final MainTabPane mainTabPane;
     private final JTextArea textArea;
     private final UndoManager undoManager;
     private final UndoAction undoAction;
@@ -46,17 +46,17 @@ public class ScrollTextPane extends JScrollPane {
     private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
 
-    public ScrollTextPane(MainPane mainPane, String filename) {
-        this(mainPane, filename, false, true, null);
+    public ScrollTextPane(MainTabPane mainTabPane, String filename) {
+        this(mainTabPane, filename, false, true, null);
     }
 
-    public ScrollTextPane(MainPane mainPane, File file) {
-        this(mainPane, file.getName(), false, true, file);
+    public ScrollTextPane(MainTabPane mainTabPane, File file) {
+        this(mainTabPane, file.getName(), false, true, file);
     }
 
-    public ScrollTextPane(MainPane mainPane, String filename, boolean modified, boolean modifyAware, File file) {
+    public ScrollTextPane(MainTabPane mainTabPane, String filename, boolean modified, boolean modifyAware, File file) {
         super();
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
         this.filename = filename;
         this.modified = modified;
         this.modifyAware = modifyAware;
@@ -70,7 +70,7 @@ public class ScrollTextPane extends JScrollPane {
 
         this.textArea = new JTextArea();
         this.lineNumberComponent = createLineNumComponent();
-        initTextArea(mainPane);
+        initTextArea(mainTabPane);
         this.setRowHeaderView(lineNumberComponent);
         this.setViewportView(textArea);
 
@@ -97,7 +97,7 @@ public class ScrollTextPane extends JScrollPane {
      * 将文件内容写入文本窗格内
      *
      * @param file 文件
-     * @param disableModifyAware 是否文件修改感知功能（临时操作，仅限于该方法内）
+     * @param disableModifyAware 是否临时禁用文件修改感知功能（禁用行为仅限于该方法内）
      */
     public void setText(File file,boolean disableModifyAware) {
         if (disableModifyAware) {
@@ -172,9 +172,9 @@ public class ScrollTextPane extends JScrollPane {
             saveToFile(this.file);
             saved = true;
         } else {
-            int state = mainPane.getFileChooser().showSaveDialog(this);
+            int state = mainTabPane.getFileChooser().showSaveDialog(this);
             if (state == JFileChooser.APPROVE_OPTION) {
-                File file = mainPane.getFileChooser().getSelectedFile();
+                File file = mainTabPane.getFileChooser().getSelectedFile();
                 if (file.exists()) {
                     String message = String.format("%s already exist, would you like overwriting it?", file.getName());
                     int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
@@ -237,10 +237,10 @@ public class ScrollTextPane extends JScrollPane {
     }
 
     // ------------------- init ScrollTextPane
-    private void initTextArea(MainPane mainPane) {
-        textArea.setFont(mainPane.getStpFont());
+    private void initTextArea(MainTabPane mainTabPane) {
+        textArea.setFont(mainTabPane.getStpFont());
         // 绑定快捷键
-        addKeyBinding(mainPane.getKeyStrokes(), mainPane.getActions(), textArea);
+        addKeyBinding(mainTabPane.getKeyStrokes(), mainTabPane.getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏
         textArea.addCaretListener(CaretStatusIndicator.INDICATOR);
 

@@ -31,36 +31,35 @@ public class EditorFrame extends JFrame {
 
     private void init() {
         // 创建文本主面板
-        MainPane mainPane = new MainPane();
+        MainTabPane mainTabPane = new MainTabPane();
         // 创建底部状态栏
         StatusBar statusBar = new StatusBar();
 
         // 添加菜单
-        addMenu(mainPane);
+        addMenu(mainTabPane);
         // 添加主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
-        rootPane.add(mainPane, BorderLayout.CENTER);
+        rootPane.add(mainTabPane, BorderLayout.CENTER);
         rootPane.add(statusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
         // add key bindings
-        addDefaultKeyBinding(rootPane, mainPane.getKeyStrokes(), mainPane.getActions());
+        addDefaultKeyBinding(rootPane, mainTabPane.getKeyStrokes(), mainTabPane.getActions());
 
         // 加载未保存的新建文件
-        if (!mainPane.loadUnSavedNewTextPane()) {
+        if (mainTabPane.loadUnSavedNewTextPane() < 1) {
             // 创建默认的文本窗
-            ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, "new-1");
-            mainPane.addTab("new-1", scrollTextPane, true);
+            mainTabPane.createTextPane();
         }
     }
 
 
     // ---------- 创建菜单
-    private void addMenu(MainPane mainPane) {
-        Map<ActionName, KeyStroke> keyStrokes = mainPane.getKeyStrokes();
-        Map<ActionName, Action> actions = mainPane.getActions();
+    private void addMenu(MainTabPane mainTabPane) {
+        Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getKeyStrokes();
+        Map<ActionName, Action> actions = mainTabPane.getActions();
 
         // create 'File' menu
-        JMenu fileMenu = createFileMenu(keyStrokes, actions, mainPane);
+        JMenu fileMenu = createFileMenu(keyStrokes, actions, mainTabPane);
         // create 'Edit' menu
         JMenu editMenu = createEditMenu(keyStrokes, actions);
         // create 'View' menu
@@ -74,7 +73,7 @@ public class EditorFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions, MainPane mainPane) {
+    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions, MainTabPane mainTabPane) {
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
@@ -85,8 +84,8 @@ public class EditorFrame extends JFrame {
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(OPEN_FILE), actions.get(OPEN_FILE));
         // open recently
-        OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainPane);
-        mainPane.setOpenRecentlyMenu(recentlyMenu);
+        OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainTabPane);
+        mainTabPane.setOpenRecentlyMenu(recentlyMenu);
         menu.add(recentlyMenu);
 
         // save & save all

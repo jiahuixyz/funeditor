@@ -1,30 +1,21 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.MainPane;
-import redcoder.texteditor.pane.ScrollTextPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class NewAction extends AbstractAction {
 
-    // fixme
-    private final AtomicInteger counter = new AtomicInteger(1);
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public NewAction(MainPane mainPane) {
+    public NewAction(MainTabPane mainTabPane) {
         super("New File");
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int i = counter.incrementAndGet();
-        String filename = "new-" + i;
-
-        ScrollTextPane scrollTextPane = new ScrollTextPane(mainPane, filename);
-        mainPane.addTab(filename, scrollTextPane, true);
-        mainPane.setSelectedComponent(scrollTextPane);
+        mainTabPane.createTextPane();
     }
 }

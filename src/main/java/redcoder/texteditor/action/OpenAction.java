@@ -1,23 +1,23 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class OpenAction extends AbstractAction {
 
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public OpenAction(MainPane mainPane) {
+    public OpenAction(MainTabPane mainTabPane) {
         super("Open File");
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            mainPane.openFile();
+            mainTabPane.openFile();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

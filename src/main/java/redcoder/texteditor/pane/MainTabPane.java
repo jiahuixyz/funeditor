@@ -1,6 +1,5 @@
 package redcoder.texteditor.pane;
 
-import redcoder.texteditor.UnsavedNewTextPane;
 import redcoder.texteditor.action.*;
 import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.openrecently.OpenedFilesRecently;
@@ -22,9 +21,9 @@ import static java.awt.event.KeyEvent.*;
 import static redcoder.texteditor.action.ActionName.*;
 
 /**
- * 编辑器主窗格
+ * 编辑器主窗格，支持多tab
  */
-public class MainPane extends JTabbedPane {
+public class MainTabPane extends JTabbedPane {
 
     public static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 20);
 
@@ -42,9 +41,28 @@ public class MainPane extends JTabbedPane {
     private OpenRecentlyMenu openRecentlyMenu;
     private Map<String, ScrollTextPane> addedFileTabbedIndex = new HashMap<>();
     private UnsavedNewTextPane unsavedNewTextPane;
+    private TextPaneGenerator textPaneGenerator;
 
-    public MainPane() {
+    public MainTabPane() {
         init();
+    }
+
+    /**
+     * 加载未保存的新建的文件窗格
+     *
+     * @return 加载的text pane数量
+     */
+    public int loadUnSavedNewTextPane() {
+        int i = unsavedNewTextPane.load(this);
+        textPaneGenerator.setInitialCounter(i + 1);
+        return i;
+    }
+
+    /**
+     * 创建新的文本窗格
+     */
+    public void createTextPane() {
+        this.textPaneGenerator.generate(this);
     }
 
     /**
@@ -154,15 +172,6 @@ public class MainPane extends JTabbedPane {
         return true;
     }
 
-    /**
-     * 加载未保存的新建的文件窗格
-     *
-     * @return true - 存在未保存的新建文件且已被加载，false—没有这样的文件
-     */
-    public boolean loadUnSavedNewTextPane() {
-        return unsavedNewTextPane.load();
-    }
-
     // ------------ font operation
 
     /**
@@ -255,7 +264,7 @@ public class MainPane extends JTabbedPane {
             } else {
                 scrollTextPane = new ScrollTextPane(this, file);
                 addTab(filename, scrollTextPane, false);
-                // setSelectedComponent(scrollTextPane);
+                setSelectedComponent(scrollTextPane);
             }
 
             // 添加最近打开列表中
@@ -306,7 +315,7 @@ public class MainPane extends JTabbedPane {
         this.openRecentlyMenu = openRecentlyMenu;
     }
 
-    // ----------------- init MainPane
+    // ----------------- init
     private void init() {
         this.fileChooser = new JFileChooser();
         this.fileChooser.addChoosableFileFilter(new FileFilter() {
@@ -321,7 +330,8 @@ public class MainPane extends JTabbedPane {
             }
         });
         this.ofr = new OpenedFilesRecently();
-        this.unsavedNewTextPane = new UnsavedNewTextPane(this);
+        this.unsavedNewTextPane = new UnsavedNewTextPane();
+        this.textPaneGenerator = new DefaultTextPaneGenerator();
 
         // create default key strokes
         keyStrokes = createDefaultKeyStrokes();

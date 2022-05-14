@@ -1,24 +1,24 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.MainPane;
+import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class SaveAllAction extends AbstractAction {
 
-    private MainPane mainPane;
+    private MainTabPane mainTabPane;
 
-    public SaveAllAction(MainPane mainPane) {
+    public SaveAllAction(MainTabPane mainTabPane) {
         super("Save All");
-        this.mainPane = mainPane;
+        this.mainTabPane = mainTabPane;
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            mainPane.saveAllTab();
+            mainTabPane.saveAllTab();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
