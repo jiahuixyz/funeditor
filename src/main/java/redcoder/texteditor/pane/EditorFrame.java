@@ -30,10 +30,10 @@ public class EditorFrame extends JFrame {
     }
 
     private void init() {
-        // 创建文本主面板
-        MainTabPane mainTabPane = new MainTabPane();
         // 创建底部状态栏
         StatusBar statusBar = new StatusBar();
+        // 创建文本主面板
+        MainTabPane mainTabPane = new MainTabPane(statusBar);
 
         // 添加菜单
         addMenu(mainTabPane);

@@ -7,6 +7,7 @@ import redcoder.texteditor.linenumber.JTextAreaBasedLineNumberModel;
 import redcoder.texteditor.linenumber.LineNumberComponent;
 import redcoder.texteditor.linenumber.LineNumberModel;
 import redcoder.texteditor.statusbar.CaretStatusIndicator;
+import redcoder.texteditor.statusbar.StatusBar;
 import redcoder.texteditor.statusbar.TextLengthIndicator;
 import redcoder.texteditor.utils.FileUtils;
 
@@ -38,6 +39,7 @@ public class ScrollTextPane extends JScrollPane {
     // 本地文件
     private File file;
 
+    private StatusBar statusBar;
     private final MainTabPane mainTabPane;
     private final JTextArea textArea;
     private final UndoManager undoManager;
@@ -46,16 +48,16 @@ public class ScrollTextPane extends JScrollPane {
     private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
 
-    public ScrollTextPane(MainTabPane mainTabPane, String filename) {
-        this(mainTabPane, filename, false, true, null);
+    public ScrollTextPane(StatusBar statusBar,MainTabPane mainTabPane, String filename) {
+        this(statusBar,mainTabPane, filename, false, true, null);
     }
 
-    public ScrollTextPane(MainTabPane mainTabPane, File file) {
-        this(mainTabPane, file.getName(), false, true, file);
+    public ScrollTextPane(StatusBar statusBar,MainTabPane mainTabPane, File file) {
+        this(statusBar,mainTabPane, file.getName(), false, true, file);
     }
 
-    public ScrollTextPane(MainTabPane mainTabPane, String filename, boolean modified, boolean modifyAware, File file) {
-        super();
+    public ScrollTextPane(StatusBar statusBar,MainTabPane mainTabPane, String filename, boolean modified, boolean modifyAware, File file) {
+        this.statusBar = statusBar;
         this.mainTabPane = mainTabPane;
         this.filename = filename;
         this.modified = modified;
@@ -242,7 +244,7 @@ public class ScrollTextPane extends JScrollPane {
         // 绑定快捷键
         addKeyBinding(mainTabPane.getKeyStrokes(), mainTabPane.getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏
-        textArea.addCaretListener(CaretStatusIndicator.INDICATOR);
+        textArea.addCaretListener(statusBar.getCaretStatusIndicator());
 
         // 添加几个文档监听器
         Document doc = this.textArea.getDocument();
@@ -298,17 +300,17 @@ public class ScrollTextPane extends JScrollPane {
         doc.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                TextLengthIndicator.INDICATOR.refresh(textArea);
+                statusBar.getTextLengthIndicator().refresh(textArea);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                TextLengthIndicator.INDICATOR.refresh(textArea);
+                statusBar.getTextLengthIndicator().refresh(textArea);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                TextLengthIndicator.INDICATOR.refresh(textArea);
+                statusBar.getTextLengthIndicator().refresh(textArea);
             }
         });
     }

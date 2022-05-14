@@ -10,13 +10,12 @@ import java.awt.*;
  */
 public class LineSeparatorIndicator extends JPanel {
 
-    public static final LineSeparatorIndicator INDICATOR = new LineSeparatorIndicator();
     private static final String TEMPLATE_TEXT1 = "  Windows (CR LF)";
     private static final String TEMPLATE_TEXT2 = "  UNIX (LF)";
 
     private final JLabel label = new JLabel();
 
-    private LineSeparatorIndicator() {
+    public LineSeparatorIndicator() {
         super(new GridLayout(1, 1));
         setBorder(StatusBarBorder.BORDER);
 

@@ -11,6 +11,11 @@ public class StatusBar extends JPanel {
     public static final StatusBar INSTANCE = new StatusBar();
     public static final int STATUS_BAR_HEIGHT = 30;
 
+    private TextLengthIndicator textLengthIndicator;
+    private CaretStatusIndicator caretStatusIndicator;
+    private LineSeparatorIndicator lineSeparatorIndicator;
+    private TextFontSizeIndicator textFontSizeIndicator;
+
     public StatusBar() {
         super(new GridBagLayout());
         setPreferredSize(new Dimension(Short.MAX_VALUE, STATUS_BAR_HEIGHT));
@@ -18,6 +23,11 @@ public class StatusBar extends JPanel {
     }
 
     private void init() {
+        textLengthIndicator = new TextLengthIndicator();
+        caretStatusIndicator = new CaretStatusIndicator();
+        lineSeparatorIndicator = new LineSeparatorIndicator();
+        textFontSizeIndicator = new TextFontSizeIndicator();
+
         // left part
         Box leftBox = Box.createHorizontalBox();
         leftBox.add(Box.createRigidArea(new Dimension(10, STATUS_BAR_HEIGHT)));
@@ -25,13 +35,13 @@ public class StatusBar extends JPanel {
 
         // right part
         Box rightBox = Box.createHorizontalBox();
-        rightBox.add(TextLengthIndicator.INDICATOR);
+        rightBox.add(textLengthIndicator);
         rightBox.add(Box.createRigidArea(new Dimension(60, STATUS_BAR_HEIGHT)));
-        rightBox.add(CaretStatusIndicator.INDICATOR);
+        rightBox.add(caretStatusIndicator);
         rightBox.add(Box.createRigidArea(new Dimension(60, STATUS_BAR_HEIGHT)));
-        rightBox.add(LineSeparatorIndicator.INDICATOR);
+        rightBox.add(lineSeparatorIndicator);
         rightBox.add(Box.createRigidArea(new Dimension(20, STATUS_BAR_HEIGHT)));
-        rightBox.add(TextFontSizeIndicator.INDICATOR);
+        rightBox.add(textFontSizeIndicator);
         rightBox.add(Box.createRigidArea(new Dimension(50, STATUS_BAR_HEIGHT)));
 
         add(leftBox, new GridBagConstraints(0, 0, 1, 1,
@@ -43,16 +53,32 @@ public class StatusBar extends JPanel {
     }
 
     public void hideStatusBar() {
-        TextLengthIndicator.INDICATOR.setVisible(false);
-        CaretStatusIndicator.INDICATOR.setVisible(false);
-        LineSeparatorIndicator.INDICATOR.setVisible(false);
-        TextFontSizeIndicator.INDICATOR.setVisible(false);
+        textLengthIndicator.setVisible(false);
+        caretStatusIndicator.setVisible(false);
+        lineSeparatorIndicator.setVisible(false);
+        textFontSizeIndicator.setVisible(false);
     }
 
     public void displayStatusBar() {
-        TextLengthIndicator.INDICATOR.setVisible(true);
-        CaretStatusIndicator.INDICATOR.setVisible(true);
-        LineSeparatorIndicator.INDICATOR.setVisible(true);
-        TextFontSizeIndicator.INDICATOR.setVisible(true);
+        textLengthIndicator.setVisible(false);
+        caretStatusIndicator.setVisible(false);
+        lineSeparatorIndicator.setVisible(false);
+        textFontSizeIndicator.setVisible(false);
+    }
+
+    public TextLengthIndicator getTextLengthIndicator() {
+        return textLengthIndicator;
+    }
+
+    public CaretStatusIndicator getCaretStatusIndicator() {
+        return caretStatusIndicator;
+    }
+
+    public LineSeparatorIndicator getLineSeparatorIndicator() {
+        return lineSeparatorIndicator;
+    }
+
+    public TextFontSizeIndicator getTextFontSizeIndicator() {
+        return textFontSizeIndicator;
     }
 }

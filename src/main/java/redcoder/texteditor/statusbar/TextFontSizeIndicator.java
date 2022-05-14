@@ -10,11 +10,10 @@ import java.awt.*;
  */
 public class TextFontSizeIndicator extends JPanel {
 
-    public static final TextFontSizeIndicator INDICATOR = new TextFontSizeIndicator();
     private static final String TEMPLATE_TEXT = "  Font Size: %s";
     private final JLabel label = new JLabel("  UTF-8");
 
-    private TextFontSizeIndicator() {
+    public TextFontSizeIndicator() {
         super(new GridLayout(1, 1));
         setBorder(StatusBarBorder.BORDER);
 

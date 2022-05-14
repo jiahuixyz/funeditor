@@ -14,7 +14,6 @@ import java.awt.*;
  */
 public class CaretStatusIndicator extends JPanel implements CaretListener {
 
-    public static final CaretStatusIndicator INDICATOR = new CaretStatusIndicator();
     private static final String TEMPLATE_TEXT1 = "  row %d, col %d";
     private static final String TEMPLATE_TEXT2 = "  row %d, col %d (%d selected)";
 

@@ -3,10 +3,7 @@ package redcoder.texteditor.pane;
 import redcoder.texteditor.action.*;
 import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.openrecently.OpenedFilesRecently;
-import redcoder.texteditor.statusbar.CaretStatusIndicator;
 import redcoder.texteditor.statusbar.StatusBar;
-import redcoder.texteditor.statusbar.TextFontSizeIndicator;
-import redcoder.texteditor.statusbar.TextLengthIndicator;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -30,6 +27,7 @@ public class MainTabPane extends JTabbedPane {
     private static final int FONT_SIZE_MINIMUM = 10;
     private static final int FONT_SIZE_MAXIMUM = 100;
 
+    private StatusBar statusBar;
     private ScrollTextPane selectedScrollTextPane;
     private JFileChooser fileChooser;
     private Map<ActionName, KeyStroke> keyStrokes;
@@ -43,7 +41,8 @@ public class MainTabPane extends JTabbedPane {
     private UnsavedNewTextPane unsavedNewTextPane;
     private TextPaneGenerator textPaneGenerator;
 
-    public MainTabPane() {
+    public MainTabPane(StatusBar statusBar) {
+        this.statusBar = statusBar;
         init();
     }
 
@@ -199,7 +198,7 @@ public class MainTabPane extends JTabbedPane {
                 scrollTextPane.setFont(stpFont);
             }
         }
-        TextFontSizeIndicator.INDICATOR.refresh(stpFont);
+        statusBar.getTextFontSizeIndicator().refresh(stpFont);
     }
 
 
@@ -251,7 +250,7 @@ public class MainTabPane extends JTabbedPane {
 
         String filename = file.getName();
         if (unsavedNewTextPane) {
-            scrollTextPane = new ScrollTextPane(this, filename);
+            scrollTextPane = new ScrollTextPane(statusBar,this, filename);
             addTab(filename, scrollTextPane, true);
             scrollTextPane.setText(file, false);
         } else {
@@ -262,7 +261,7 @@ public class MainTabPane extends JTabbedPane {
                 selectedScrollTextPane.setText(file, true);
                 selectedScrollTextPane.updateTabbedTitle(filename);
             } else {
-                scrollTextPane = new ScrollTextPane(this, file);
+                scrollTextPane = new ScrollTextPane(statusBar, this, file);
                 addTab(filename, scrollTextPane, false);
                 setSelectedComponent(scrollTextPane);
             }
@@ -331,7 +330,7 @@ public class MainTabPane extends JTabbedPane {
         });
         this.ofr = new OpenedFilesRecently();
         this.unsavedNewTextPane = new UnsavedNewTextPane();
-        this.textPaneGenerator = new DefaultTextPaneGenerator();
+        this.textPaneGenerator = new DefaultTextPaneGenerator(statusBar);
 
         // create default key strokes
         keyStrokes = createDefaultKeyStrokes();
@@ -349,8 +348,8 @@ public class MainTabPane extends JTabbedPane {
                 }
                 selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
                 JTextArea textArea = selectedScrollTextPane.getTextArea();
-                TextLengthIndicator.INDICATOR.refresh(textArea);
-                CaretStatusIndicator.INDICATOR.refresh(textArea);
+                statusBar.getTextLengthIndicator().refresh(textArea);
+                statusBar.getCaretStatusIndicator().refresh(textArea);
             }
         });
         // 监听器，记录增加/移除的tab index
