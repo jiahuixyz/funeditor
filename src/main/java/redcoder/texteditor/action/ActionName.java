@@ -16,5 +16,7 @@ public enum ActionName {
     CLOSE_ALL,
     EXIT,
     LINE_WRAP,
-    OPEN_RECENTLY
+    OPEN_RECENTLY,
+    NEW_WINDOW,
+    CLOSE_WINDOW
 }

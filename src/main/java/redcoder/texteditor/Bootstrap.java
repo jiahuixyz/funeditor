@@ -1,11 +1,11 @@
 package redcoder.texteditor;
 
-import redcoder.texteditor.pane.EditorFrame;
+import redcoder.texteditor.pane.Framework;
 
 public class Bootstrap {
 
     public static void main(String[] args) {
-        new EditorFrame();
+        Framework.FRAMEWORK.makeNewWindow();
     }
 
 }

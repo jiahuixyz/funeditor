@@ -19,17 +19,9 @@ public class EditorFrame extends JFrame {
 
     public EditorFrame() {
         super(TITLE);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 900, 600);
-
-        init();
-
-        setMinimumSize(new Dimension(700, 432));
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setVisible(true);
     }
 
-    private void init() {
+    public void init() {
         // 创建底部状态栏
         StatusBar statusBar = new StatusBar();
         // 创建文本主面板
@@ -50,8 +42,12 @@ public class EditorFrame extends JFrame {
             // 创建默认的文本窗
             mainTabPane.createTextPane();
         }
-    }
 
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setMinimumSize(new Dimension(700, 432));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setVisible(true);
+    }
 
     // ---------- 创建菜单
     private void addMenu(MainTabPane mainTabPane) {
@@ -97,6 +93,11 @@ public class EditorFrame extends JFrame {
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(CLOSE), actions.get(CLOSE),
                 keyStrokes.get(CLOSE_ALL), actions.get(CLOSE_ALL));
+
+        // new window & close window
+        menu.addSeparator();
+        addMenuItem(menu, keyStrokes.get(NEW_WINDOW), actions.get(NEW_WINDOW),
+                keyStrokes.get(CLOSE_WINDOW), actions.get(CLOSE_WINDOW));
 
         // exit
         menu.addSeparator();
@@ -172,5 +173,7 @@ public class EditorFrame extends JFrame {
         inputMap.put(keyStrokes.get(CLOSE_ALL), CLOSE_ALL);
         inputMap.put(keyStrokes.get(EXIT), EXIT);
         inputMap.put(keyStrokes.get(LINE_WRAP), LINE_WRAP);
+        inputMap.put(keyStrokes.get(NEW_WINDOW), NEW_WINDOW);
+        inputMap.put(keyStrokes.get(CLOSE_WINDOW), CLOSE_WINDOW);
     }
 }
