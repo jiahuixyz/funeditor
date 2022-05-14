@@ -2,7 +2,6 @@ package redcoder.texteditor.pane;
 
 import redcoder.texteditor.action.*;
 import redcoder.texteditor.openrecently.OpenRecentlyMenu;
-import redcoder.texteditor.openrecently.OpenedFilesRecently;
 import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;
@@ -30,14 +29,12 @@ public class MainTabPane extends JTabbedPane {
     private StatusBar statusBar;
     private ScrollTextPane selectedScrollTextPane;
     private JFileChooser fileChooser;
-    private Map<ActionName, KeyStroke> keyStrokes;
-    private Map<ActionName, Action> actions;
+    private ActionCollection actionCollection;
     // font used by ScrollTextPane's all instance
     private Font stpFont = DEFAULT_FONT;
 
-    private OpenedFilesRecently ofr;
     private OpenRecentlyMenu openRecentlyMenu;
-    private Map<String, ScrollTextPane> addedFileTabbedIndex = new HashMap<>();
+    private Map<String, ScrollTextPane> addedFileTabbedIndex;
     private UnsavedNewTextPane unsavedNewTextPane;
     private TextPaneGenerator textPaneGenerator;
 
@@ -244,7 +241,7 @@ public class MainTabPane extends JTabbedPane {
             // 文件已打开，切换到文件所在的tab即可
             setSelectedComponent(scrollTextPane);
             // for resort menu item
-            openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
+            openRecentlyMenu.addOpenedFileRecently(file);
             return;
         }
 
@@ -267,8 +264,7 @@ public class MainTabPane extends JTabbedPane {
             }
 
             // 添加最近打开列表中
-            ofr.addFile(file);
-            openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
+            openRecentlyMenu.addOpenedFileRecently(file);
         }
     }
 
@@ -288,19 +284,8 @@ public class MainTabPane extends JTabbedPane {
         return fileChooser;
     }
 
-    public OpenedFilesRecently getOfr() {
-        return ofr;
-    }
-
-    public Map<ActionName, KeyStroke> getKeyStrokes() {
-        return keyStrokes;
-    }
-
-    /**
-     * 返回所有默认使用的Action
-     */
-    public Map<ActionName, Action> getActions() {
-        return actions;
+    public ActionCollection getActionCollection() {
+        return actionCollection;
     }
 
     /**
@@ -328,14 +313,10 @@ public class MainTabPane extends JTabbedPane {
                 return "Just Files";
             }
         });
-        this.ofr = new OpenedFilesRecently();
+        this.addedFileTabbedIndex = new HashMap<>();
         this.unsavedNewTextPane = new UnsavedNewTextPane();
         this.textPaneGenerator = new DefaultTextPaneGenerator(statusBar);
-
-        // create default key strokes
-        keyStrokes = createDefaultKeyStrokes();
-        // create default action
-        actions = createDefaultActions();
+        this.actionCollection = new ActionCollection(this);
         // set main pane font
         setFont(new Font(null, Font.PLAIN, 16));
         // record selected text pane with change listener
@@ -378,49 +359,5 @@ public class MainTabPane extends JTabbedPane {
                 }
             }
         });
-    }
-
-    private Map<ActionName, KeyStroke> createDefaultKeyStrokes() {
-        Map<ActionName, KeyStroke> keyStrokes = new HashMap<>();
-        keyStrokes.put(ZOOM_IN, KeyStroke.getKeyStroke(VK_ADD, CTRL_DOWN_MASK));
-        keyStrokes.put(ZOOM_OUT, KeyStroke.getKeyStroke(VK_SUBTRACT, CTRL_DOWN_MASK));
-        keyStrokes.put(NEW_FILE, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK));
-        keyStrokes.put(OPEN_FILE, KeyStroke.getKeyStroke(VK_O, CTRL_DOWN_MASK));
-        keyStrokes.put(SAVE_FILE, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK));
-        keyStrokes.put(SAVE_ALL, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
-        keyStrokes.put(CLOSE, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK));
-        keyStrokes.put(CLOSE_ALL, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
-        keyStrokes.put(UNDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK));
-        keyStrokes.put(REDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
-        keyStrokes.put(CUT, KeyStroke.getKeyStroke(VK_X, CTRL_DOWN_MASK));
-        keyStrokes.put(COPY, KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
-        keyStrokes.put(PASTE, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));
-        keyStrokes.put(EXIT, KeyStroke.getKeyStroke(VK_F4, CTRL_DOWN_MASK));
-        keyStrokes.put(LINE_WRAP, KeyStroke.getKeyStroke(VK_Z, ALT_DOWN_MASK));
-        keyStrokes.put(NEW_WINDOW, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
-        keyStrokes.put(CLOSE_WINDOW, KeyStroke.getKeyStroke(VK_F4, ALT_DOWN_MASK));
-        return keyStrokes;
-    }
-
-    private Map<ActionName, Action> createDefaultActions() {
-        Map<ActionName, Action> actions = new HashMap<>();
-        actions.put(UNDO, new UndoActionWrapper(this));
-        actions.put(REDO, new RedoActionWrapper(this));
-        actions.put(ZOOM_IN, new ZoomInAction(this));
-        actions.put(ZOOM_OUT, new ZoomOutAction(this));
-        actions.put(NEW_FILE, new NewAction(this));
-        actions.put(OPEN_FILE, new OpenAction(this));
-        actions.put(SAVE_FILE, new SaveAction(this));
-        actions.put(SAVE_ALL, new SaveAllAction(this));
-        actions.put(CUT, new CutAction());
-        actions.put(COPY, new CopyAction());
-        actions.put(PASTE, new PasteAction());
-        actions.put(CLOSE, new CloseAction(this));
-        actions.put(CLOSE_ALL, new CloseAllAction(this));
-        actions.put(EXIT, new ExitAction());
-        actions.put(LINE_WRAP, new LineWrapAction(this));
-        actions.put(NEW_WINDOW, new NewWindowAction());
-        actions.put(CLOSE_WINDOW, new CloseWindowAction());
-        return actions;
     }
 }

@@ -35,7 +35,7 @@ public class EditorFrame extends JFrame {
         rootPane.add(statusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
         // add key bindings
-        addDefaultKeyBinding(rootPane, mainTabPane.getKeyStrokes(), mainTabPane.getActions());
+        addDefaultKeyBinding(rootPane, mainTabPane);
 
         // 加载未保存的新建文件
         if (mainTabPane.loadUnSavedNewTextPane() < 1) {
@@ -51,8 +51,8 @@ public class EditorFrame extends JFrame {
 
     // ---------- 创建菜单
     private void addMenu(MainTabPane mainTabPane) {
-        Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getKeyStrokes();
-        Map<ActionName, Action> actions = mainTabPane.getActions();
+        Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getActionCollection().getKeyStrokes();
+        Map<ActionName, Action> actions = mainTabPane.getActionCollection().getActions();
 
         // create 'File' menu
         JMenu fileMenu = createFileMenu(keyStrokes, actions, mainTabPane);
@@ -156,12 +156,16 @@ public class EditorFrame extends JFrame {
         }
     }
 
-    private void addDefaultKeyBinding(JPanel rootPane, Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
+    private void addDefaultKeyBinding(JPanel rootPane, MainTabPane mainTabPane) {
+        Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getActionCollection().getKeyStrokes();
+        Map<ActionName, Action> actions = mainTabPane.getActionCollection().getActions();
+
+        // register action
         ActionMap actionMap = rootPane.getActionMap();
         for (Map.Entry<ActionName, Action> entry : actions.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
-
+        // add key binding
         InputMap inputMap = rootPane.getInputMap(WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(keyStrokes.get(ZOOM_IN), ZOOM_IN);
         inputMap.put(keyStrokes.get(ZOOM_OUT), ZOOM_OUT);

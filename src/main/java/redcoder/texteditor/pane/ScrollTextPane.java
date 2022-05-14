@@ -242,7 +242,7 @@ public class ScrollTextPane extends JScrollPane {
     private void initTextArea(MainTabPane mainTabPane) {
         textArea.setFont(mainTabPane.getStpFont());
         // 绑定快捷键
-        addKeyBinding(mainTabPane.getKeyStrokes(), mainTabPane.getActions(), textArea);
+        addKeyBinding(mainTabPane.getActionCollection().getKeyStrokes(), mainTabPane.getActionCollection().getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏
         textArea.addCaretListener(statusBar.getCaretStatusIndicator());
 
