@@ -67,11 +67,92 @@ public class MainPane extends JTabbedPane {
         }
     }
 
+    /**
+     * 保存当前选中的tab
+     *
+     * @return true-保存成功，false-保存失败
+     */
+    public boolean saveSelectedTab() {
+        return selectedScrollTextPane.saveTextPane();
+    }
+
+    /**
+     * 保存所有tab
+     *
+     * @return 只有全部保存成功才返回true，否则返回false。
+     */
+    public boolean saveAllTab() {
+        for (int i = this.getTabCount() - 1; i >= 0; i--) {
+            // switch to tab i
+            this.setSelectedIndex(i);
+            Component component = this.getComponentAt(i);
+            if (component instanceof ScrollTextPane) {
+                if (!((ScrollTextPane) component).saveTextPane()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 关闭当前选中的tab
+     *
+     * @return true：关闭成功，false：关闭失败
+     */
+    public boolean closeSelectedTab() {
+        if (selectedScrollTextPane.closeTextPane()) {
+            removeTabAt(getSelectedIndex());
+            // remove from UnsavedNewFile
+            unsavedNewFile.removeTextPane(selectedScrollTextPane);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 关闭指定位置的tab
+     *
+     * @param index tab位置
+     * @return true：关闭成功，false：关闭失败
+     */
+    public boolean closeTab(int index) {
+        Component component = getComponentAt(index);
+        if (component instanceof ScrollTextPane) {
+            ScrollTextPane scrollTextPane = (ScrollTextPane) component;
+            if (scrollTextPane.closeTextPane()) {
+                removeTabAt(index);
+                unsavedNewFile.removeTextPane(scrollTextPane);
+                return true;
+            }
+        } else {
+            removeTabAt(index);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 关闭所有的文本窗格。
+     *
+     * @return 只有全部关闭成功才返回true，否则返回false。
+     */
+    public boolean closeAllTab() {
+        for (int i = this.getTabCount() - 1; i >= 0; i--) {
+            // switch to tab i
+            setSelectedIndex(i);
+            // then close it
+            closeTab(i);
+        }
+        return true;
+    }
+
     public boolean loadUnSavedNewFile() {
         return unsavedNewFile.load();
     }
 
-    // ------------ operation about font
+    // ------------ font operation
 
     /**
      * 放大字体（当前仅放大编辑窗口内的文本字体）
@@ -102,7 +183,7 @@ public class MainPane extends JTabbedPane {
     }
 
 
-    // -------------  operation about file
+    // -------------  file operation
 
     /**
      * 打开用户选择的文件
@@ -135,7 +216,7 @@ public class MainPane extends JTabbedPane {
     }
 
     public void openUnsavedNewFile(File file) {
-        openFile(file,true);
+        openFile(file, true);
     }
 
     private void openFile(File file, boolean unsavedNewFile) {
@@ -171,45 +252,6 @@ public class MainPane extends JTabbedPane {
             openRecentlyMenu.addOrMoveToFirst(file.getAbsolutePath());
         }
     }
-
-    /**
-     * 保存所有文本窗格内的文件。
-     *
-     * @return 只有全部保存成功才返回true，否则返回false。
-     */
-    public boolean saveAllTextPane() {
-        for (int i = this.getTabCount() - 1; i >= 0; i--) {
-            // switch to tab i
-            this.setSelectedIndex(i);
-            Component component = this.getComponentAt(i);
-            if (component instanceof ScrollTextPane) {
-                if (!((ScrollTextPane) component).saveTextPane()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 关闭所有的文本窗格。
-     *
-     * @return 只有全部关闭成功才返回true，否则返回false。
-     */
-    public boolean closeAllTextPane() {
-        for (int i = this.getTabCount() - 1; i >= 0; i--) {
-            // switch to tab i
-            this.setSelectedIndex(i);
-            Component component = this.getComponentAt(i);
-            if (component instanceof ScrollTextPane) {
-                if (!((ScrollTextPane) component).closeTextPane(i)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 
     // ----------- getter setter
 
@@ -251,10 +293,6 @@ public class MainPane extends JTabbedPane {
 
     public void setOpenRecentlyMenu(OpenRecentlyMenu openRecentlyMenu) {
         this.openRecentlyMenu = openRecentlyMenu;
-    }
-
-    public UnsavedNewFile getUnsavedNewFile() {
-        return unsavedNewFile;
     }
 
     // ----------------- init MainPane

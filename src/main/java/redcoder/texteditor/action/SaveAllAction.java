@@ -18,7 +18,7 @@ public class SaveAllAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            mainPane.saveAllTextPane();
+            mainPane.saveAllTab();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

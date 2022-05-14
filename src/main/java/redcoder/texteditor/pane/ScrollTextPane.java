@@ -117,93 +117,9 @@ public class ScrollTextPane extends JScrollPane {
         }
     }
 
-    public void updateTabbedTitle(String newTitle){
+    public void updateTabbedTitle(String newTitle) {
         buttonTabComponent.updateTabbedTitle(newTitle);
     }
-
-    // ----------------------- operation about file
-
-    /**
-     * 保存当前窗格中的文本
-     *
-     * @return true-保存成功，false-保存失败
-     */
-    public boolean saveTextPane() {
-        boolean saved = false;
-        if (file != null) {
-            saveToFile(this.file);
-            saved = true;
-        } else {
-            int state = mainPane.getFileChooser().showSaveDialog(this);
-            if (state == JFileChooser.APPROVE_OPTION) {
-                File file = mainPane.getFileChooser().getSelectedFile();
-                if (file.exists()) {
-                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
-                    int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
-                    if (n == JOptionPane.YES_OPTION) {
-                        saveToFile(file);
-                        saved = true;
-                    }
-                } else {
-                    saveToFile(file);
-                    saved = true;
-                }
-
-                if (saved) {
-                    this.file = file;
-                    // remove from UnsavedNewFile
-                    mainPane.getUnsavedNewFile().removeTextPane(this);
-                }
-            }
-        }
-
-        if (saved) {
-            modified = false;
-        }
-        return saved;
-    }
-
-    private void saveToFile(File file) {
-        FileUtils.writeFile(textArea.getText(), file);
-
-        // update tab title and filename
-        updateTabbedTitle(file.getName());
-        filename = file.getName();
-    }
-
-    /**
-     * 关闭当前窗格
-     *
-     * @param index 当前窗格在主窗口中的位置
-     * @return true：关闭成功，false：关闭失败
-     */
-    public boolean closeTextPane(int index) {
-        boolean closed = false;
-        if (modified) {
-            String message = String.format("Do you want to save the changes you made to %s?\n"
-                    + "Your changes will be lost if you don't save them.", filename);
-            int state = JOptionPane.showOptionDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
-            if (state == JOptionPane.YES_OPTION) {
-                // save file firstly, then close it.
-                if (saveTextPane()) {
-                    mainPane.removeTabAt(index);
-                    closed = true;
-                }
-            } else if (state == JOptionPane.NO_OPTION) {
-                // close file directly
-                mainPane.removeTabAt(index);
-                closed = true;
-            }
-            // user cancel operation, don't close it.
-        } else {
-            mainPane.removeTabAt(index);
-            closed = true;
-        }
-
-        return closed;
-    }
-
 
     // ---------- getter, setter
 
@@ -229,6 +145,83 @@ public class ScrollTextPane extends JScrollPane {
 
     public boolean isModified() {
         return modified;
+    }
+
+    // ----------------- save & close
+
+    /**
+     * 保存当前窗格中的文本
+     *
+     * @return true-保存成功，false-保存失败
+     */
+    boolean saveTextPane() {
+        boolean saved = false;
+        if (file != null) {
+            saveToFile(this.file);
+            saved = true;
+        } else {
+            int state = mainPane.getFileChooser().showSaveDialog(this);
+            if (state == JFileChooser.APPROVE_OPTION) {
+                File file = mainPane.getFileChooser().getSelectedFile();
+                if (file.exists()) {
+                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
+                    int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
+                    if (n == JOptionPane.YES_OPTION) {
+                        saveToFile(file);
+                        saved = true;
+                    }
+                } else {
+                    saveToFile(file);
+                    saved = true;
+                }
+
+                if (saved) {
+                    this.file = file;
+                }
+            }
+        }
+
+        if (saved) {
+            modified = false;
+        }
+        return saved;
+    }
+
+    private void saveToFile(File file) {
+        FileUtils.writeFile(textArea.getText(), file);
+
+        // update tab title and filename
+        updateTabbedTitle(file.getName());
+        filename = file.getName();
+    }
+
+    /**
+     * 关闭当前窗格
+     *
+     * @return true：关闭成功，false：关闭失败
+     */
+    boolean closeTextPane() {
+        boolean closed = false;
+        if (modified) {
+            String message = String.format("Do you want to save the changes you made to %s?\n"
+                    + "Your changes will be lost if you don't save them.", filename);
+            int state = JOptionPane.showOptionDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
+            if (state == JOptionPane.YES_OPTION) {
+                // save file firstly, then close it.
+                if (saveTextPane()) {
+                    closed = true;
+                }
+            } else if (state == JOptionPane.NO_OPTION) {
+                // close file directly
+                closed = true;
+            }
+            // user cancel operation, don't close it.
+        } else {
+            closed = true;
+        }
+
+        return closed;
     }
 
     // ------------------- init ScrollTextPane

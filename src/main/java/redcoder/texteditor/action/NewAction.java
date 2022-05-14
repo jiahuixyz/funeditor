@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class NewAction extends AbstractAction {
 
+    // fixme
     private final AtomicInteger counter = new AtomicInteger(1);
     private MainPane mainPane;
 

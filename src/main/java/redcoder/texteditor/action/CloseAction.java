@@ -17,8 +17,6 @@ public class CloseAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ScrollTextPane scrollTextPane = mainPane.getSelectedTextPane();
-        int index = mainPane.getSelectedIndex();
-        scrollTextPane.closeTextPane(index);
+        mainPane.closeSelectedTab();
     }
 }

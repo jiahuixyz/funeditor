@@ -16,6 +16,6 @@ public class CloseAllAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainPane.closeAllTextPane();
+        mainPane.closeAllTab();
     }
 }
