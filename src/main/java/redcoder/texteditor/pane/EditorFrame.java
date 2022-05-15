@@ -1,13 +1,18 @@
 package redcoder.texteditor.pane;
 
+import org.apache.commons.lang3.StringUtils;
 import redcoder.texteditor.action.ActionName;
-import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import static redcoder.texteditor.action.ActionName.*;
 
@@ -17,45 +22,100 @@ public class EditorFrame extends JFrame {
     public static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
     public static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
 
+    private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
+
+    private StatusBar statusBar;
+    private MainTabPane mainTabPane;
+
     public EditorFrame() {
         super(TITLE);
     }
 
     public void init() {
         // 创建底部状态栏
-        StatusBar statusBar = new StatusBar();
+        statusBar = new StatusBar();
         // 创建文本主面板
-        MainTabPane mainTabPane = new MainTabPane(statusBar);
+        mainTabPane = new MainTabPane(statusBar);
 
         // 添加菜单
-        addMenu(mainTabPane);
+        addMenu();
         // 添加主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(mainTabPane, BorderLayout.CENTER);
         rootPane.add(statusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
         // add key bindings
-        addDefaultKeyBinding(rootPane, mainTabPane);
+        addDefaultKeyBinding(rootPane);
 
         // 加载未保存的新建文件
-        if (mainTabPane.loadUnSavedNewTextPane() < 1) {
-            // 创建默认的文本窗
-            mainTabPane.createTextPane();
-        }
+        mainTabPane.loadUnSavedNewTextPane();
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setMinimumSize(new Dimension(700, 432));
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setVisible(true);
+        setSize(900, 600);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Framework.INSTANCE.closeWindow();
+            }
+        });
+    }
+
+    public boolean shouldClose() {
+        if (Framework.INSTANCE.getNumWindows() > 1) {
+            List<ScrollTextPane> list = getModifiedTextPane();
+            if (!list.isEmpty()) {
+                String message = String.format("Do you want to save the changes to the following %d files?", list.size());
+                String filenames = StringUtils.join(list.stream().map(ScrollTextPane::getFilename).collect(toList()), '\n');
+                message = message + "\n\n" + filenames + "\n\n" + "Your changes will be lost if you don't save them.";
+                int state = JOptionPane.showOptionDialog(mainTabPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
+                if (state == JOptionPane.YES_OPTION) {
+                    for (ScrollTextPane pane : list) {
+                        if (!pane.saveTextPane()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    return state == JOptionPane.NO_OPTION;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private List<ScrollTextPane> getModifiedTextPane() {
+        List<ScrollTextPane> textPaneList = new ArrayList<>();
+        for (int i = 0; i < mainTabPane.getTabCount(); i++) {
+            Component component = mainTabPane.getComponentAt(i);
+            if (component instanceof ScrollTextPane) {
+                if (((ScrollTextPane) component).isModified()) {
+                    textPaneList.add((ScrollTextPane) component);
+                }
+            }
+        }
+        return textPaneList;
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    public MainTabPane getMainTabPane() {
+        return mainTabPane;
     }
 
     // ---------- 创建菜单
-    private void addMenu(MainTabPane mainTabPane) {
+    private void addMenu() {
         Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getActionCollection().getKeyStrokes();
         Map<ActionName, Action> actions = mainTabPane.getActionCollection().getActions();
 
         // create 'File' menu
-        JMenu fileMenu = createFileMenu(keyStrokes, actions, mainTabPane);
+        JMenu fileMenu = createFileMenu(keyStrokes, actions);
         // create 'Edit' menu
         JMenu editMenu = createEditMenu(keyStrokes, actions);
         // create 'View' menu
@@ -69,7 +129,7 @@ public class EditorFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions, MainTabPane mainTabPane) {
+    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
@@ -81,7 +141,6 @@ public class EditorFrame extends JFrame {
         addMenuItem(menu, keyStrokes.get(OPEN_FILE), actions.get(OPEN_FILE));
         // open recently
         OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainTabPane);
-        mainTabPane.setOpenRecentlyMenu(recentlyMenu);
         menu.add(recentlyMenu);
 
         // save & save all
@@ -101,7 +160,7 @@ public class EditorFrame extends JFrame {
 
         // exit
         menu.addSeparator();
-        addMenuItem(menu, actions.get(EXIT));
+        addMenuItem(menu, keyStrokes.get(EXIT), actions.get(EXIT));
 
         return menu;
     }
@@ -156,7 +215,7 @@ public class EditorFrame extends JFrame {
         }
     }
 
-    private void addDefaultKeyBinding(JPanel rootPane, MainTabPane mainTabPane) {
+    private void addDefaultKeyBinding(JPanel rootPane) {
         Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getActionCollection().getKeyStrokes();
         Map<ActionName, Action> actions = mainTabPane.getActionCollection().getActions();
 

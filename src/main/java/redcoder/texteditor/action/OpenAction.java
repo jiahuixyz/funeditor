@@ -1,5 +1,6 @@
 package redcoder.texteditor.action;
 
+import redcoder.texteditor.pane.Framework;
 import redcoder.texteditor.pane.MainTabPane;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ public class OpenAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            mainTabPane.openFile();
+            Framework.INSTANCE.getFileProcessor().openFile(mainTabPane);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

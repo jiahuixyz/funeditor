@@ -6,12 +6,8 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.awt.event.InputEvent.ALT_DOWN_MASK;
-import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
-import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
 import static java.awt.event.KeyEvent.*;
 import static redcoder.texteditor.action.ActionName.*;
-import static redcoder.texteditor.action.ActionName.CLOSE_WINDOW;
 
 public class ActionCollection {
 

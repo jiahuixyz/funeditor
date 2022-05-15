@@ -1,4 +1,4 @@
-package redcoder.texteditor.linenumber;
+package redcoder.texteditor.pane.linenumber;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;

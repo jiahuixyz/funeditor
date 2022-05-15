@@ -13,6 +13,6 @@ public class NewWindowAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Framework.FRAMEWORK.makeNewWindow();
+        Framework.INSTANCE.makeNewWindow();
     }
 }

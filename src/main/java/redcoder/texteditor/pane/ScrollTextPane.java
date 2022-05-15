@@ -3,12 +3,11 @@ package redcoder.texteditor.pane;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
-import redcoder.texteditor.linenumber.JTextAreaBasedLineNumberModel;
-import redcoder.texteditor.linenumber.LineNumberComponent;
-import redcoder.texteditor.linenumber.LineNumberModel;
-import redcoder.texteditor.statusbar.CaretStatusIndicator;
+import redcoder.texteditor.pane.file.FileProcessor;
+import redcoder.texteditor.pane.linenumber.JTextAreaBasedLineNumberModel;
+import redcoder.texteditor.pane.linenumber.LineNumberComponent;
+import redcoder.texteditor.pane.linenumber.LineNumberModel;
 import redcoder.texteditor.statusbar.StatusBar;
-import redcoder.texteditor.statusbar.TextLengthIndicator;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -39,8 +38,7 @@ public class ScrollTextPane extends JScrollPane {
     // 本地文件
     private File file;
 
-    private StatusBar statusBar;
-    private final MainTabPane mainTabPane;
+    private final StatusBar statusBar;
     private final JTextArea textArea;
     private final UndoManager undoManager;
     private final UndoAction undoAction;
@@ -48,17 +46,16 @@ public class ScrollTextPane extends JScrollPane {
     private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
 
-    public ScrollTextPane(StatusBar statusBar,MainTabPane mainTabPane, String filename) {
-        this(statusBar,mainTabPane, filename, false, true, null);
+    public ScrollTextPane(StatusBar statusBar, MainTabPane mainTabPane, String filename) {
+        this(statusBar, mainTabPane, filename, false, true, null);
     }
 
-    public ScrollTextPane(StatusBar statusBar,MainTabPane mainTabPane, File file) {
-        this(statusBar,mainTabPane, file.getName(), false, true, file);
+    public ScrollTextPane(StatusBar statusBar, MainTabPane mainTabPane, File file) {
+        this(statusBar, mainTabPane, file.getName(), false, true, file);
     }
 
-    public ScrollTextPane(StatusBar statusBar,MainTabPane mainTabPane, String filename, boolean modified, boolean modifyAware, File file) {
+    public ScrollTextPane(StatusBar statusBar, MainTabPane mainTabPane, String filename, boolean modified, boolean modifyAware, File file) {
         this.statusBar = statusBar;
-        this.mainTabPane = mainTabPane;
         this.filename = filename;
         this.modified = modified;
         this.modifyAware = modifyAware;
@@ -98,10 +95,10 @@ public class ScrollTextPane extends JScrollPane {
     /**
      * 将文件内容写入文本窗格内
      *
-     * @param file 文件
+     * @param file               文件
      * @param disableModifyAware 是否临时禁用文件修改感知功能（禁用行为仅限于该方法内）
      */
-    public void setText(File file,boolean disableModifyAware) {
+    public void setText(File file, boolean disableModifyAware) {
         if (disableModifyAware) {
             modifyAware = false;
         }
@@ -168,45 +165,16 @@ public class ScrollTextPane extends JScrollPane {
      *
      * @return true-保存成功，false-保存失败
      */
-    boolean saveTextPane() {
-        boolean saved = false;
-        if (file != null) {
-            saveToFile(this.file);
-            saved = true;
-        } else {
-            int state = mainTabPane.getFileChooser().showSaveDialog(this);
-            if (state == JFileChooser.APPROVE_OPTION) {
-                File file = mainTabPane.getFileChooser().getSelectedFile();
-                if (file.exists()) {
-                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
-                    int n = JOptionPane.showConfirmDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
-                    if (n == JOptionPane.YES_OPTION) {
-                        saveToFile(file);
-                        saved = true;
-                    }
-                } else {
-                    saveToFile(file);
-                    saved = true;
-                }
-
-                if (saved) {
-                    this.file = file;
-                }
-            }
-        }
-
+    public boolean saveTextPane() {
+        FileProcessor fileProcessor = Framework.INSTANCE.getFileProcessor();
+        boolean saved = fileProcessor.saveTextPaneToFile(this);
         if (saved) {
             modified = false;
+            // update tab title and filename
+            updateTabbedTitle(file.getName());
+            filename = file.getName();
         }
         return saved;
-    }
-
-    private void saveToFile(File file) {
-        FileUtils.writeFile(textArea.getText(), file);
-
-        // update tab title and filename
-        updateTabbedTitle(file.getName());
-        filename = file.getName();
     }
 
     /**
@@ -214,7 +182,7 @@ public class ScrollTextPane extends JScrollPane {
      *
      * @return true：关闭成功，false：关闭失败
      */
-    boolean closeTextPane() {
+    public boolean closeTextPane() {
         boolean closed = false;
         if (modified) {
             String message = String.format("Do you want to save the changes you made to %s?\n"
@@ -238,7 +206,6 @@ public class ScrollTextPane extends JScrollPane {
         return closed;
     }
 
-    // ------------------- init ScrollTextPane
     private void initTextArea(MainTabPane mainTabPane) {
         textArea.setFont(mainTabPane.getStpFont());
         // 绑定快捷键
@@ -300,16 +267,20 @@ public class ScrollTextPane extends JScrollPane {
         doc.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                statusBar.getTextLengthIndicator().refresh(textArea);
+                refreshIndicator();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                statusBar.getTextLengthIndicator().refresh(textArea);
+                refreshIndicator();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
+                refreshIndicator();
+            }
+
+            private void refreshIndicator() {
                 statusBar.getTextLengthIndicator().refresh(textArea);
             }
         });

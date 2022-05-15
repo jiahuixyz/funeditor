@@ -1,4 +1,4 @@
-package redcoder.texteditor.linenumber;
+package redcoder.texteditor.pane.linenumber;
 
 import redcoder.texteditor.pane.MainTabPane;
 

@@ -9,14 +9,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class UnsavedNewTextPane {
+/**
+ * 管理新创建的且未保存的文件
+ */
+public class UnsavedCreatedNewlyFiles {
 
-    private static final String FILENAME = "un-snf";
+    private static final String DIR_NAME = "ucnf";
     private final Map<String, ScrollTextPane> textPanes = new HashMap<>();
     private final File targetDir;
+    private boolean loaded;
 
-    public UnsavedNewTextPane() {
-        targetDir = new File(SystemUtils.getUserDir(), FILENAME);
+    public UnsavedCreatedNewlyFiles() {
+        targetDir = new File(SystemUtils.getUserDir(), DIR_NAME);
         if (!targetDir.exists()) {
             targetDir.mkdir();
         }
@@ -34,7 +38,7 @@ public class UnsavedNewTextPane {
     }
 
     public void addTextPanes(ScrollTextPane textPane) {
-        this.textPanes.put(textPane.getFilename(), textPane);
+        this.textPanes.putIfAbsent(textPane.getFilename(), textPane);
     }
 
     public void removeTextPane(ScrollTextPane textPane) {
@@ -52,12 +56,16 @@ public class UnsavedNewTextPane {
      * @return 加载的text pane数量
      */
     public int load(MainTabPane mainTabPane) {
+        if (loaded) {
+            return 0;
+        }
+        loaded = true;
         File[] files = targetDir.listFiles(pathname -> !pathname.isDirectory());
         if (files == null || files.length == 0) {
             return 0;
         }
         for (File file : files) {
-            mainTabPane.openUnsavedNewFile(file);
+            Framework.INSTANCE.getFileProcessor().openFile(mainTabPane, file, true);
         }
         return files.length;
     }

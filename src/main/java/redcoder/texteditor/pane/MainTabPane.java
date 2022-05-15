@@ -1,20 +1,15 @@
 package redcoder.texteditor.pane;
 
-import redcoder.texteditor.action.*;
-import redcoder.texteditor.openrecently.OpenRecentlyMenu;
 import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.awt.event.KeyEvent.*;
-import static redcoder.texteditor.action.ActionName.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 编辑器主窗格，支持多tab
@@ -26,51 +21,91 @@ public class MainTabPane extends JTabbedPane {
     private static final int FONT_SIZE_MINIMUM = 10;
     private static final int FONT_SIZE_MAXIMUM = 100;
 
-    private StatusBar statusBar;
+    private final AtomicInteger counter = new AtomicInteger(0);
+    private final StatusBar statusBar;
+    private final ActionCollection actionCollection;
+    private final Map<String, ScrollTextPane> addedFileTabbedIndex;
     private ScrollTextPane selectedScrollTextPane;
-    private JFileChooser fileChooser;
-    private ActionCollection actionCollection;
-    // font used by ScrollTextPane's all instance
-    private Font stpFont = DEFAULT_FONT;
-
-    private OpenRecentlyMenu openRecentlyMenu;
-    private Map<String, ScrollTextPane> addedFileTabbedIndex;
-    private UnsavedNewTextPane unsavedNewTextPane;
-    private TextPaneGenerator textPaneGenerator;
+    private Font stpFont = DEFAULT_FONT; // font used by ScrollTextPane's all instance
 
     public MainTabPane(StatusBar statusBar) {
         this.statusBar = statusBar;
-        init();
+        this.addedFileTabbedIndex = new HashMap<>();
+        this.actionCollection = new ActionCollection(this);
+
+        setFont(new Font(null, Font.PLAIN, 16));
+        // 添加监听器-记录选中的tab，更新底部状态信息
+        addChangeListener(e -> {
+            if (this.getTabCount() == 0) {
+                StatusBar.INSTANCE.hideStatusBar();
+            } else {
+                if (this.getTabCount() == 1) {
+                    StatusBar.INSTANCE.displayStatusBar();
+                }
+                selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
+                JTextArea textArea = selectedScrollTextPane.getTextArea();
+                statusBar.getTextLengthIndicator().refresh(textArea);
+                statusBar.getCaretStatusIndicator().refresh(textArea);
+            }
+        });
+        // 添加监听器-记录增加/移除的tab index
+        addContainerListener(new ContainerListener() {
+            @Override
+            public void componentAdded(ContainerEvent e) {
+                Component child = e.getChild();
+                if (child instanceof ScrollTextPane) {
+                    ScrollTextPane scrollTextPane = (ScrollTextPane) child;
+                    File file = scrollTextPane.getFile();
+                    if (file != null) {
+                        addedFileTabbedIndex.put(file.getAbsolutePath(), scrollTextPane);
+                    }
+                }
+            }
+
+            @Override
+            public void componentRemoved(ContainerEvent e) {
+                Component child = e.getChild();
+                if (child instanceof ScrollTextPane) {
+                    ScrollTextPane scrollTextPane = (ScrollTextPane) child;
+                    File file = scrollTextPane.getFile();
+                    if (file != null) {
+                        addedFileTabbedIndex.remove(file.getAbsolutePath());
+                    }
+                }
+            }
+        });
     }
 
     /**
-     * 加载未保存的新建的文件窗格
-     *
-     * @return 加载的text pane数量
+     * 加载新创建的且未保存的文件
      */
-    public int loadUnSavedNewTextPane() {
-        int i = unsavedNewTextPane.load(this);
-        textPaneGenerator.setInitialCounter(i + 1);
-        return i;
+    public void loadUnSavedNewTextPane() {
+        int i = Framework.INSTANCE.getUnsavedCreatedNewlyFiles().load(this);
+        counter.set(i);
     }
 
     /**
      * 创建新的文本窗格
      */
     public void createTextPane() {
-        this.textPaneGenerator.generate(this);
+        int i = counter.getAndIncrement();
+        String filename = "new-" + i;
+
+        ScrollTextPane scrollTextPane = new ScrollTextPane(statusBar, this, filename);
+        addTab(filename, scrollTextPane, true);
+        setSelectedComponent(scrollTextPane);
     }
 
     /**
      * 添加新的tab
      *
-     * @param title              tab title
-     * @param scrollTextPane     文本窗格
-     * @param unsavedNewTextPane 未保存的且新建的文本窗格
+     * @param title          tab标题
+     * @param scrollTextPane 文本窗格
+     * @param ucnf           是否是新创建的且未保存的文件
      */
-    public void addTab(String title, ScrollTextPane scrollTextPane, boolean unsavedNewTextPane) {
-        if (unsavedNewTextPane) {
-            this.unsavedNewTextPane.addTextPanes(scrollTextPane);
+    public void addTab(String title, ScrollTextPane scrollTextPane, boolean ucnf) {
+        if (ucnf) {
+            Framework.INSTANCE.getUnsavedCreatedNewlyFiles().addTextPanes(scrollTextPane);
         }
         addTab(title, scrollTextPane);
     }
@@ -124,7 +159,7 @@ public class MainTabPane extends JTabbedPane {
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
             // remove from UnsavedNewFile
-            unsavedNewTextPane.removeTextPane(selectedScrollTextPane);
+            Framework.INSTANCE.getUnsavedCreatedNewlyFiles().removeTextPane(selectedScrollTextPane);
             return true;
         } else {
             return false;
@@ -143,7 +178,7 @@ public class MainTabPane extends JTabbedPane {
             ScrollTextPane scrollTextPane = (ScrollTextPane) component;
             if (scrollTextPane.closeTextPane()) {
                 removeTabAt(index);
-                unsavedNewTextPane.removeTextPane(scrollTextPane);
+                Framework.INSTANCE.getUnsavedCreatedNewlyFiles().removeTextPane(scrollTextPane);
                 return true;
             }
         } else {
@@ -198,56 +233,24 @@ public class MainTabPane extends JTabbedPane {
         statusBar.getTextFontSizeIndicator().refresh(stpFont);
     }
 
-
-    // -------------  file operation
-
-    /**
-     * 打开用户选择的文件
-     *
-     * @return true：打开成功，false：打开失败
-     */
-    public boolean openFile() {
-        int state = fileChooser.showOpenDialog(this);
-        if (state == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            openFile(file, false);
-            return true;
-        }
-        return false;
-    }
-
     /**
      * 打开指定的文件
      *
-     * @param filepath 文件路径
-     * @return true：打开成功，false：打开失败
+     * @param file 要打开的文件
+     * @param ucnf 是否是新创建的且未保存的文件
+     * @return true-打开成功、false-打开失败
      */
-    public boolean openFile(String filepath) {
-        File file = new File(filepath);
-        if (!file.exists()) {
-            return false;
-        }
-        openFile(file, false);
-        return true;
-    }
-
-    public void openUnsavedNewFile(File file) {
-        openFile(file, true);
-    }
-
-    private void openFile(File file, boolean unsavedNewTextPane) {
+    public boolean openFile(File file, boolean ucnf) {
         ScrollTextPane scrollTextPane = addedFileTabbedIndex.get(file.getAbsolutePath());
         if (scrollTextPane != null) {
             // 文件已打开，切换到文件所在的tab即可
             setSelectedComponent(scrollTextPane);
-            // for resort menu item
-            openRecentlyMenu.addOpenedFileRecently(file);
-            return;
+            return true;
         }
 
         String filename = file.getName();
-        if (unsavedNewTextPane) {
-            scrollTextPane = new ScrollTextPane(statusBar,this, filename);
+        if (ucnf) {
+            scrollTextPane = new ScrollTextPane(statusBar, this, filename);
             addTab(filename, scrollTextPane, true);
             scrollTextPane.setText(file, false);
         } else {
@@ -256,16 +259,16 @@ public class MainTabPane extends JTabbedPane {
                     && !selectedScrollTextPane.isModified()) {
                 // 当前tab是新打开的且未写入任何内容，将文件放入改tab下
                 selectedScrollTextPane.setText(file, true);
+                selectedScrollTextPane.setFile(file);
                 selectedScrollTextPane.updateTabbedTitle(filename);
             } else {
                 scrollTextPane = new ScrollTextPane(statusBar, this, file);
                 addTab(filename, scrollTextPane, false);
                 setSelectedComponent(scrollTextPane);
             }
-
-            // 添加最近打开列表中
-            openRecentlyMenu.addOpenedFileRecently(file);
         }
+
+        return true;
     }
 
     // ----------- getter setter
@@ -277,13 +280,6 @@ public class MainTabPane extends JTabbedPane {
         return selectedScrollTextPane;
     }
 
-    /**
-     * 返回使用的文件选择器
-     */
-    public JFileChooser getFileChooser() {
-        return fileChooser;
-    }
-
     public ActionCollection getActionCollection() {
         return actionCollection;
     }
@@ -293,71 +289,5 @@ public class MainTabPane extends JTabbedPane {
      */
     public Font getStpFont() {
         return stpFont;
-    }
-
-    public void setOpenRecentlyMenu(OpenRecentlyMenu openRecentlyMenu) {
-        this.openRecentlyMenu = openRecentlyMenu;
-    }
-
-    // ----------------- init
-    private void init() {
-        this.fileChooser = new JFileChooser();
-        this.fileChooser.addChoosableFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return !f.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Just Files";
-            }
-        });
-        this.addedFileTabbedIndex = new HashMap<>();
-        this.unsavedNewTextPane = new UnsavedNewTextPane();
-        this.textPaneGenerator = new DefaultTextPaneGenerator(statusBar);
-        this.actionCollection = new ActionCollection(this);
-        // set main pane font
-        setFont(new Font(null, Font.PLAIN, 16));
-        // record selected text pane with change listener
-        addChangeListener(e -> {
-            if (this.getTabCount() == 0) {
-                StatusBar.INSTANCE.hideStatusBar();
-            } else {
-                if (this.getTabCount() == 1) {
-                    StatusBar.INSTANCE.displayStatusBar();
-                }
-                selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
-                JTextArea textArea = selectedScrollTextPane.getTextArea();
-                statusBar.getTextLengthIndicator().refresh(textArea);
-                statusBar.getCaretStatusIndicator().refresh(textArea);
-            }
-        });
-        // 监听器，记录增加/移除的tab index
-        addContainerListener(new ContainerListener() {
-            @Override
-            public void componentAdded(ContainerEvent e) {
-                Component child = e.getChild();
-                if (child instanceof ScrollTextPane) {
-                    ScrollTextPane scrollTextPane = (ScrollTextPane) child;
-                    File file = scrollTextPane.getFile();
-                    if (file != null) {
-                        addedFileTabbedIndex.put(file.getAbsolutePath(), scrollTextPane);
-                    }
-                }
-            }
-
-            @Override
-            public void componentRemoved(ContainerEvent e) {
-                Component child = e.getChild();
-                if (child instanceof ScrollTextPane) {
-                    ScrollTextPane scrollTextPane = (ScrollTextPane) child;
-                    File file = scrollTextPane.getFile();
-                    if (file != null) {
-                        addedFileTabbedIndex.remove(file.getAbsolutePath());
-                    }
-                }
-            }
-        });
     }
 }

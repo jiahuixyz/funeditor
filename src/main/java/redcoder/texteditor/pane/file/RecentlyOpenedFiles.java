@@ -1,4 +1,4 @@
-package redcoder.texteditor.openrecently;
+package redcoder.texteditor.pane.file;
 
 import org.apache.commons.lang3.SystemUtils;
 import redcoder.texteditor.utils.FileUtils;
@@ -9,19 +9,46 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class OpenedFilesRecently {
+public class RecentlyOpenedFiles {
 
-    private static final String FILENAME = "ofr.rc";
-    private final Set<File> recentlyFiles = new HashSet<>();
+    private static final String FILENAME = "rof.rc";
+    private final List<File> recentlyFiles = new ArrayList<>();
     private final File target;
 
-    public OpenedFilesRecently() {
+    public RecentlyOpenedFiles() {
         target = new File(SystemUtils.getUserDir(), FILENAME);
+        init();
+    }
+
+    /**
+     * add the recently opened file
+     *
+     * @param file the recently opened file
+     */
+    public synchronized void addFile(File file) {
+        if (recentlyFiles.contains(file)) {
+            // exist, move it to the head
+            recentlyFiles.remove(file);
+            recentlyFiles.add(0, file);
+        } else {
+            // insert it to the head
+            recentlyFiles.add(0, file);
+        }
+    }
+
+    /**
+     * get all recently opened files.
+     */
+    public List<File> getRecentlyFile() {
+        return recentlyFiles;
+    }
+
+    private void init() {
+        loadRecentFilesFromLocal();
+
         ScheduledUtils.scheduleAtFixedRate(() -> {
             try {
                 if (!recentlyFiles.isEmpty()) {
@@ -36,24 +63,18 @@ public class OpenedFilesRecently {
         }, 1, 5, TimeUnit.MINUTES);
     }
 
-    public void addFile(File file) {
-        recentlyFiles.add(file);
-    }
-
-    public List<String> getRecentlyFile() {
-        List<String> list = new ArrayList<>();
+    private void loadRecentFilesFromLocal() {
         try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
-            String line = reader.readLine();
-            while (line != null) {
-                list.add(line);
-                line = reader.readLine();
+            String filepath = reader.readLine();
+            while (filepath != null) {
+                recentlyFiles.add(new File(filepath));
+                filepath = reader.readLine();
             }
         } catch (FileNotFoundException e) {
             // ignore
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
     }
 
     private String extract(List<File> files) {
