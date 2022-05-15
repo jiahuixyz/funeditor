@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * display line separator.
  */
-public class LineSeparatorIndicator extends JPanel {
+public class LineSeparatorIndicator extends JPanel implements Indicator{
 
     private static final String TEMPLATE_TEXT1 = "  Windows (CR LF)";
     private static final String TEMPLATE_TEXT2 = "  UNIX (LF)";
@@ -20,6 +20,16 @@ public class LineSeparatorIndicator extends JPanel {
         setBorder(StatusBarBorder.BORDER);
 
         init();
+    }
+
+    @Override
+    public void hidden() {
+        setVisible(false);
+    }
+
+    @Override
+    public void display() {
+        setVisible(true);
     }
 
     private void init() {

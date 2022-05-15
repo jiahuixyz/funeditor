@@ -1,5 +1,6 @@
 package redcoder.texteditor.pane;
 
+import redcoder.texteditor.pane.textpane.ScrollTextPane;
 import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;
@@ -37,15 +38,13 @@ public class MainTabPane extends JTabbedPane {
         // 添加监听器-记录选中的tab，更新底部状态信息
         addChangeListener(e -> {
             if (this.getTabCount() == 0) {
-                StatusBar.INSTANCE.hideStatusBar();
+                StatusBar.INSTANCE.hideIndicator();
             } else {
                 if (this.getTabCount() == 1) {
-                    StatusBar.INSTANCE.displayStatusBar();
+                    StatusBar.INSTANCE.displayIndicator();
                 }
                 selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
-                JTextArea textArea = selectedScrollTextPane.getTextArea();
-                statusBar.getTextLengthIndicator().refresh(textArea);
-                statusBar.getCaretStatusIndicator().refresh(textArea);
+                statusBar.onChange(selectedScrollTextPane);
             }
         });
         // 添加监听器-记录增加/移除的tab index
@@ -91,7 +90,8 @@ public class MainTabPane extends JTabbedPane {
         int i = counter.getAndIncrement();
         String filename = "new-" + i;
 
-        ScrollTextPane scrollTextPane = new ScrollTextPane(statusBar, this, filename);
+        ScrollTextPane scrollTextPane = new ScrollTextPane(this, filename);
+        scrollTextPane.addTextPaneChangeListener(statusBar);
         addTab(filename, scrollTextPane, true);
         setSelectedComponent(scrollTextPane);
     }
@@ -230,7 +230,6 @@ public class MainTabPane extends JTabbedPane {
                 scrollTextPane.setFont(stpFont);
             }
         }
-        statusBar.getTextFontSizeIndicator().refresh(stpFont);
     }
 
     /**
@@ -250,7 +249,8 @@ public class MainTabPane extends JTabbedPane {
 
         String filename = file.getName();
         if (ucnf) {
-            scrollTextPane = new ScrollTextPane(statusBar, this, filename);
+            scrollTextPane = new ScrollTextPane(this, filename);
+            scrollTextPane.addTextPaneChangeListener(statusBar);
             addTab(filename, scrollTextPane, true);
             scrollTextPane.setText(file, false);
         } else {
@@ -262,7 +262,8 @@ public class MainTabPane extends JTabbedPane {
                 selectedScrollTextPane.setFile(file);
                 selectedScrollTextPane.updateTabbedTitle(filename);
             } else {
-                scrollTextPane = new ScrollTextPane(statusBar, this, file);
+                scrollTextPane = new ScrollTextPane(this, file);
+                scrollTextPane.addTextPaneChangeListener(statusBar);
                 addTab(filename, scrollTextPane, false);
                 setSelectedComponent(scrollTextPane);
             }

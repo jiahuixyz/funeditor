@@ -2,6 +2,7 @@ package redcoder.texteditor.pane;
 
 import org.apache.commons.lang3.StringUtils;
 import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.pane.textpane.ScrollTextPane;
 import redcoder.texteditor.statusbar.StatusBar;
 
 import javax.swing.*;

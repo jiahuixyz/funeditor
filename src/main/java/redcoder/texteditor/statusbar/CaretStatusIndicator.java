@@ -1,10 +1,10 @@
 package redcoder.texteditor.statusbar;
 
+import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
 import redcoder.texteditor.utils.RowColumnUtils;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
@@ -12,7 +12,7 @@ import java.awt.*;
 /**
  * 根据插入符号的位置展示一些信息：位于第几行第几列，选中的几个字符。
  */
-public class CaretStatusIndicator extends JPanel implements CaretListener {
+public class CaretStatusIndicator extends JPanel implements Indicator, TextPaneChangeListener {
 
     private static final String TEMPLATE_TEXT1 = "  row %d, col %d";
     private static final String TEMPLATE_TEXT2 = "  row %d, col %d (%d selected)";
@@ -28,15 +28,18 @@ public class CaretStatusIndicator extends JPanel implements CaretListener {
     }
 
     @Override
-    public void caretUpdate(CaretEvent e) {
-        Object source = e.getSource();
-        if (source instanceof JTextComponent) {
-            JTextComponent textComponent = (JTextComponent) source;
-            refresh(textComponent, e.getDot(), e.getMark());
-        }
+    public void hidden() {
+        setVisible(false);
     }
 
-    public void refresh(JTextArea textArea) {
+    @Override
+    public void display() {
+        setVisible(true);
+    }
+
+    @Override
+    public void onChange(ScrollTextPane textPane) {
+        JTextArea textArea = textPane.getTextArea();
         Caret caret = textArea.getCaret();
         refresh(textArea, caret.getDot(), caret.getMark());
     }

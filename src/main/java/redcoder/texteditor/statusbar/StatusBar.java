@@ -1,20 +1,22 @@
 package redcoder.texteditor.statusbar;
 
+import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 编辑器底部状态栏
  */
-public class StatusBar extends JPanel {
+public class StatusBar extends JPanel implements TextPaneChangeListener {
 
     public static final StatusBar INSTANCE = new StatusBar();
     public static final int STATUS_BAR_HEIGHT = 30;
 
-    private TextLengthIndicator textLengthIndicator;
-    private CaretStatusIndicator caretStatusIndicator;
-    private LineSeparatorIndicator lineSeparatorIndicator;
-    private TextFontSizeIndicator textFontSizeIndicator;
+    private List<JComponent> indicators;
 
     public StatusBar() {
         super(new GridBagLayout());
@@ -23,10 +25,15 @@ public class StatusBar extends JPanel {
     }
 
     private void init() {
-        textLengthIndicator = new TextLengthIndicator();
-        caretStatusIndicator = new CaretStatusIndicator();
-        lineSeparatorIndicator = new LineSeparatorIndicator();
-        textFontSizeIndicator = new TextFontSizeIndicator();
+        indicators = new ArrayList<>();
+        TextLengthIndicator textLengthIndicator = new TextLengthIndicator();
+        CaretStatusIndicator caretStatusIndicator = new CaretStatusIndicator();
+        LineSeparatorIndicator lineSeparatorIndicator = new LineSeparatorIndicator();
+        TextFontSizeIndicator textFontSizeIndicator = new TextFontSizeIndicator();
+        indicators.add(textLengthIndicator);
+        indicators.add(caretStatusIndicator);
+        indicators.add(lineSeparatorIndicator);
+        indicators.add(textFontSizeIndicator);
 
         // left part
         Box leftBox = Box.createHorizontalBox();
@@ -47,38 +54,33 @@ public class StatusBar extends JPanel {
         add(leftBox, new GridBagConstraints(0, 0, 1, 1,
                 0.2, 1, GridBagConstraints.LINE_START, GridBagConstraints.NONE,
                 new Insets(0, 0, 0, 0), 0, 0));
-        add(rightBox,  new GridBagConstraints(1, 0, 1, 1,
+        add(rightBox, new GridBagConstraints(1, 0, 1, 1,
                 0.8, 1, GridBagConstraints.LINE_END, GridBagConstraints.NONE,
                 new Insets(0, 0, 0, 0), 0, 0));
     }
 
-    public void hideStatusBar() {
-        textLengthIndicator.setVisible(false);
-        caretStatusIndicator.setVisible(false);
-        lineSeparatorIndicator.setVisible(false);
-        textFontSizeIndicator.setVisible(false);
+    public void hideIndicator() {
+        for (JComponent indicator : indicators) {
+            if (indicator instanceof Indicator) {
+                ((Indicator) indicator).hidden();
+            }
+        }
     }
 
-    public void displayStatusBar() {
-        textLengthIndicator.setVisible(false);
-        caretStatusIndicator.setVisible(false);
-        lineSeparatorIndicator.setVisible(false);
-        textFontSizeIndicator.setVisible(false);
+    public void displayIndicator() {
+        for (JComponent indicator : indicators) {
+            if (indicator instanceof Indicator) {
+                ((Indicator) indicator).display();
+            }
+        }
     }
 
-    public TextLengthIndicator getTextLengthIndicator() {
-        return textLengthIndicator;
-    }
-
-    public CaretStatusIndicator getCaretStatusIndicator() {
-        return caretStatusIndicator;
-    }
-
-    public LineSeparatorIndicator getLineSeparatorIndicator() {
-        return lineSeparatorIndicator;
-    }
-
-    public TextFontSizeIndicator getTextFontSizeIndicator() {
-        return textFontSizeIndicator;
+    @Override
+    public void onChange(ScrollTextPane textPane) {
+        for (JComponent indicator : indicators) {
+            if (indicator instanceof TextPaneChangeListener) {
+                ((TextPaneChangeListener) indicator).onChange(textPane);
+            }
+        }
     }
 }

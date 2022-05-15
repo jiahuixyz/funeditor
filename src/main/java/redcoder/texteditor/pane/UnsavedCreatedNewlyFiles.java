@@ -1,6 +1,7 @@
 package redcoder.texteditor.pane;
 
 import org.apache.commons.lang3.SystemUtils;
+import redcoder.texteditor.pane.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
 
