@@ -38,10 +38,10 @@ public class MainTabPane extends JTabbedPane {
         // 添加监听器-记录选中的tab，更新底部状态信息
         addChangeListener(e -> {
             if (this.getTabCount() == 0) {
-                StatusBar.INSTANCE.hideIndicator();
+                statusBar.hideIndicator();
             } else {
                 if (this.getTabCount() == 1) {
-                    StatusBar.INSTANCE.displayIndicator();
+                    statusBar.displayIndicator();
                 }
                 selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
                 statusBar.onChange(selectedScrollTextPane);

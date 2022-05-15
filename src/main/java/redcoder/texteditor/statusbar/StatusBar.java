@@ -13,8 +13,7 @@ import java.util.List;
  */
 public class StatusBar extends JPanel implements TextPaneChangeListener {
 
-    public static final StatusBar INSTANCE = new StatusBar();
-    public static final int STATUS_BAR_HEIGHT = 30;
+    private static final int STATUS_BAR_HEIGHT = 30;
 
     private List<JComponent> indicators;
 
