@@ -21,6 +21,7 @@ public class StatusBar extends JPanel implements TextPaneChangeListener {
         super(new GridBagLayout());
         setPreferredSize(new Dimension(Short.MAX_VALUE, STATUS_BAR_HEIGHT));
         init();
+        hideIndicator();
     }
 
     private void init() {
