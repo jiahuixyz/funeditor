@@ -2,7 +2,7 @@ package redcoder.texteditor.core.tabpane;
 
 import redcoder.texteditor.action.*;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
+import redcoder.texteditor.core.font.FontChangeProcessor;
 import redcoder.texteditor.core.statusbar.StatusBar;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 
@@ -159,7 +159,7 @@ public class MainTabPane extends JTabbedPane {
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
             Framework.getUnsavedCreatedNewlyFiles().removeTextPane(selectedScrollTextPane);
-            FontZoomInZoomOutProcessor.removeListener(selectedScrollTextPane);
+            FontChangeProcessor.removeListener(selectedScrollTextPane);
             return true;
         } else {
             return false;
@@ -179,7 +179,7 @@ public class MainTabPane extends JTabbedPane {
             if (scrollTextPane.closeTextPane()) {
                 removeTabAt(index);
                 Framework.getUnsavedCreatedNewlyFiles().removeTextPane(scrollTextPane);
-                FontZoomInZoomOutProcessor.removeListener(scrollTextPane);
+                FontChangeProcessor.removeListener(scrollTextPane);
                 return true;
             }
         } else {

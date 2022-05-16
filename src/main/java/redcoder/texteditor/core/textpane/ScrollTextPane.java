@@ -6,9 +6,9 @@ import redcoder.texteditor.action.UndoAction;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileProcessor;
-import redcoder.texteditor.core.fontsize.FontSizeChangeEvent;
-import redcoder.texteditor.core.fontsize.FontSizeChangeListener;
-import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
+import redcoder.texteditor.core.font.FontChangeEvent;
+import redcoder.texteditor.core.font.FontChangeListener;
+import redcoder.texteditor.core.font.FontChangeProcessor;
 import redcoder.texteditor.core.linenumber.JTextAreaBasedLineNumberModel;
 import redcoder.texteditor.core.linenumber.LineNumberComponent;
 import redcoder.texteditor.core.linenumber.LineNumberModel;
@@ -34,7 +34,7 @@ import static redcoder.texteditor.action.ActionName.UNDO;
 /**
  * 支持滚动的文本窗格
  */
-public class ScrollTextPane extends JScrollPane implements FontSizeChangeListener {
+public class ScrollTextPane extends JScrollPane implements FontChangeListener {
 
     private static final Object[] CLOSE_OPTIONS = {"Save", "Don't Save", "Cancel"};
 
@@ -85,7 +85,7 @@ public class ScrollTextPane extends JScrollPane implements FontSizeChangeListene
             setText(file, true);
         }
 
-        FontZoomInZoomOutProcessor.addListener(this);
+        FontChangeProcessor.addListener(this);
     }
 
     /**
@@ -156,9 +156,8 @@ public class ScrollTextPane extends JScrollPane implements FontSizeChangeListene
     }
 
     @Override
-    public void onChange(FontSizeChangeEvent e) {
-        Font font = getFont();
-        Font newFont = new Font(font.getName(), font.getStyle(), e.getFontSize());
+    public void onChange(FontChangeEvent e) {
+        Font newFont = e.getNewFont();
         if (textArea != null) {
             textArea.setFont(newFont);
         }
@@ -243,7 +242,7 @@ public class ScrollTextPane extends JScrollPane implements FontSizeChangeListene
     }
 
     private void initTextArea(MainTabPane mainTabPane) {
-        textArea.setFont(FontZoomInZoomOutProcessor.getSharedFont());
+        textArea.setFont(FontChangeProcessor.getSharedFont());
         // 绑定快捷键
         addKeyBinding(Framework.getFrameworkShareKeyStrokes(), mainTabPane.getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏

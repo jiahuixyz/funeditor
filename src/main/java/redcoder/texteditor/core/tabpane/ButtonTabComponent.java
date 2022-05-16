@@ -1,7 +1,5 @@
 package redcoder.texteditor.core.tabpane;
 
-import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
-
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;

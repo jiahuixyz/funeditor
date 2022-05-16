@@ -1,6 +1,6 @@
 package redcoder.texteditor.core.linenumber;
 
-import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
+import redcoder.texteditor.core.font.FontChangeProcessor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +27,7 @@ public class LineNumberComponent extends JComponent {
 
     private int alignment = LEFT_ALIGNMENT;
     private LineNumberModel lineNumberModel;
-    private Font lineNumberFont = FontZoomInZoomOutProcessor.getSharedFont();
+    private Font lineNumberFont = FontChangeProcessor.getSharedFont();
 
 
     /**

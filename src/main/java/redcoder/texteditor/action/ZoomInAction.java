@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
+import redcoder.texteditor.core.font.FontChangeProcessor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,6 +16,6 @@ public class ZoomInAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        FontZoomInZoomOutProcessor.zoomIn(this);
+        FontChangeProcessor.zoomIn(this);
     }
 }
