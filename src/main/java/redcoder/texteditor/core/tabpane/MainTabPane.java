@@ -69,6 +69,10 @@ public class MainTabPane extends JTabbedPane {
                         addedFileTabbedIndex.remove(file.getAbsolutePath());
                     }
                 }
+
+                if (getTabCount() == 0) {
+                    selectedScrollTextPane = null;
+                }
             }
         });
 
@@ -128,6 +132,9 @@ public class MainTabPane extends JTabbedPane {
      * @return true-保存成功，false-保存失败
      */
     public boolean saveSelectedTab() {
+        if (selectedScrollTextPane == null) {
+            return false;
+        }
         return selectedScrollTextPane.saveTextPane();
     }
 
@@ -156,6 +163,10 @@ public class MainTabPane extends JTabbedPane {
      * @return true：关闭成功，false：关闭失败
      */
     public boolean closeSelectedTab() {
+        if (selectedScrollTextPane == null) {
+            return false;
+        }
+
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
             UnsavedCreatedNewlyFiles.removeTextPane(selectedScrollTextPane);
