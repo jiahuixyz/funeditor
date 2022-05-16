@@ -20,6 +20,6 @@ public class OpenRecentlyAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Framework.INSTANCE.getFileProcessor().openFile(mainTabPane, file, false);
+        Framework.getFileProcessor().openFile(mainTabPane, file, false);
     }
 }

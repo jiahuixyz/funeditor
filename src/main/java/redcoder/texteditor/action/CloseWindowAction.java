@@ -13,6 +13,6 @@ public class CloseWindowAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Framework.INSTANCE.closeWindow();
+        Framework.closeWindow();
     }
 }

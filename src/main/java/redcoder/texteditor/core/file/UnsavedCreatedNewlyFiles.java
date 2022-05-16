@@ -68,7 +68,7 @@ public class UnsavedCreatedNewlyFiles {
             return 0;
         }
         for (File file : files) {
-            Framework.INSTANCE.getFileProcessor().openFile(mainTabPane, file, true);
+            Framework.getFileProcessor().openFile(mainTabPane, file, true);
         }
         return files.length;
     }

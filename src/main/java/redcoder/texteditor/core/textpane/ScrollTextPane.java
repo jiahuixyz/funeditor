@@ -198,7 +198,7 @@ public class ScrollTextPane extends JScrollPane {
      * @return true-保存成功，false-保存失败
      */
     public boolean saveTextPane() {
-        FileProcessor fileProcessor = Framework.INSTANCE.getFileProcessor();
+        FileProcessor fileProcessor = Framework.getFileProcessor();
         boolean saved = fileProcessor.saveTextPaneToFile(this);
         if (saved) {
             modified = false;

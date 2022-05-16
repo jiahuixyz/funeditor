@@ -22,7 +22,7 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
 
         initMenuItem();
         setFont(EditorFrame.MENU_ITEM_DEFAULT_FONT);
-        Framework.INSTANCE.getFileProcessor().addFileOpenListener(this);
+        Framework.getFileProcessor().addFileOpenListener(this);
     }
 
     @Override
@@ -34,14 +34,14 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
     }
 
     private void initMenuItem() {
-        RecentlyOpenedFiles rof = Framework.INSTANCE.getRecentlyOpenedFiles();
+        RecentlyOpenedFiles rof = Framework.getRecentlyOpenedFiles();
         for (File file : rof.getRecentlyFile()) {
             add(new OpenRecentlyAction(mainTabPane, file));
         }
     }
 
     private void addOpenedFileRecently(File file) {
-        RecentlyOpenedFiles rof = Framework.INSTANCE.getRecentlyOpenedFiles();
+        RecentlyOpenedFiles rof = Framework.getRecentlyOpenedFiles();
         rof.addFile(file);
 
         // if menuitem exist, move it to first

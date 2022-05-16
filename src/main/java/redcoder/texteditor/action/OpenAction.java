@@ -18,7 +18,7 @@ public class OpenAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            Framework.INSTANCE.getFileProcessor().openFile(mainTabPane);
+            Framework.getFileProcessor().openFile(mainTabPane);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

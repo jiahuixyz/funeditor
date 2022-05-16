@@ -1,6 +1,8 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.action.ThemeAction;
+import redcoder.texteditor.theme.Theme;
 import redcoder.texteditor.core.menu.OpenRecentlyMenu;
 import redcoder.texteditor.core.statusbar.StatusBar;
 import redcoder.texteditor.core.tabpane.MainTabPane;
@@ -60,13 +62,13 @@ public class EditorFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Framework.INSTANCE.closeWindow();
+                Framework.closeWindow();
             }
         });
     }
 
     public boolean shouldClose() {
-        if (Framework.INSTANCE.getNumWindows() > 1) {
+        if (Framework.getNumWindows() > 1) {
             List<ScrollTextPane> list = getModifiedTextPane();
             if (!list.isEmpty()) {
                 String message = String.format("Do you want to save the changes to the following %d files?", list.size());
@@ -124,12 +126,15 @@ public class EditorFrame extends JFrame {
         JMenu editMenu = createEditMenu(keyStrokes, actions);
         // create 'View' menu
         JMenu viewMenu = createViewMenu(keyStrokes, actions);
+        // create 'Theme' menu
+        JMenu themeMenu = createThemeMenu();
 
         // set menu bar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
+        menuBar.add(themeMenu);
         setJMenuBar(menuBar);
     }
 
@@ -198,6 +203,13 @@ public class EditorFrame extends JFrame {
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(LINE_WRAP), actions.get(LINE_WRAP));
 
+        return menu;
+    }
+
+    private JMenu createThemeMenu() {
+        JMenu menu = new JMenu("Theme");
+        menu.setFont(MENU_DEFAULT_FONT);
+        addMenuItem(menu, new ThemeAction(Theme.JAVA_METAL), new ThemeAction(Theme.FOLLOW_SYSTEM));
         return menu;
     }
 

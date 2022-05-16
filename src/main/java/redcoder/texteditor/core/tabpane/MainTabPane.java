@@ -81,7 +81,7 @@ public class MainTabPane extends JTabbedPane {
      * 加载新创建的且未保存的文件
      */
     public void loadUnSavedNewTextPane() {
-        int i = Framework.INSTANCE.getUnsavedCreatedNewlyFiles().load(this);
+        int i = Framework.getUnsavedCreatedNewlyFiles().load(this);
         counter.set(i);
     }
 
@@ -107,7 +107,7 @@ public class MainTabPane extends JTabbedPane {
      */
     public void addTab(String title, ScrollTextPane scrollTextPane, boolean ucnf) {
         if (ucnf) {
-            Framework.INSTANCE.getUnsavedCreatedNewlyFiles().addTextPanes(scrollTextPane);
+            Framework.getUnsavedCreatedNewlyFiles().addTextPanes(scrollTextPane);
         }
         addTab(title, scrollTextPane);
     }
@@ -161,7 +161,7 @@ public class MainTabPane extends JTabbedPane {
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
             // remove from UnsavedNewFile
-            Framework.INSTANCE.getUnsavedCreatedNewlyFiles().removeTextPane(selectedScrollTextPane);
+            Framework.getUnsavedCreatedNewlyFiles().removeTextPane(selectedScrollTextPane);
             return true;
         } else {
             return false;
@@ -180,7 +180,7 @@ public class MainTabPane extends JTabbedPane {
             ScrollTextPane scrollTextPane = (ScrollTextPane) component;
             if (scrollTextPane.closeTextPane()) {
                 removeTabAt(index);
-                Framework.INSTANCE.getUnsavedCreatedNewlyFiles().removeTextPane(scrollTextPane);
+                Framework.getUnsavedCreatedNewlyFiles().removeTextPane(scrollTextPane);
                 return true;
             }
         } else {
