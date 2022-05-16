@@ -1,5 +1,7 @@
 package redcoder.texteditor.core.tabpane;
 
+import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
@@ -22,7 +24,7 @@ public class ButtonTabComponent extends JPanel {
         setOpaque(false);
 
         label = new JLabel(title);
-        label.setFont(MainTabPane.DEFAULT_FONT);
+        label.setFont(new Font(null, Font.PLAIN, 20));
         add(label);
         //  add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));

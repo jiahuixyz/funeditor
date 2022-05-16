@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -10,16 +10,14 @@ import java.awt.event.ActionEvent;
  */
 public class ZoomOutAction extends AbstractAction {
 
-    private MainTabPane mainTabPane;
 
-    public ZoomOutAction(MainTabPane mainTabPane) {
+    public ZoomOutAction() {
         super("Zoom Out");
-        this.mainTabPane = mainTabPane;
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainTabPane.zoomOutFont();
+        FontZoomInZoomOutProcessor.zoomOut(this);
     }
 }

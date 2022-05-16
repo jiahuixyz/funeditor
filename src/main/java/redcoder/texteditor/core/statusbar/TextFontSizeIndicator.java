@@ -1,6 +1,6 @@
 package redcoder.texteditor.core.statusbar;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.core.textpane.TextPaneChangeEvent;
 import redcoder.texteditor.core.textpane.TextPaneChangeListener;
@@ -21,7 +21,7 @@ public class TextFontSizeIndicator extends JPanel implements Indicator, TextPane
         setBorder(StatusBarBorder.BORDER);
 
         add(label);
-        updateLabel(MainTabPane.DEFAULT_FONT);
+        updateLabel(FontZoomInZoomOutProcessor.getSharedFont());
     }
 
     @Override

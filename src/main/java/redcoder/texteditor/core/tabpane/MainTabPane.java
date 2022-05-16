@@ -1,9 +1,10 @@
 package redcoder.texteditor.core.tabpane;
 
-import redcoder.texteditor.action.ActionCollection;
+import redcoder.texteditor.action.*;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
 import redcoder.texteditor.core.statusbar.StatusBar;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,29 +15,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static redcoder.texteditor.action.ActionName.*;
+
 /**
  * 编辑器主窗格，支持多tab
  */
 public class MainTabPane extends JTabbedPane {
 
-    public static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 20);
-
-    private static final int FONT_SIZE_MINIMUM = 10;
-    private static final int FONT_SIZE_MAXIMUM = 100;
-
     private final AtomicInteger counter = new AtomicInteger(0);
     private final StatusBar statusBar;
-    private final ActionCollection actionCollection;
     private final Map<String, ScrollTextPane> addedFileTabbedIndex;
     private ScrollTextPane selectedScrollTextPane;
-    private Font stpFont = DEFAULT_FONT; // font used by ScrollTextPane's all instance
+    private Map<ActionName, Action> actions;
 
     public MainTabPane(StatusBar statusBar) {
         this.statusBar = statusBar;
         this.addedFileTabbedIndex = new HashMap<>();
-        this.actionCollection = new ActionCollection(this);
 
-        setFont(new Font(null, Font.PLAIN, 16));
+        setFont(new Font(null, Font.PLAIN, 20));
         // 添加监听器-记录选中的tab，更新底部状态信息
         addChangeListener(e -> {
             if (this.getTabCount() == 0) {
@@ -75,6 +71,8 @@ public class MainTabPane extends JTabbedPane {
                 }
             }
         });
+
+        initActions();
     }
 
     /**
@@ -160,8 +158,8 @@ public class MainTabPane extends JTabbedPane {
     public boolean closeSelectedTab() {
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
-            // remove from UnsavedNewFile
             Framework.getUnsavedCreatedNewlyFiles().removeTextPane(selectedScrollTextPane);
+            FontZoomInZoomOutProcessor.removeListener(selectedScrollTextPane);
             return true;
         } else {
             return false;
@@ -181,6 +179,7 @@ public class MainTabPane extends JTabbedPane {
             if (scrollTextPane.closeTextPane()) {
                 removeTabAt(index);
                 Framework.getUnsavedCreatedNewlyFiles().removeTextPane(scrollTextPane);
+                FontZoomInZoomOutProcessor.removeListener(scrollTextPane);
                 return true;
             }
         } else {
@@ -203,35 +202,6 @@ public class MainTabPane extends JTabbedPane {
             closeTab(i);
         }
         return true;
-    }
-
-    // ------------ font operation
-
-    /**
-     * 放大字体（当前仅放大编辑窗口内的文本字体）
-     */
-    public void zoomInFont() {
-        int newSize = Math.min(stpFont.getSize() + 2, FONT_SIZE_MAXIMUM);
-        stpFont = new Font(stpFont.getName(), stpFont.getStyle(), newSize);
-        setChildComponentFont();
-    }
-
-    /**
-     * 缩小字体（当前仅缩小编辑窗口内的文本字体）
-     */
-    public void zoomOutFont() {
-        int newSize = Math.max(stpFont.getSize() - 2, FONT_SIZE_MINIMUM);
-        stpFont = new Font(stpFont.getName(), stpFont.getStyle(), newSize);
-        setChildComponentFont();
-    }
-
-    private void setChildComponentFont() {
-        for (Component component : getComponents()) {
-            if (component instanceof ScrollTextPane) {
-                ScrollTextPane scrollTextPane = (ScrollTextPane) component;
-                scrollTextPane.setFont(stpFont);
-            }
-        }
     }
 
     /**
@@ -283,14 +253,20 @@ public class MainTabPane extends JTabbedPane {
         return selectedScrollTextPane;
     }
 
-    public ActionCollection getActionCollection() {
-        return actionCollection;
+    public Map<ActionName, Action> getActions() {
+        return actions;
     }
 
-    /**
-     * 返回所有tab下的文本窗共享的字体
-     */
-    public Font getStpFont() {
-        return stpFont;
+    private void initActions() {
+        actions = new HashMap<>();
+        actions.put(UNDO, new UndoActionWrapper(this));
+        actions.put(REDO, new RedoActionWrapper(this));
+        actions.put(NEW_FILE, new NewAction(this));
+        actions.put(OPEN_FILE, new OpenAction(this));
+        actions.put(SAVE_FILE, new SaveAction(this));
+        actions.put(SAVE_ALL, new SaveAllAction(this));
+        actions.put(CLOSE, new CloseAction(this));
+        actions.put(CLOSE_ALL, new CloseAllAction(this));
+        actions.put(LINE_WRAP, new LineWrapAction(this));
     }
 }

@@ -2,11 +2,11 @@ package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.ThemeAction;
-import redcoder.texteditor.theme.Theme;
 import redcoder.texteditor.core.menu.OpenRecentlyMenu;
 import redcoder.texteditor.core.statusbar.StatusBar;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.theme.Theme;
 import redcoder.texteditor.utils.StringUtils;
 
 import javax.swing.*;
@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,15 +43,22 @@ public class EditorFrame extends JFrame {
         // 创建文本主面板
         mainTabPane = new MainTabPane(statusBar);
 
+        Map<ActionName, KeyStroke> keyStrokes = Framework.getFrameworkShareKeyStrokes();
+        Map<ActionName, Action> mergedAction = new HashMap<>();
+        mergedAction.putAll(Framework.getFrameworkSharedAction());
+        mergedAction.putAll(mainTabPane.getActions());
+
         // 添加菜单
-        addMenu();
+        addMenu(keyStrokes, mergedAction);
+
         // 添加主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(mainTabPane, BorderLayout.CENTER);
         rootPane.add(statusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
+
         // add key bindings
-        addDefaultKeyBinding(rootPane);
+        addKeyBinding(rootPane, keyStrokes, mergedAction);
 
         // 加载未保存的新建文件
         mainTabPane.loadUnSavedNewTextPane();
@@ -116,16 +124,14 @@ public class EditorFrame extends JFrame {
     }
 
     // ---------- 创建菜单
-    private void addMenu() {
-        Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getActionCollection().getKeyStrokes();
-        Map<ActionName, Action> actions = mainTabPane.getActionCollection().getActions();
-
+    private void addMenu(Map<ActionName, KeyStroke> keyStrokes,
+                         Map<ActionName, Action> mergedAction) {
         // create 'File' menu
-        JMenu fileMenu = createFileMenu(keyStrokes, actions);
+        JMenu fileMenu = createFileMenu(keyStrokes, mergedAction);
         // create 'Edit' menu
-        JMenu editMenu = createEditMenu(keyStrokes, actions);
+        JMenu editMenu = createEditMenu(keyStrokes, mergedAction);
         // create 'View' menu
-        JMenu viewMenu = createViewMenu(keyStrokes, actions);
+        JMenu viewMenu = createViewMenu(keyStrokes, mergedAction);
         // create 'Theme' menu
         JMenu themeMenu = createThemeMenu();
 
@@ -138,70 +144,73 @@ public class EditorFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
+    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes,
+                                 Map<ActionName, Action> mergedAction) {
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
         // new file
-        addMenuItem(menu, keyStrokes.get(NEW_FILE), actions.get(NEW_FILE));
+        addMenuItem(menu, keyStrokes.get(NEW_FILE), mergedAction.get(NEW_FILE));
 
         // open file
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(OPEN_FILE), actions.get(OPEN_FILE));
+        addMenuItem(menu, keyStrokes.get(OPEN_FILE), mergedAction.get(OPEN_FILE));
         // open recently
         OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainTabPane);
         menu.add(recentlyMenu);
 
         // save & save all
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(SAVE_FILE), actions.get(SAVE_FILE),
-                keyStrokes.get(SAVE_ALL), actions.get(SAVE_ALL));
+        addMenuItem(menu, keyStrokes.get(SAVE_FILE), mergedAction.get(SAVE_FILE),
+                keyStrokes.get(SAVE_ALL), mergedAction.get(SAVE_ALL));
 
         // close & close all
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(CLOSE), actions.get(CLOSE),
-                keyStrokes.get(CLOSE_ALL), actions.get(CLOSE_ALL));
+        addMenuItem(menu, keyStrokes.get(CLOSE), mergedAction.get(CLOSE),
+                keyStrokes.get(CLOSE_ALL), mergedAction.get(CLOSE_ALL));
 
         // new window & close window
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(NEW_WINDOW), actions.get(NEW_WINDOW),
-                keyStrokes.get(CLOSE_WINDOW), actions.get(CLOSE_WINDOW));
+        addMenuItem(menu, keyStrokes.get(NEW_WINDOW), mergedAction.get(NEW_WINDOW),
+                keyStrokes.get(CLOSE_WINDOW), mergedAction.get(CLOSE_WINDOW));
 
         // exit
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(EXIT), actions.get(EXIT));
+        addMenuItem(menu, keyStrokes.get(EXIT), mergedAction.get(EXIT));
 
         return menu;
     }
 
-    private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
+    private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes,
+                                 Map<ActionName, Action> mergedAction) {
         JMenu menu = new JMenu("Edit");
         menu.setFont(MENU_DEFAULT_FONT);
 
         // undo & redo
-        addMenuItem(menu, keyStrokes.get(UNDO), actions.get(UNDO),
-                keyStrokes.get(REDO), actions.get(REDO));
+        addMenuItem(menu, keyStrokes.get(UNDO), mergedAction.get(UNDO),
+                keyStrokes.get(REDO), mergedAction.get(REDO));
 
         // cut, copy, paste
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(CUT), actions.get(CUT),
-                keyStrokes.get(COPY), actions.get(COPY),
-                keyStrokes.get(PASTE), actions.get(PASTE));
+        addMenuItem(menu, keyStrokes.get(CUT), mergedAction.get(CUT),
+                keyStrokes.get(COPY), mergedAction.get(COPY),
+                keyStrokes.get(PASTE), mergedAction.get(PASTE));
 
         return menu;
     }
 
-    private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes, Map<ActionName, Action> actions) {
+    private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes,
+                                 Map<ActionName, Action> mergedAction) {
         JMenu menu = new JMenu("View");
         menu.setFont(MENU_DEFAULT_FONT);
 
-        // zoom in
-        addMenuItem(menu, keyStrokes.get(ZOOM_IN), actions.get(ZOOM_IN),
-                keyStrokes.get(ZOOM_OUT), actions.get(ZOOM_OUT));
+        // zoom in & zoom out
+        addMenuItem(menu, keyStrokes.get(ZOOM_IN), mergedAction.get(ZOOM_IN),
+                keyStrokes.get(ZOOM_OUT), mergedAction.get(ZOOM_OUT));
 
-        // zoom out
+        // line wrap
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(LINE_WRAP), actions.get(LINE_WRAP));
+        addMenuItem(menu, keyStrokes.get(LINE_WRAP), mergedAction.get(LINE_WRAP));
 
         return menu;
     }
@@ -231,13 +240,12 @@ public class EditorFrame extends JFrame {
         }
     }
 
-    private void addDefaultKeyBinding(JPanel rootPane) {
-        Map<ActionName, KeyStroke> keyStrokes = mainTabPane.getActionCollection().getKeyStrokes();
-        Map<ActionName, Action> actions = mainTabPane.getActionCollection().getActions();
-
+    private void addKeyBinding(JPanel rootPane,
+                               Map<ActionName, KeyStroke> keyStrokes,
+                               Map<ActionName, Action> mergedAction) {
         // register action
         ActionMap actionMap = rootPane.getActionMap();
-        for (Map.Entry<ActionName, Action> entry : actions.entrySet()) {
+        for (Map.Entry<ActionName, Action> entry : mergedAction.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
         // add key binding

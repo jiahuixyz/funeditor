@@ -3,14 +3,17 @@ package redcoder.texteditor.core.textpane;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
-import redcoder.texteditor.core.tabpane.ButtonTabComponent;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.file.FileProcessor;
+import redcoder.texteditor.core.fontsize.FontSizeChangeEvent;
+import redcoder.texteditor.core.fontsize.FontSizeChangeListener;
+import redcoder.texteditor.core.fontsize.FontZoomInZoomOutProcessor;
 import redcoder.texteditor.core.linenumber.JTextAreaBasedLineNumberModel;
 import redcoder.texteditor.core.linenumber.LineNumberComponent;
 import redcoder.texteditor.core.linenumber.LineNumberModel;
+import redcoder.texteditor.core.tabpane.ButtonTabComponent;
+import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -31,7 +34,7 @@ import static redcoder.texteditor.action.ActionName.UNDO;
 /**
  * 支持滚动的文本窗格
  */
-public class ScrollTextPane extends JScrollPane {
+public class ScrollTextPane extends JScrollPane implements FontSizeChangeListener {
 
     private static final Object[] CLOSE_OPTIONS = {"Save", "Don't Save", "Cancel"};
 
@@ -81,6 +84,8 @@ public class ScrollTextPane extends JScrollPane {
         if (file != null) {
             setText(file, true);
         }
+
+        FontZoomInZoomOutProcessor.addListener(this);
     }
 
     /**
@@ -90,10 +95,7 @@ public class ScrollTextPane extends JScrollPane {
         this.listenerList.add(listener);
     }
 
-    /**
-     * 通知文本窗格变化监听器
-     */
-    private void noticeTextPaneChangeListener() {
+    private void fireTextPaneChangeEvent() {
         if (listenerList != null) {
             for (TextPaneChangeListener textPaneChangeListener : listenerList) {
                 textPaneChangeListener.onChange(new TextPaneChangeEvent(this));
@@ -105,7 +107,7 @@ public class ScrollTextPane extends JScrollPane {
      * 当切换到某个tab是，{@link MainTabPane}会调用该方法，通知被选中的tab下的文本窗格。
      */
     public void touch() {
-        noticeTextPaneChangeListener();
+        fireTextPaneChangeEvent();
     }
 
     /**
@@ -136,20 +138,9 @@ public class ScrollTextPane extends JScrollPane {
         modifyAware = true;
     }
 
-    @Override
-    public void setFont(Font font) {
-        super.setFont(font);
-
-        if (textArea != null) {
-            textArea.setFont(font);
-        }
-        if (lineNumberComponent != null) {
-            lineNumberComponent.setLineNumberFont(font);
-        }
-
-        noticeTextPaneChangeListener();
-    }
-
+    /**
+     * 开启/关闭自动换行
+     */
     public void lineWrapSwitch() {
         if (textArea.getLineWrap()) {
             textArea.setLineWrap(false);
@@ -164,8 +155,21 @@ public class ScrollTextPane extends JScrollPane {
         buttonTabComponent.updateTabbedTitle(newTitle);
     }
 
-    // ---------- getter, setter
+    @Override
+    public void onChange(FontSizeChangeEvent e) {
+        Font font = getFont();
+        Font newFont = new Font(font.getName(), font.getStyle(), e.getFontSize());
+        if (textArea != null) {
+            textArea.setFont(newFont);
+        }
+        if (lineNumberComponent != null) {
+            lineNumberComponent.setLineNumberFont(newFont);
+        }
 
+        fireTextPaneChangeEvent();
+    }
+
+    // ---------- getter, setter
     public JTextArea getTextArea() {
         return textArea;
     }
@@ -239,11 +243,11 @@ public class ScrollTextPane extends JScrollPane {
     }
 
     private void initTextArea(MainTabPane mainTabPane) {
-        textArea.setFont(mainTabPane.getStpFont());
+        textArea.setFont(FontZoomInZoomOutProcessor.getSharedFont());
         // 绑定快捷键
-        addKeyBinding(mainTabPane.getActionCollection().getKeyStrokes(), mainTabPane.getActionCollection().getActions(), textArea);
+        addKeyBinding(Framework.getFrameworkShareKeyStrokes(), mainTabPane.getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏
-        textArea.addCaretListener(e -> noticeTextPaneChangeListener());
+        textArea.addCaretListener(e -> fireTextPaneChangeEvent());
 
         // 添加几个文档监听器
         Document doc = this.textArea.getDocument();
@@ -299,27 +303,27 @@ public class ScrollTextPane extends JScrollPane {
         doc.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                noticeTextPaneChangeListener();
+                fireTextPaneChangeEvent();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                noticeTextPaneChangeListener();
+                fireTextPaneChangeEvent();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                noticeTextPaneChangeListener();
+                fireTextPaneChangeEvent();
             }
 
         });
     }
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,
-                               Map<ActionName, Action> actions,
+                               Map<ActionName, Action> textPaneSharedAction,
                                JTextArea textPane) {
         ActionMap actionMap = textPane.getActionMap();
-        for (Map.Entry<ActionName, Action> entry : actions.entrySet()) {
+        for (Map.Entry<ActionName, Action> entry : textPaneSharedAction.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
 
