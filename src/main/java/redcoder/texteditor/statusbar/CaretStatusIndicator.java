@@ -1,6 +1,7 @@
 package redcoder.texteditor.statusbar;
 
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.pane.textpane.TextPaneChangeEvent;
 import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
 import redcoder.texteditor.utils.RowColumnUtils;
 
@@ -38,10 +39,14 @@ public class CaretStatusIndicator extends JPanel implements Indicator, TextPaneC
     }
 
     @Override
-    public void onChange(ScrollTextPane textPane) {
-        JTextArea textArea = textPane.getTextArea();
-        Caret caret = textArea.getCaret();
-        refresh(textArea, caret.getDot(), caret.getMark());
+    public void onChange(TextPaneChangeEvent e) {
+        Object source = e.getSource();
+        if (source instanceof ScrollTextPane) {
+            ScrollTextPane textPane = (ScrollTextPane) source;
+            JTextArea textArea = textPane.getTextArea();
+            Caret caret = textArea.getCaret();
+            refresh(textArea, caret.getDot(), caret.getMark());
+        }
     }
 
     private void refresh(JTextComponent textComponent, int dot, int mark) {

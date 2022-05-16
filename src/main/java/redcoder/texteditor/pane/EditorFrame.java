@@ -2,6 +2,7 @@ package redcoder.texteditor.pane;
 
 import org.apache.commons.lang3.StringUtils;
 import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
 import redcoder.texteditor.statusbar.StatusBar;
 
@@ -54,6 +55,7 @@ public class EditorFrame extends JFrame {
         setMinimumSize(new Dimension(700, 432));
         setSize(900, 600);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setLocationRelativeTo(null);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

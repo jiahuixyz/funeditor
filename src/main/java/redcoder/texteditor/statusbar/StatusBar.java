@@ -1,6 +1,7 @@
 package redcoder.texteditor.statusbar;
 
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.pane.textpane.TextPaneChangeEvent;
 import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
 
 import javax.swing.*;
@@ -76,10 +77,10 @@ public class StatusBar extends JPanel implements TextPaneChangeListener {
     }
 
     @Override
-    public void onChange(ScrollTextPane textPane) {
+    public void onChange(TextPaneChangeEvent e) {
         for (JComponent indicator : indicators) {
             if (indicator instanceof TextPaneChangeListener) {
-                ((TextPaneChangeListener) indicator).onChange(textPane);
+                ((TextPaneChangeListener) indicator).onChange(e);
             }
         }
     }

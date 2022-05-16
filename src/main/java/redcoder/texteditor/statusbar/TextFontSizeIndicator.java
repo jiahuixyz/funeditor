@@ -1,7 +1,8 @@
 package redcoder.texteditor.statusbar;
 
-import redcoder.texteditor.pane.MainTabPane;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.pane.textpane.TextPaneChangeEvent;
 import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.awt.*;
 /**
  * 显示文本字符大小
  */
-public class TextFontSizeIndicator extends JPanel implements Indicator,TextPaneChangeListener {
+public class TextFontSizeIndicator extends JPanel implements Indicator, TextPaneChangeListener {
 
     private static final String TEMPLATE_TEXT = "  Font Size: %s";
     private final JLabel label = new JLabel("  UTF-8");
@@ -34,9 +35,13 @@ public class TextFontSizeIndicator extends JPanel implements Indicator,TextPaneC
     }
 
     @Override
-    public void onChange(ScrollTextPane textPane) {
-        JTextArea textArea = textPane.getTextArea();
-        updateLabel(textArea.getFont());
+    public void onChange(TextPaneChangeEvent e) {
+        Object source = e.getSource();
+        if (source instanceof ScrollTextPane) {
+            ScrollTextPane textPane = (ScrollTextPane) source;
+            JTextArea textArea = textPane.getTextArea();
+            updateLabel(textArea.getFont());
+        }
     }
 
     private void updateLabel(Font font) {

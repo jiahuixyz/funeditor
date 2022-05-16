@@ -1,8 +1,10 @@
 package redcoder.texteditor.pane;
 
 import redcoder.texteditor.action.OpenRecentlyAction;
+import redcoder.texteditor.pane.file.FileOpenEvent;
 import redcoder.texteditor.pane.file.FileOpenListener;
 import redcoder.texteditor.pane.file.RecentlyOpenedFiles;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 
 import javax.swing.*;
 import java.io.File;

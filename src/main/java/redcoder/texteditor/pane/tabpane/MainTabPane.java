@@ -1,5 +1,7 @@
-package redcoder.texteditor.pane;
+package redcoder.texteditor.pane.tabpane;
 
+import redcoder.texteditor.pane.ActionCollection;
+import redcoder.texteditor.pane.Framework;
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
 import redcoder.texteditor.statusbar.StatusBar;
 
@@ -44,7 +46,7 @@ public class MainTabPane extends JTabbedPane {
                     statusBar.displayIndicator();
                 }
                 selectedScrollTextPane = (ScrollTextPane) getSelectedComponent();
-                statusBar.onChange(selectedScrollTextPane);
+                selectedScrollTextPane.touch();
             }
         });
         // 添加监听器-记录增加/移除的tab index

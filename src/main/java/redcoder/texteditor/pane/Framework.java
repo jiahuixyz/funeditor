@@ -3,6 +3,7 @@ package redcoder.texteditor.pane;
 import redcoder.texteditor.pane.file.DefaultFileProcessor;
 import redcoder.texteditor.pane.file.FileProcessor;
 import redcoder.texteditor.pane.file.RecentlyOpenedFiles;
+import redcoder.texteditor.pane.file.UnsavedCreatedNewlyFiles;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;

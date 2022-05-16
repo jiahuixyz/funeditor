@@ -6,9 +6,9 @@ package redcoder.texteditor.pane.textpane;
 public interface TextPaneChangeListener {
 
     /**
-     * 响应文本窗格的变化
+     * 处理文本窗格的变化事件
      *
-     * @param textPane 变化的文本窗格
+     * @param e 文本窗格变化事件
      */
-    void onChange(ScrollTextPane textPane);
+    void onChange(TextPaneChangeEvent e);
 }

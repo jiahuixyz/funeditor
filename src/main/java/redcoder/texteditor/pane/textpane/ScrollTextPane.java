@@ -3,10 +3,10 @@ package redcoder.texteditor.pane.textpane;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
-import redcoder.texteditor.pane.ButtonTabComponent;
+import redcoder.texteditor.pane.tabpane.ButtonTabComponent;
 import redcoder.texteditor.pane.EditorFrame;
 import redcoder.texteditor.pane.Framework;
-import redcoder.texteditor.pane.MainTabPane;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 import redcoder.texteditor.pane.file.FileProcessor;
 import redcoder.texteditor.pane.linenumber.JTextAreaBasedLineNumberModel;
 import redcoder.texteditor.pane.linenumber.LineNumberComponent;
@@ -22,8 +22,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import static redcoder.texteditor.action.ActionName.REDO;
 import static redcoder.texteditor.action.ActionName.UNDO;
@@ -96,9 +96,16 @@ public class ScrollTextPane extends JScrollPane {
     private void noticeTextPaneChangeListener() {
         if (listenerList != null) {
             for (TextPaneChangeListener textPaneChangeListener : listenerList) {
-                textPaneChangeListener.onChange(this);
+                textPaneChangeListener.onChange(new TextPaneChangeEvent(this));
             }
         }
+    }
+
+    /**
+     * 当切换到某个tab是，{@link MainTabPane}会调用该方法，通知被选中的tab下的文本窗格。
+     */
+    public void touch() {
+        noticeTextPaneChangeListener();
     }
 
     /**

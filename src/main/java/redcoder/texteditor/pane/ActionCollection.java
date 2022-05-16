@@ -1,6 +1,7 @@
 package redcoder.texteditor.pane;
 
 import redcoder.texteditor.action.*;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 
 import javax.swing.*;
 import java.util.HashMap;

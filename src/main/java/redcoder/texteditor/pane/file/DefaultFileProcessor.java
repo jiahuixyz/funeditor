@@ -1,7 +1,7 @@
 package redcoder.texteditor.pane.file;
 
 import redcoder.texteditor.pane.EditorFrame;
-import redcoder.texteditor.pane.MainTabPane;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 
@@ -55,7 +55,7 @@ public class DefaultFileProcessor implements FileProcessor {
     @Override
     public boolean openFile(MainTabPane mainTabPane, File file, boolean ucnf) {
         boolean b = mainTabPane.openFile(file, ucnf);
-        noticeFireOpenListener(file, ucnf);
+        noticeFileOpenListener(file, ucnf);
         return b;
     }
 
@@ -94,31 +94,11 @@ public class DefaultFileProcessor implements FileProcessor {
         return true;
     }
 
-    private void noticeFireOpenListener(File file, boolean unsavedNewTextPane) {
-        FileOpenListener.FileOpenEvent e = new DefaultFileOpenEvent(file, unsavedNewTextPane);
+    private void noticeFileOpenListener(File file, boolean unsavedNewTextPane) {
+        FileOpenEvent e = new FileOpenEvent(this, unsavedNewTextPane, file);
         for (FileOpenListener listener : listenerList) {
             listener.onFileOpen(e);
         }
     }
 
-    public static class DefaultFileOpenEvent implements FileOpenListener.FileOpenEvent {
-
-        private final File file;
-        private final boolean isUnSavedNew;
-
-        public DefaultFileOpenEvent(File file, boolean isUnSavedNew) {
-            this.file = file;
-            this.isUnSavedNew = isUnSavedNew;
-        }
-
-        @Override
-        public boolean isUnSavedNew() {
-            return this.isUnSavedNew;
-        }
-
-        @Override
-        public File getOpenedFile() {
-            return this.file;
-        }
-    }
 }

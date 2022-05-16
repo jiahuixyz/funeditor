@@ -1,6 +1,7 @@
 package redcoder.texteditor.statusbar;
 
 import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.pane.textpane.TextPaneChangeEvent;
 import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
 
 import javax.swing.*;
@@ -9,13 +10,13 @@ import java.awt.*;
 /**
  * 显示当前文本窗格的字符长度和行数。
  */
-public class TextLengthIndicator extends JPanel implements Indicator,TextPaneChangeListener {
+public class TextLengthIndicator extends JPanel implements Indicator, TextPaneChangeListener {
 
     private static final String TEMPLATE_TEXT = "  length: %d, lines: %d";
 
     private final JLabel label = new JLabel();
 
-    public TextLengthIndicator(){
+    public TextLengthIndicator() {
         super(new GridLayout(1, 1));
         setBorder(StatusBarBorder.BORDER);
 
@@ -34,11 +35,15 @@ public class TextLengthIndicator extends JPanel implements Indicator,TextPaneCha
     }
 
     @Override
-    public void onChange(ScrollTextPane textPane) {
-        JTextArea textArea = textPane.getTextArea();
-        int length = textArea.getText().length();
-        int lineCount = textArea.getLineCount();
-        label.setText(getFormattedText(length, lineCount));
+    public void onChange(TextPaneChangeEvent e) {
+        Object source = e.getSource();
+        if (source instanceof ScrollTextPane) {
+            ScrollTextPane textPane = (ScrollTextPane) source;
+            JTextArea textArea = textPane.getTextArea();
+            int length = textArea.getText().length();
+            int lineCount = textArea.getLineCount();
+            label.setText(getFormattedText(length, lineCount));
+        }
     }
 
     private String getFormattedText(int length, int lines) {

@@ -1,6 +1,6 @@
 package redcoder.texteditor.pane.linenumber;
 
-import redcoder.texteditor.pane.MainTabPane;
+import redcoder.texteditor.pane.tabpane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.*;
