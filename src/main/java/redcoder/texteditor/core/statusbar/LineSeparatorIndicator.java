@@ -1,4 +1,4 @@
-package redcoder.texteditor.statusbar;
+package redcoder.texteditor.core.statusbar;
 
 import org.apache.commons.lang3.SystemUtils;
 

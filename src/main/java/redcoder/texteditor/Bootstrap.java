@@ -1,6 +1,6 @@
 package redcoder.texteditor;
 
-import redcoder.texteditor.pane.Framework;
+import redcoder.texteditor.core.Framework;
 
 public class Bootstrap {
 

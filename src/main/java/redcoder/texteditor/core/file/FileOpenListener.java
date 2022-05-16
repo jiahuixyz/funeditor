@@ -1,4 +1,4 @@
-package redcoder.texteditor.pane.file;
+package redcoder.texteditor.core.file;
 
 /**
  * 接收文件打开事件的监听器

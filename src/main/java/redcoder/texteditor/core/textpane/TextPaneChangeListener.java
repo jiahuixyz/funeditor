@@ -1,4 +1,4 @@
-package redcoder.texteditor.pane.textpane;
+package redcoder.texteditor.core.textpane;
 
 /**
  * 接收文本窗格变化的监听器

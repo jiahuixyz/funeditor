@@ -1,10 +1,12 @@
-package redcoder.texteditor.pane;
+package redcoder.texteditor.core.menu;
 
 import redcoder.texteditor.action.OpenRecentlyAction;
-import redcoder.texteditor.pane.file.FileOpenEvent;
-import redcoder.texteditor.pane.file.FileOpenListener;
-import redcoder.texteditor.pane.file.RecentlyOpenedFiles;
-import redcoder.texteditor.pane.tabpane.MainTabPane;
+import redcoder.texteditor.core.EditorFrame;
+import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.core.file.FileOpenEvent;
+import redcoder.texteditor.core.file.FileOpenListener;
+import redcoder.texteditor.core.file.RecentlyOpenedFiles;
+import redcoder.texteditor.core.tabpane.MainTabPane;
 
 import javax.swing.*;
 import java.io.File;

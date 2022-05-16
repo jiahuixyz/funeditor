@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.Framework;
+import redcoder.texteditor.core.Framework;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

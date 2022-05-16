@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.MainTabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

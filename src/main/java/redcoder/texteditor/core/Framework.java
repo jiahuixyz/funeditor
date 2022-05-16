@@ -1,9 +1,9 @@
-package redcoder.texteditor.pane;
+package redcoder.texteditor.core;
 
-import redcoder.texteditor.pane.file.DefaultFileProcessor;
-import redcoder.texteditor.pane.file.FileProcessor;
-import redcoder.texteditor.pane.file.RecentlyOpenedFiles;
-import redcoder.texteditor.pane.file.UnsavedCreatedNewlyFiles;
+import redcoder.texteditor.core.file.DefaultFileProcessor;
+import redcoder.texteditor.core.file.FileProcessor;
+import redcoder.texteditor.core.file.RecentlyOpenedFiles;
+import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;

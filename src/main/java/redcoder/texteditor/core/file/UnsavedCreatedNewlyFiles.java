@@ -1,9 +1,9 @@
-package redcoder.texteditor.pane.file;
+package redcoder.texteditor.core.file;
 
 import org.apache.commons.lang3.SystemUtils;
-import redcoder.texteditor.pane.Framework;
-import redcoder.texteditor.pane.tabpane.MainTabPane;
-import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
 

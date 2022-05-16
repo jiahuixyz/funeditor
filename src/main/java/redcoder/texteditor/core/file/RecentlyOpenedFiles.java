@@ -1,4 +1,4 @@
-package redcoder.texteditor.pane.file;
+package redcoder.texteditor.core.file;
 
 import org.apache.commons.lang3.SystemUtils;
 import redcoder.texteditor.utils.FileUtils;

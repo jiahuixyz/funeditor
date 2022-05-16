@@ -1,16 +1,16 @@
-package redcoder.texteditor.pane.textpane;
+package redcoder.texteditor.core.textpane;
 
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.RedoAction;
 import redcoder.texteditor.action.UndoAction;
-import redcoder.texteditor.pane.tabpane.ButtonTabComponent;
-import redcoder.texteditor.pane.EditorFrame;
-import redcoder.texteditor.pane.Framework;
-import redcoder.texteditor.pane.tabpane.MainTabPane;
-import redcoder.texteditor.pane.file.FileProcessor;
-import redcoder.texteditor.pane.linenumber.JTextAreaBasedLineNumberModel;
-import redcoder.texteditor.pane.linenumber.LineNumberComponent;
-import redcoder.texteditor.pane.linenumber.LineNumberModel;
+import redcoder.texteditor.core.tabpane.ButtonTabComponent;
+import redcoder.texteditor.core.EditorFrame;
+import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.file.FileProcessor;
+import redcoder.texteditor.core.linenumber.JTextAreaBasedLineNumberModel;
+import redcoder.texteditor.core.linenumber.LineNumberComponent;
+import redcoder.texteditor.core.linenumber.LineNumberModel;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;

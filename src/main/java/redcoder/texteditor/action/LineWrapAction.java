@@ -1,7 +1,7 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.pane.tabpane.MainTabPane;
-import redcoder.texteditor.pane.textpane.ScrollTextPane;
+import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
 
 import javax.swing.*;
 import java.awt.*;

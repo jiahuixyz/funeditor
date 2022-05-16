@@ -1,9 +1,9 @@
-package redcoder.texteditor.statusbar;
+package redcoder.texteditor.core.statusbar;
 
-import redcoder.texteditor.pane.tabpane.MainTabPane;
-import redcoder.texteditor.pane.textpane.ScrollTextPane;
-import redcoder.texteditor.pane.textpane.TextPaneChangeEvent;
-import redcoder.texteditor.pane.textpane.TextPaneChangeListener;
+import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.core.textpane.TextPaneChangeEvent;
+import redcoder.texteditor.core.textpane.TextPaneChangeListener;
 
 import javax.swing.*;
 import java.awt.*;

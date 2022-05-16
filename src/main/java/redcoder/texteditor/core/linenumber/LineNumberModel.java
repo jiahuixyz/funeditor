@@ -1,4 +1,4 @@
-package redcoder.texteditor.pane.linenumber;
+package redcoder.texteditor.core.linenumber;
 
 import java.awt.*;
 

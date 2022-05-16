@@ -1,10 +1,11 @@
-package redcoder.texteditor.pane;
+package redcoder.texteditor.core;
 
 import org.apache.commons.lang3.StringUtils;
 import redcoder.texteditor.action.ActionName;
-import redcoder.texteditor.pane.tabpane.MainTabPane;
-import redcoder.texteditor.pane.textpane.ScrollTextPane;
-import redcoder.texteditor.statusbar.StatusBar;
+import redcoder.texteditor.core.menu.OpenRecentlyMenu;
+import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.core.statusbar.StatusBar;
 
 import javax.swing.*;
 import java.awt.*;

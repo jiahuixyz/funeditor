@@ -1,4 +1,4 @@
-package redcoder.texteditor.statusbar;
+package redcoder.texteditor.core.statusbar;
 
 public interface Indicator {
 

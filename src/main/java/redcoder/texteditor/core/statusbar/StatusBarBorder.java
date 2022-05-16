@@ -1,4 +1,4 @@
-package redcoder.texteditor.statusbar;
+package redcoder.texteditor.core.statusbar;
 
 import javax.swing.border.AbstractBorder;
 import java.awt.*;

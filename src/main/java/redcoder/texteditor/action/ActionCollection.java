@@ -1,7 +1,6 @@
-package redcoder.texteditor.pane;
+package redcoder.texteditor.action;
 
-import redcoder.texteditor.action.*;
-import redcoder.texteditor.pane.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.MainTabPane;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -50,7 +49,7 @@ public class ActionCollection {
     }
 
     private void initActions(MainTabPane mainTabPane) {
-         actions = new HashMap<>();
+        actions = new HashMap<>();
         actions.put(UNDO, new UndoActionWrapper(mainTabPane));
         actions.put(REDO, new RedoActionWrapper(mainTabPane));
         actions.put(ZOOM_IN, new ZoomInAction(mainTabPane));

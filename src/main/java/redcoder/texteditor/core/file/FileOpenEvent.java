@@ -1,4 +1,4 @@
-package redcoder.texteditor.pane.file;
+package redcoder.texteditor.core.file;
 
 import java.io.File;
 import java.util.EventObject;

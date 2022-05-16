@@ -1,4 +1,4 @@
-package redcoder.texteditor.pane.tabpane;
+package redcoder.texteditor.core.tabpane;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
