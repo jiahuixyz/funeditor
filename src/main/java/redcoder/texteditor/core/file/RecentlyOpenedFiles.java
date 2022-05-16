@@ -15,12 +15,15 @@ import java.util.concurrent.TimeUnit;
 public class RecentlyOpenedFiles {
 
     private static final String FILENAME = "rof.rc";
-    private final List<File> recentlyFiles = new ArrayList<>();
-    private final File target;
+    private static final List<File> recentlyFiles = new ArrayList<>();
+    private static final File target;
 
-    public RecentlyOpenedFiles() {
+    static {
         target = new File(SystemUtils.getUserDir(), FILENAME);
         init();
+    }
+
+    private RecentlyOpenedFiles() {
     }
 
     /**
@@ -28,7 +31,7 @@ public class RecentlyOpenedFiles {
      *
      * @param file the recently opened file
      */
-    public synchronized void addFile(File file) {
+    public static synchronized void addFile(File file) {
         if (recentlyFiles.contains(file)) {
             // exist, move it to the head
             recentlyFiles.remove(file);
@@ -42,11 +45,11 @@ public class RecentlyOpenedFiles {
     /**
      * get all recently opened files.
      */
-    public List<File> getRecentlyFile() {
+    public static List<File> getRecentlyFile() {
         return recentlyFiles;
     }
 
-    private void init() {
+    private static void init() {
         loadRecentFilesFromLocal();
 
         ScheduledUtils.scheduleAtFixedRate(() -> {
@@ -63,7 +66,7 @@ public class RecentlyOpenedFiles {
         }, 1, 5, TimeUnit.MINUTES);
     }
 
-    private void loadRecentFilesFromLocal() {
+    private static void loadRecentFilesFromLocal() {
         try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
             String filepath = reader.readLine();
             while (filepath != null) {
@@ -77,7 +80,7 @@ public class RecentlyOpenedFiles {
         }
     }
 
-    private String extract(List<File> files) {
+    private static String extract(List<File> files) {
         StringBuilder tmp = new StringBuilder();
         for (File file : files) {
             tmp.append(file.getAbsolutePath()).append("\n");

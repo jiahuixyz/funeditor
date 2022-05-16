@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 
 import javax.swing.*;
@@ -20,6 +20,6 @@ public class OpenRecentlyAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Framework.getFileProcessor().openFile(mainTabPane, file, false);
+        FileProcessor.openFile(mainTabPane, file, false);
     }
 }

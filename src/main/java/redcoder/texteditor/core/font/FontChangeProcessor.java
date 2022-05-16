@@ -12,6 +12,9 @@ public class FontChangeProcessor {
     private static final int FONT_SIZE_MAXIMUM = 100;
     private static Font font = DEFAULT_FONT;
 
+    private FontChangeProcessor() {
+    }
+
     public static void addListener(FontChangeListener listener) {
         LISTENERS.add(listener);
     }

@@ -6,6 +6,7 @@ import redcoder.texteditor.action.UndoAction;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileProcessor;
+import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 import redcoder.texteditor.core.font.FontChangeEvent;
 import redcoder.texteditor.core.font.FontChangeListener;
 import redcoder.texteditor.core.font.FontChangeProcessor;
@@ -201,13 +202,15 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
      * @return true-保存成功，false-保存失败
      */
     public boolean saveTextPane() {
-        FileProcessor fileProcessor = Framework.getFileProcessor();
-        boolean saved = fileProcessor.saveTextPaneToFile(this);
+        boolean saved = FileProcessor.saveTextPaneToFile(this);
         if (saved) {
             modified = false;
+
             // update tab title and filename
             updateTabbedTitle(file.getName());
             filename = file.getName();
+
+            UnsavedCreatedNewlyFiles.removeTextPane(this);
         }
         return saved;
     }
@@ -236,6 +239,10 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
             // user cancel operation, don't close it.
         } else {
             closed = true;
+        }
+
+        if (closed) {
+            UnsavedCreatedNewlyFiles.removeTextPane(this);
         }
 
         return closed;

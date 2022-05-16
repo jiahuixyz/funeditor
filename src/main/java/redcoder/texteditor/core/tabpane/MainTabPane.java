@@ -1,7 +1,7 @@
 package redcoder.texteditor.core.tabpane;
 
 import redcoder.texteditor.action.*;
-import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 import redcoder.texteditor.core.font.FontChangeProcessor;
 import redcoder.texteditor.core.statusbar.StatusBar;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
@@ -79,7 +79,7 @@ public class MainTabPane extends JTabbedPane {
      * 加载新创建的且未保存的文件
      */
     public void loadUnSavedNewTextPane() {
-        int i = Framework.getUnsavedCreatedNewlyFiles().load(this);
+        int i = UnsavedCreatedNewlyFiles.load(this);
         counter.set(i);
     }
 
@@ -105,7 +105,7 @@ public class MainTabPane extends JTabbedPane {
      */
     public void addTab(String title, ScrollTextPane scrollTextPane, boolean ucnf) {
         if (ucnf) {
-            Framework.getUnsavedCreatedNewlyFiles().addTextPanes(scrollTextPane);
+            UnsavedCreatedNewlyFiles.addTextPanes(scrollTextPane);
         }
         addTab(title, scrollTextPane);
     }
@@ -158,7 +158,7 @@ public class MainTabPane extends JTabbedPane {
     public boolean closeSelectedTab() {
         if (selectedScrollTextPane.closeTextPane()) {
             removeTabAt(getSelectedIndex());
-            Framework.getUnsavedCreatedNewlyFiles().removeTextPane(selectedScrollTextPane);
+            UnsavedCreatedNewlyFiles.removeTextPane(selectedScrollTextPane);
             FontChangeProcessor.removeListener(selectedScrollTextPane);
             return true;
         } else {
@@ -178,7 +178,7 @@ public class MainTabPane extends JTabbedPane {
             ScrollTextPane scrollTextPane = (ScrollTextPane) component;
             if (scrollTextPane.closeTextPane()) {
                 removeTabAt(index);
-                Framework.getUnsavedCreatedNewlyFiles().removeTextPane(scrollTextPane);
+                UnsavedCreatedNewlyFiles.removeTextPane(scrollTextPane);
                 FontChangeProcessor.removeListener(scrollTextPane);
                 return true;
             }

@@ -1,6 +1,5 @@
 package redcoder.texteditor.core.file;
 
-import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
@@ -13,16 +12,17 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 管理新创建的且未保存的文件
+ * 管理未保存的且新创建的文件
  */
 public class UnsavedCreatedNewlyFiles {
 
     private static final String DIR_NAME = "ucnf";
-    private final Map<String, ScrollTextPane> textPanes = new HashMap<>();
-    private final File targetDir;
-    private boolean loaded;
+    private static final Map<String, ScrollTextPane> textPanes;
+    private static final File targetDir;
+    private static boolean loaded;
 
-    public UnsavedCreatedNewlyFiles() {
+    static {
+        textPanes = new HashMap<>();
         targetDir = new File(SystemUtils.getUserDir(), DIR_NAME);
         if (!targetDir.exists()) {
             targetDir.mkdir();
@@ -40,25 +40,39 @@ public class UnsavedCreatedNewlyFiles {
         }, 1, 3, TimeUnit.MINUTES);
     }
 
-    public void addTextPanes(ScrollTextPane textPane) {
-        this.textPanes.putIfAbsent(textPane.getFilename(), textPane);
+    private UnsavedCreatedNewlyFiles() {
     }
 
-    public void removeTextPane(ScrollTextPane textPane) {
+    /**
+     * 添加新创建的且未保存的文本窗格
+     *
+     * @param textPane 新创建的且未保存的文本窗格
+     */
+    public static void addTextPanes(ScrollTextPane textPane) {
+        textPanes.putIfAbsent(textPane.getFilename(), textPane);
+    }
+
+    /**
+     * 移除已保存或关闭的文本窗格
+     *
+     * @param textPane 已保存或关闭的文本窗格
+     */
+    public static void removeTextPane(ScrollTextPane textPane) {
         String filename = textPane.getFilename();
-        this.textPanes.remove(filename);
+        textPanes.remove(filename);
+
         // delete file
         File f = new File(targetDir, filename);
         f.delete();
     }
 
     /**
-     * 加载未保存的新建text pane
+     * 加载未保存的且新创建的文件
      *
      * @param mainTabPane 主窗格
-     * @return 加载的text pane数量
+     * @return 加载的文件数量
      */
-    public int load(MainTabPane mainTabPane) {
+    public static int load(MainTabPane mainTabPane) {
         if (loaded) {
             return 0;
         }
@@ -68,7 +82,7 @@ public class UnsavedCreatedNewlyFiles {
             return 0;
         }
         for (File file : files) {
-            Framework.getFileProcessor().openFile(mainTabPane, file, true);
+            FileProcessor.openFile(mainTabPane, file, true);
         }
         return files.length;
     }

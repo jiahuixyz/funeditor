@@ -2,9 +2,9 @@ package redcoder.texteditor.core.menu;
 
 import redcoder.texteditor.action.OpenRecentlyAction;
 import redcoder.texteditor.core.EditorFrame;
-import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileOpenEvent;
 import redcoder.texteditor.core.file.FileOpenListener;
+import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.file.RecentlyOpenedFiles;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 
@@ -22,7 +22,7 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
 
         initMenuItem();
         setFont(EditorFrame.MENU_ITEM_DEFAULT_FONT);
-        Framework.getFileProcessor().addFileOpenListener(this);
+        FileProcessor.addFileOpenListener(this);
     }
 
     @Override
@@ -34,15 +34,13 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
     }
 
     private void initMenuItem() {
-        RecentlyOpenedFiles rof = Framework.getRecentlyOpenedFiles();
-        for (File file : rof.getRecentlyFile()) {
+        for (File file : RecentlyOpenedFiles.getRecentlyFile()) {
             add(new OpenRecentlyAction(mainTabPane, file));
         }
     }
 
     private void addOpenedFileRecently(File file) {
-        RecentlyOpenedFiles rof = Framework.getRecentlyOpenedFiles();
-        rof.addFile(file);
+        RecentlyOpenedFiles.addFile(file);
 
         // if menuitem exist, move it to first
         String filepath = file.getAbsolutePath();

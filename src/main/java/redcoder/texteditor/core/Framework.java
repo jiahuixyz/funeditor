@@ -1,10 +1,6 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.*;
-import redcoder.texteditor.core.file.DefaultFileProcessor;
-import redcoder.texteditor.core.file.FileProcessor;
-import redcoder.texteditor.core.file.RecentlyOpenedFiles;
-import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +16,9 @@ import static redcoder.texteditor.action.ActionName.*;
 
 public class Framework extends WindowAdapter {
 
+    private static final Framework INSTANCE = new Framework();
     private static final Map<ActionName, KeyStroke> FRAMEWORK_SHARE_KEY_STROKES;
     private static final Map<ActionName, Action> FRAMEWORK_SHARED_ACTION;
-    private static final Framework INSTANCE = new Framework();
-    private static final FileProcessor FILE_PROCESSOR = new DefaultFileProcessor();
-    private static final RecentlyOpenedFiles ROF = new RecentlyOpenedFiles();
-    private static final UnsavedCreatedNewlyFiles UCNF = new UnsavedCreatedNewlyFiles();
 
     private static int numWindows = 0;
     private static Point lastLocation;
@@ -114,18 +107,6 @@ public class Framework extends WindowAdapter {
 
     public static int getNumWindows() {
         return numWindows;
-    }
-
-    public static FileProcessor getFileProcessor() {
-        return FILE_PROCESSOR;
-    }
-
-    public static RecentlyOpenedFiles getRecentlyOpenedFiles() {
-        return ROF;
-    }
-
-    public static UnsavedCreatedNewlyFiles getUnsavedCreatedNewlyFiles() {
-        return UCNF;
     }
 
     public static void switchTheme(String themeName) {
