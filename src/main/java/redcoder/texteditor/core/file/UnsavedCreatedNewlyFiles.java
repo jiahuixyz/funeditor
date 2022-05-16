@@ -1,11 +1,11 @@
 package redcoder.texteditor.core.file;
 
-import org.apache.commons.lang3.SystemUtils;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
+import redcoder.texteditor.utils.SystemUtils;
 
 import java.io.File;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package redcoder.texteditor.core.file;
 
-import org.apache.commons.lang3.SystemUtils;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
+import redcoder.texteditor.utils.SystemUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

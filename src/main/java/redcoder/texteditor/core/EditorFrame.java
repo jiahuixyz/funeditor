@@ -1,11 +1,11 @@
 package redcoder.texteditor.core;
 
-import org.apache.commons.lang3.StringUtils;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.core.menu.OpenRecentlyMenu;
+import redcoder.texteditor.core.statusbar.StatusBar;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
-import redcoder.texteditor.core.statusbar.StatusBar;
+import redcoder.texteditor.utils.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,7 +70,7 @@ public class EditorFrame extends JFrame {
             List<ScrollTextPane> list = getModifiedTextPane();
             if (!list.isEmpty()) {
                 String message = String.format("Do you want to save the changes to the following %d files?", list.size());
-                String filenames = StringUtils.join(list.stream().map(ScrollTextPane::getFilename).collect(toList()), '\n');
+                String filenames = StringUtils.join(list.stream().map(ScrollTextPane::getFilename).collect(toList()), "\n");
                 message = message + "\n\n" + filenames + "\n\n" + "Your changes will be lost if you don't save them.";
                 int state = JOptionPane.showOptionDialog(mainTabPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
