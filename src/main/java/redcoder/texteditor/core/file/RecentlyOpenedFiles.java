@@ -70,7 +70,10 @@ public class RecentlyOpenedFiles {
         try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
             String filepath = reader.readLine();
             while (filepath != null) {
-                recentlyFiles.add(new File(filepath));
+                File file = new File(filepath);
+                if (file.exists()) {
+                    recentlyFiles.add(file);
+                }
                 filepath = reader.readLine();
             }
         } catch (FileNotFoundException e) {
