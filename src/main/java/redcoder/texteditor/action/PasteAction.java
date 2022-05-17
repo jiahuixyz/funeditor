@@ -1,13 +1,19 @@
 package redcoder.texteditor.action;
 
+import redcoder.texteditor.core.toolbar.ToolBarIconResource;
+
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import java.awt.event.ActionEvent;
+import java.util.Optional;
 
 public class PasteAction extends TextAction {
 
     public PasteAction() {
         super("Paste");
+        Optional.ofNullable(ToolBarIconResource.getImageIcon("Paste24.gif"))
+                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 
     @Override

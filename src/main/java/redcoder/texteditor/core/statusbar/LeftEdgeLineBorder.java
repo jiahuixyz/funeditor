@@ -4,13 +4,13 @@ import javax.swing.border.AbstractBorder;
 import java.awt.*;
 
 /**
- * 自定义的border，用于状态栏组件
+ * 自定义的border，左边缘有一条竖线
  */
-public class StatusBarBorder extends AbstractBorder {
+public class LeftEdgeLineBorder extends AbstractBorder {
 
-    public static final StatusBarBorder BORDER = new StatusBarBorder();
+    public static final LeftEdgeLineBorder BORDER = new LeftEdgeLineBorder();
 
-    private StatusBarBorder(){
+    private LeftEdgeLineBorder(){
     }
 
     @Override

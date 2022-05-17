@@ -18,7 +18,7 @@ public class TextFontSizeIndicator extends JPanel implements Indicator, TextPane
 
     public TextFontSizeIndicator() {
         super(new GridLayout(1, 1));
-        setBorder(StatusBarBorder.BORDER);
+        setBorder(LeftEdgeLineBorder.BORDER);
 
         add(label);
         updateLabel(FontChangeProcessor.getSharedFont());

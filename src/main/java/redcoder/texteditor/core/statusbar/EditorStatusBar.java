@@ -11,13 +11,13 @@ import java.util.List;
 /**
  * 编辑器底部状态栏
  */
-public class StatusBar extends JPanel implements TextPaneChangeListener {
+public class EditorStatusBar extends JPanel implements TextPaneChangeListener {
 
     private static final int STATUS_BAR_HEIGHT = 30;
 
     private List<JComponent> indicators;
 
-    public StatusBar() {
+    public EditorStatusBar() {
         super(new GridBagLayout());
         setPreferredSize(new Dimension(Short.MAX_VALUE, STATUS_BAR_HEIGHT));
         init();

@@ -18,7 +18,7 @@ public class TextLengthIndicator extends JPanel implements Indicator, TextPaneCh
 
     public TextLengthIndicator() {
         super(new GridLayout(1, 1));
-        setBorder(StatusBarBorder.BORDER);
+        setBorder(LeftEdgeLineBorder.BORDER);
 
         label.setText(getFormattedText(0, 0));
         add(label);

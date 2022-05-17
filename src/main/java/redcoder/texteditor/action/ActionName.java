@@ -11,6 +11,7 @@ public enum ActionName {
     NEW_FILE,
     OPEN_FILE,
     SAVE_FILE,
+    SAVE_AS_FILE,
     SAVE_ALL,
     CLOSE,
     CLOSE_ALL,

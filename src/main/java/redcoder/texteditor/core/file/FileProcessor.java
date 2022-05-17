@@ -76,25 +76,36 @@ public class FileProcessor {
             FileUtils.writeFile(text, file);
             return true;
         } else {
-            int state = fileChooser.showSaveDialog(textPane);
-            if (state == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-                if (file.exists()) {
-                    String message = String.format("%s already exist, would you like overwriting it?", file.getName());
-                    int n = JOptionPane.showConfirmDialog(textPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
-                    if (n == JOptionPane.YES_OPTION) {
-                        FileUtils.writeFile(text, file);
-                        textPane.setFile(file);
-                        return true;
-                    }
-                } else {
+            return saveTextPaneToAnotherFile(textPane) != null;
+        }
+    }
+
+    /**
+     * 将文本窗格中的内容保存到另外一个文件中
+     *
+     * @param textPane 文本窗格
+     * @return 返回保存的文件，如果保存失败，返回null
+     */
+    public static File saveTextPaneToAnotherFile(ScrollTextPane textPane) {
+        int state = fileChooser.showSaveDialog(textPane);
+        if (state == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String text = textPane.getTextArea().getText();
+            if (file.exists()) {
+                String message = String.format("%s already exist, would you like overwriting it?", file.getName());
+                int n = JOptionPane.showConfirmDialog(textPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_OPTION);
+                if (n == JOptionPane.YES_OPTION) {
                     FileUtils.writeFile(text, file);
                     textPane.setFile(file);
-                    return true;
+                    return file;
                 }
+            } else {
+                FileUtils.writeFile(text, file);
+                textPane.setFile(file);
+                return file;
             }
         }
-        return false;
+        return null;
     }
 
     /**

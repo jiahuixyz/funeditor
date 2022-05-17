@@ -38,6 +38,7 @@ public class Framework extends WindowAdapter {
         FRAMEWORK_SHARE_KEY_STROKES.put(NEW_FILE, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK));
         FRAMEWORK_SHARE_KEY_STROKES.put(OPEN_FILE, KeyStroke.getKeyStroke(VK_O, CTRL_DOWN_MASK));
         FRAMEWORK_SHARE_KEY_STROKES.put(SAVE_FILE, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK));
+        FRAMEWORK_SHARE_KEY_STROKES.put(SAVE_AS_FILE, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK | ALT_DOWN_MASK));
         FRAMEWORK_SHARE_KEY_STROKES.put(SAVE_ALL, KeyStroke.getKeyStroke(VK_S, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
         FRAMEWORK_SHARE_KEY_STROKES.put(CLOSE, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK));
         FRAMEWORK_SHARE_KEY_STROKES.put(CLOSE_ALL, KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));

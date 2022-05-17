@@ -17,7 +17,7 @@ public class LineSeparatorIndicator extends JPanel implements Indicator {
 
     public LineSeparatorIndicator() {
         super(new GridLayout(1, 1));
-        setBorder(StatusBarBorder.BORDER);
+        setBorder(LeftEdgeLineBorder.BORDER);
 
         init();
     }

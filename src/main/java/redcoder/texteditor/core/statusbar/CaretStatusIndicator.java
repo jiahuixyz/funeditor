@@ -22,7 +22,7 @@ public class CaretStatusIndicator extends JPanel implements Indicator, TextPaneC
 
     public CaretStatusIndicator() {
         super(new GridLayout(1, 1));
-        setBorder(StatusBarBorder.BORDER);
+        setBorder(LeftEdgeLineBorder.BORDER);
 
         label.setText(getFormattedText(1, 1, 0));
         add(label);

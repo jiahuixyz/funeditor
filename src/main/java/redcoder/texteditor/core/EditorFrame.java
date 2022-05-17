@@ -3,9 +3,10 @@ package redcoder.texteditor.core;
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.ThemeAction;
 import redcoder.texteditor.core.menu.OpenRecentlyMenu;
-import redcoder.texteditor.core.statusbar.StatusBar;
+import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.core.toolbar.EditorToolBar;
 import redcoder.texteditor.theme.Theme;
 import redcoder.texteditor.utils.StringUtils;
 
@@ -30,18 +31,21 @@ public class EditorFrame extends JFrame {
 
     private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
 
-    private StatusBar statusBar;
+    private EditorToolBar toolBar;
     private MainTabPane mainTabPane;
+    private EditorStatusBar editorStatusBar;
 
     public EditorFrame() {
         super(TITLE);
     }
 
     public void init() {
-        // 创建底部状态栏
-        statusBar = new StatusBar();
-        // 创建文本主面板
-        mainTabPane = new MainTabPane(statusBar);
+        // 创建状态栏
+        editorStatusBar = new EditorStatusBar();
+        // 创建主窗格
+        mainTabPane = new MainTabPane(editorStatusBar);
+        // 创建工具栏
+        toolBar = new EditorToolBar(mainTabPane);
 
         Map<ActionName, KeyStroke> keyStrokes = Framework.getFrameworkShareKeyStrokes();
         Map<ActionName, Action> mergedAction = new HashMap<>();
@@ -51,10 +55,11 @@ public class EditorFrame extends JFrame {
         // 添加菜单
         addMenu(keyStrokes, mergedAction);
 
-        // 添加主窗格和状态栏
+        // 组装工具栏、主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
+        rootPane.add(toolBar, BorderLayout.NORTH);
         rootPane.add(mainTabPane, BorderLayout.CENTER);
-        rootPane.add(statusBar, BorderLayout.SOUTH);
+        rootPane.add(editorStatusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
 
         // add key bindings
@@ -115,8 +120,8 @@ public class EditorFrame extends JFrame {
         return textPaneList;
     }
 
-    public StatusBar getStatusBar() {
-        return statusBar;
+    public EditorStatusBar getStatusBar() {
+        return editorStatusBar;
     }
 
     public MainTabPane getMainTabPane() {
@@ -159,9 +164,10 @@ public class EditorFrame extends JFrame {
         OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainTabPane);
         menu.add(recentlyMenu);
 
-        // save & save all
+        // save & save as & save all
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(SAVE_FILE), mergedAction.get(SAVE_FILE),
+                keyStrokes.get(SAVE_AS_FILE), mergedAction.get(SAVE_AS_FILE),
                 keyStrokes.get(SAVE_ALL), mergedAction.get(SAVE_ALL));
 
         // close & close all
