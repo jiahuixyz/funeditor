@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.toolbar.ToolBarIconResource;
+import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -12,7 +12,7 @@ public class CutAction extends TextAction {
 
     public CutAction() {
         super("Cut");
-        Optional.ofNullable(ToolBarIconResource.getImageIcon("Cut24.gif"))
+        Optional.ofNullable(ToolbarIconResource.getImageIcon("Cut24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 

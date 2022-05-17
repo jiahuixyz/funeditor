@@ -6,7 +6,7 @@ import redcoder.texteditor.core.menu.OpenRecentlyMenu;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
-import redcoder.texteditor.core.toolbar.EditorToolBar;
+import redcoder.texteditor.core.toolbar.EditorToolbar;
 import redcoder.texteditor.theme.Theme;
 import redcoder.texteditor.utils.StringUtils;
 
@@ -31,7 +31,7 @@ public class EditorFrame extends JFrame {
 
     private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
 
-    private EditorToolBar toolBar;
+    private EditorToolbar toolBar;
     private MainTabPane mainTabPane;
     private EditorStatusBar editorStatusBar;
 
@@ -45,7 +45,7 @@ public class EditorFrame extends JFrame {
         // 创建主窗格
         mainTabPane = new MainTabPane(editorStatusBar);
         // 创建工具栏
-        toolBar = new EditorToolBar(mainTabPane);
+        toolBar = new EditorToolbar(mainTabPane);
 
         Map<ActionName, KeyStroke> keyStrokes = Framework.getFrameworkShareKeyStrokes();
         Map<ActionName, Action> mergedAction = new HashMap<>();

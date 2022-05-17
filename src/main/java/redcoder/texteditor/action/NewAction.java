@@ -1,7 +1,7 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.tabpane.MainTabPane;
-import redcoder.texteditor.core.toolbar.ToolBarIconResource;
+import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ public class NewAction extends AbstractAction {
     public NewAction(MainTabPane mainTabPane) {
         super("New File");
         this.mainTabPane = mainTabPane;
-        Optional.ofNullable(ToolBarIconResource.getImageIcon("New24.gif"))
+        Optional.ofNullable(ToolbarIconResource.getImageIcon("New24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 

@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.toolbar.ToolBarIconResource;
+import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -12,7 +12,7 @@ public class CopyAction extends TextAction {
 
     public CopyAction() {
         super("Copy");
-        Optional.ofNullable(ToolBarIconResource.getImageIcon("Copy24.gif"))
+        Optional.ofNullable(ToolbarIconResource.getImageIcon("Copy24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 

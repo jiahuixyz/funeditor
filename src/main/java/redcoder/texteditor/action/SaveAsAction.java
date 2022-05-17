@@ -3,7 +3,7 @@ package redcoder.texteditor.action;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
-import redcoder.texteditor.core.toolbar.ToolBarIconResource;
+import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +17,7 @@ public class SaveAsAction extends AbstractAction {
     public SaveAsAction(MainTabPane mainTabPane) {
         super("Save As");
         this.mainTabPane = mainTabPane;
-        Optional.ofNullable(ToolBarIconResource.getImageIcon("SaveAs24.gif"))
+        Optional.ofNullable(ToolbarIconResource.getImageIcon("SaveAs24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 

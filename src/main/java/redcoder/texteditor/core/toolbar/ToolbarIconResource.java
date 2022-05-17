@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class ToolBarIconResource {
+public class ToolbarIconResource {
 
     private static final Map<String, ImageIcon> ICONS = new HashMap<>();
 
@@ -28,9 +28,9 @@ public class ToolBarIconResource {
     public static ImageIcon getImageIcon(String iconName) {
         ImageIcon imageIcon = ICONS.get(iconName);
         if (imageIcon == null) {
-            URL url = ToolBarIconResource.class.getResource(iconName);
+            URL url = ToolbarIconResource.class.getResource(iconName);
             if (url == null) {
-                url = ToolBarIconResource.class.getClassLoader().getResource(iconName);
+                url = ToolbarIconResource.class.getClassLoader().getResource(iconName);
             }
             if (url != null) {
                 imageIcon = new ImageIcon(url);
@@ -42,7 +42,7 @@ public class ToolBarIconResource {
 
     private static void loadDefaultIcon() {
         try {
-            ClassLoader classLoader = ToolBarIconResource.class.getClassLoader();
+            ClassLoader classLoader = ToolbarIconResource.class.getClassLoader();
             URL url = classLoader.getResource("toolbarButtonGraphics");
             if (url == null) {
                 return;

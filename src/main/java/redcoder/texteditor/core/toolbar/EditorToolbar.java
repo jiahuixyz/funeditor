@@ -2,7 +2,6 @@ package redcoder.texteditor.core.toolbar;
 
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.statusbar.LeftEdgeLineBorder;
 import redcoder.texteditor.core.tabpane.MainTabPane;
 
 import javax.swing.*;
@@ -15,9 +14,9 @@ import static redcoder.texteditor.action.ActionName.*;
 /**
  * 工具栏
  */
-public class EditorToolBar extends JPanel {
+public class EditorToolbar extends JPanel {
 
-    public EditorToolBar(MainTabPane mainTabPane) {
+    public EditorToolbar(MainTabPane mainTabPane) {
         setLayout(new BorderLayout());
         init(mainTabPane);
     }
