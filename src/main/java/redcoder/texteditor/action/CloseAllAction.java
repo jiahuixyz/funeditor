@@ -1,21 +1,21 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class CloseAllAction extends AbstractAction {
 
-    private MainTabPane mainTabPane;
+    private TabPane tabPane;
 
-    public CloseAllAction(MainTabPane mainTabPane){
+    public CloseAllAction(TabPane tabPane){
         super("Close All");
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainTabPane.closeAllTab();
+        tabPane.closeAllTab();
     }
 }

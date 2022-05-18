@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public class SaveAllAction extends AbstractAction {
 
-    private MainTabPane mainTabPane;
+    private TabPane tabPane;
 
-    public SaveAllAction(MainTabPane mainTabPane) {
+    public SaveAllAction(TabPane tabPane) {
         super("Save All");
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
         Optional.ofNullable(ToolbarIconResource.getImageIcon("SaveAll24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
@@ -22,7 +22,7 @@ public class SaveAllAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            mainTabPane.saveAllTab();
+            tabPane.saveAllTab();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -14,7 +14,7 @@ import redcoder.texteditor.core.linenumber.JTextAreaBasedLineNumberModel;
 import redcoder.texteditor.core.linenumber.LineNumberComponent;
 import redcoder.texteditor.core.linenumber.LineNumberModel;
 import redcoder.texteditor.core.tabpane.ButtonTabComponent;
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.utils.FileUtils;
 
 import javax.swing.*;
@@ -55,15 +55,15 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
     private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
 
-    public ScrollTextPane(MainTabPane mainTabPane, String filename) {
-        this(mainTabPane, filename, false, true, null);
+    public ScrollTextPane(TabPane tabPane, String filename) {
+        this(tabPane, filename, false, true, null);
     }
 
-    public ScrollTextPane(MainTabPane mainTabPane, File file) {
-        this(mainTabPane, file.getName(), false, true, file);
+    public ScrollTextPane(TabPane tabPane, File file) {
+        this(tabPane, file.getName(), false, true, file);
     }
 
-    public ScrollTextPane(MainTabPane mainTabPane, String filename, boolean modified, boolean modifyAware, File file) {
+    public ScrollTextPane(TabPane tabPane, String filename, boolean modified, boolean modifyAware, File file) {
         this.listenerList = new ArrayList<>();
         this.filename = filename;
         this.modified = modified;
@@ -78,7 +78,7 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
 
         this.textArea = new JTextArea();
         this.lineNumberComponent = createLineNumComponent();
-        initTextArea(mainTabPane);
+        initTextArea(tabPane);
         this.setRowHeaderView(lineNumberComponent);
         this.setViewportView(textArea);
 
@@ -105,7 +105,7 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
     }
 
     /**
-     * 当切换到某个tab是，{@link MainTabPane}会调用该方法，通知被选中的tab下的文本窗格。
+     * 当切换到某个tab是，{@link TabPane}会调用该方法，通知被选中的tab下的文本窗格。
      */
     public void touch() {
         fireTextPaneChangeEvent();
@@ -248,10 +248,10 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
         return closed;
     }
 
-    private void initTextArea(MainTabPane mainTabPane) {
+    private void initTextArea(TabPane tabPane) {
         textArea.setFont(FontChangeProcessor.getSharedFont());
         // 绑定快捷键
-        addKeyBinding(Framework.getFrameworkShareKeyStrokes(), mainTabPane.getActions(), textArea);
+        addKeyBinding(Framework.getFrameworkShareKeyStrokes(), tabPane.getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏
         textArea.addCaretListener(e -> fireTextPaneChangeEvent());
 

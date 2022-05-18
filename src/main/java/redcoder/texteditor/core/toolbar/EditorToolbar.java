@@ -2,7 +2,7 @@ package redcoder.texteditor.core.toolbar;
 
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,15 +16,15 @@ import static redcoder.texteditor.action.ActionName.*;
  */
 public class EditorToolbar extends JPanel {
 
-    public EditorToolbar(MainTabPane mainTabPane) {
+    public EditorToolbar(TabPane tabPane) {
         setLayout(new BorderLayout());
-        init(mainTabPane);
+        init(tabPane);
     }
 
-    private void init(MainTabPane mainTabPane) {
+    private void init(TabPane tabPane) {
         Map<ActionName, Action> mergedAction = new HashMap<>();
         mergedAction.putAll(Framework.getFrameworkSharedAction());
-        mergedAction.putAll(mainTabPane.getActions());
+        mergedAction.putAll(tabPane.getActions());
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);

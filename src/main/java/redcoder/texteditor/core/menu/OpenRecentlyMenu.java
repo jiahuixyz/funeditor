@@ -6,7 +6,7 @@ import redcoder.texteditor.core.file.FileOpenEvent;
 import redcoder.texteditor.core.file.FileOpenListener;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.file.RecentlyOpenedFiles;
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 
 import javax.swing.*;
 import java.io.File;
@@ -14,11 +14,11 @@ import java.util.Objects;
 
 public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
 
-    private final MainTabPane mainTabPane;
+    private final TabPane tabPane;
 
-    public OpenRecentlyMenu(MainTabPane mainTabPane) {
+    public OpenRecentlyMenu(TabPane tabPane) {
         super("Open Recently");
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
 
         initMenuItem();
         setFont(EditorFrame.MENU_ITEM_DEFAULT_FONT);
@@ -35,7 +35,7 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
 
     private void initMenuItem() {
         for (File file : RecentlyOpenedFiles.getRecentlyFile()) {
-            add(new OpenRecentlyAction(mainTabPane, file));
+            add(new OpenRecentlyAction(tabPane, file));
         }
     }
 
@@ -54,7 +54,7 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
             }
         }
         // not exist, insert to first
-        JMenuItem menuItem = new JMenuItem(new OpenRecentlyAction(mainTabPane, file));
+        JMenuItem menuItem = new JMenuItem(new OpenRecentlyAction(tabPane, file));
         add(menuItem, 0);
     }
 }

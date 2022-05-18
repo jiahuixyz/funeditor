@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 
 import javax.swing.*;
@@ -9,16 +9,16 @@ import java.awt.event.ActionEvent;
 
 public class LineWrapAction extends AbstractAction {
 
-    private MainTabPane mainTabPane;
+    private TabPane tabPane;
 
-    public LineWrapAction(MainTabPane mainTabPane) {
+    public LineWrapAction(TabPane tabPane) {
         super("Line Wrap");
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        for (Component component : mainTabPane.getComponents()) {
+        for (Component component : tabPane.getComponents()) {
             if (component instanceof ScrollTextPane) {
                 ((ScrollTextPane) component).lineWrapSwitch();
             }

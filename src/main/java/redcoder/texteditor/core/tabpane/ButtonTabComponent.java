@@ -12,13 +12,13 @@ import java.awt.event.*;
  */
 public class ButtonTabComponent extends JPanel {
 
-    private final MainTabPane mainTabPane;
+    private final TabPane tabPane;
     private final JLabel label;
 
-    public ButtonTabComponent(MainTabPane mainTabPane, String title) {
+    public ButtonTabComponent(TabPane tabPane, String title) {
         // unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
         setOpaque(false);
 
         label = new JLabel(title);
@@ -60,9 +60,9 @@ public class ButtonTabComponent extends JPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            int index = mainTabPane.indexOfTabComponent(ButtonTabComponent.this);
+            int index = tabPane.indexOfTabComponent(ButtonTabComponent.this);
             if (index != -1) {
-                mainTabPane.closeTab(index);
+                tabPane.closeTab(index);
             }
         }
 

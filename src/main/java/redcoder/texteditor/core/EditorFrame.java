@@ -4,7 +4,7 @@ import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.action.ThemeAction;
 import redcoder.texteditor.core.menu.OpenRecentlyMenu;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.core.toolbar.EditorToolbar;
 import redcoder.texteditor.theme.Theme;
@@ -32,7 +32,7 @@ public class EditorFrame extends JFrame {
     private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
 
     private EditorToolbar toolBar;
-    private MainTabPane mainTabPane;
+    private TabPane tabPane;
     private EditorStatusBar editorStatusBar;
 
     public EditorFrame() {
@@ -43,14 +43,14 @@ public class EditorFrame extends JFrame {
         // 创建状态栏
         editorStatusBar = new EditorStatusBar();
         // 创建主窗格
-        mainTabPane = new MainTabPane(editorStatusBar);
+        tabPane = new TabPane(editorStatusBar);
         // 创建工具栏
-        toolBar = new EditorToolbar(mainTabPane);
+        toolBar = new EditorToolbar(tabPane);
 
         Map<ActionName, KeyStroke> keyStrokes = Framework.getFrameworkShareKeyStrokes();
         Map<ActionName, Action> mergedAction = new HashMap<>();
         mergedAction.putAll(Framework.getFrameworkSharedAction());
-        mergedAction.putAll(mainTabPane.getActions());
+        mergedAction.putAll(tabPane.getActions());
 
         // 添加菜单
         addMenu(keyStrokes, mergedAction);
@@ -58,7 +58,7 @@ public class EditorFrame extends JFrame {
         // 组装工具栏、主窗格和状态栏
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(toolBar, BorderLayout.NORTH);
-        rootPane.add(mainTabPane, BorderLayout.CENTER);
+        rootPane.add(tabPane, BorderLayout.CENTER);
         rootPane.add(editorStatusBar, BorderLayout.SOUTH);
         setContentPane(rootPane);
 
@@ -66,7 +66,7 @@ public class EditorFrame extends JFrame {
         addKeyBinding(rootPane, keyStrokes, mergedAction);
 
         // 加载未保存的新建文件
-        mainTabPane.loadUnSavedNewTextPane();
+        tabPane.loadUnSavedNewTextPane();
 
         setMinimumSize(new Dimension(700, 432));
         setSize(900, 600);
@@ -87,7 +87,7 @@ public class EditorFrame extends JFrame {
                 String message = String.format("Do you want to save the changes to the following %d files?", list.size());
                 String filenames = StringUtils.join(list.stream().map(ScrollTextPane::getFilename).collect(toList()), "\n");
                 message = message + "\n\n" + filenames + "\n\n" + "Your changes will be lost if you don't save them.";
-                int state = JOptionPane.showOptionDialog(mainTabPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
+                int state = JOptionPane.showOptionDialog(tabPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
                 if (state == JOptionPane.YES_OPTION) {
                     for (ScrollTextPane pane : list) {
@@ -109,8 +109,8 @@ public class EditorFrame extends JFrame {
 
     private List<ScrollTextPane> getModifiedTextPane() {
         List<ScrollTextPane> textPaneList = new ArrayList<>();
-        for (int i = 0; i < mainTabPane.getTabCount(); i++) {
-            Component component = mainTabPane.getComponentAt(i);
+        for (int i = 0; i < tabPane.getTabCount(); i++) {
+            Component component = tabPane.getComponentAt(i);
             if (component instanceof ScrollTextPane) {
                 if (((ScrollTextPane) component).isModified()) {
                     textPaneList.add((ScrollTextPane) component);
@@ -124,8 +124,8 @@ public class EditorFrame extends JFrame {
         return editorStatusBar;
     }
 
-    public MainTabPane getMainTabPane() {
-        return mainTabPane;
+    public TabPane getMainTabPane() {
+        return tabPane;
     }
 
     // ---------- 创建菜单
@@ -161,7 +161,7 @@ public class EditorFrame extends JFrame {
         menu.addSeparator();
         addMenuItem(menu, keyStrokes.get(OPEN_FILE), mergedAction.get(OPEN_FILE));
         // open recently
-        OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(mainTabPane);
+        OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(tabPane);
         menu.add(recentlyMenu);
 
         // save & save as & save all

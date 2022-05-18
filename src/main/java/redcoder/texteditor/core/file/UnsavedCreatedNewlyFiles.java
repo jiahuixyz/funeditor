@@ -1,6 +1,6 @@
 package redcoder.texteditor.core.file;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
@@ -69,10 +69,10 @@ public class UnsavedCreatedNewlyFiles {
     /**
      * 加载未保存的且新创建的文件
      *
-     * @param mainTabPane 主窗格
+     * @param tabPane 主窗格
      * @return 加载的文件数量
      */
-    public static int load(MainTabPane mainTabPane) {
+    public static int load(TabPane tabPane) {
         if (loaded) {
             return 0;
         }
@@ -82,7 +82,7 @@ public class UnsavedCreatedNewlyFiles {
             return 0;
         }
         for (File file : files) {
-            FileProcessor.openFile(mainTabPane, file, true);
+            FileProcessor.openFile(tabPane, file, true);
         }
         return files.length;
     }

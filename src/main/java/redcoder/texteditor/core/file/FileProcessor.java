@@ -1,7 +1,7 @@
 package redcoder.texteditor.core.file;
 
 import redcoder.texteditor.core.EditorFrame;
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
 
@@ -40,11 +40,11 @@ public class FileProcessor {
      *
      * @return true：打开成功，false：打开失败
      */
-    public static boolean openFile(MainTabPane mainTabPane) {
-        int state = fileChooser.showOpenDialog(mainTabPane);
+    public static boolean openFile(TabPane tabPane) {
+        int state = fileChooser.showOpenDialog(tabPane);
         if (state == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            return openFile(mainTabPane, file, false);
+            return openFile(tabPane, file, false);
         }
         return false;
     }
@@ -52,14 +52,14 @@ public class FileProcessor {
     /**
      * 打开指定的文件
      *
-     * @param mainTabPane 编辑器主窗格
+     * @param tabPane 编辑器主窗格
      * @param file        要打开的文件
      * @param ucnf        是否是新创建的且未保存的文件
      * @return true：打开成功，false：打开失败
      */
-    public static boolean openFile(MainTabPane mainTabPane, File file, boolean ucnf) {
-        boolean b = mainTabPane.openFile(file, ucnf);
-        fireFileOpenEvent(mainTabPane, file, ucnf);
+    public static boolean openFile(TabPane tabPane, File file, boolean ucnf) {
+        boolean b = tabPane.openFile(file, ucnf);
+        fireFileOpenEvent(tabPane, file, ucnf);
         return b;
     }
 
@@ -117,8 +117,8 @@ public class FileProcessor {
         listenerList.add(listener);
     }
 
-    private static void fireFileOpenEvent(MainTabPane mainTabPane, File file, boolean ucnf) {
-        FileOpenEvent e = new FileOpenEvent(mainTabPane, ucnf, file);
+    private static void fireFileOpenEvent(TabPane tabPane, File file, boolean ucnf) {
+        FileOpenEvent e = new FileOpenEvent(tabPane, ucnf, file);
         for (FileOpenListener listener : listenerList) {
             listener.onFileOpen(e);
         }

@@ -18,9 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static redcoder.texteditor.action.ActionName.*;
 
 /**
- * 编辑器主窗格，支持多tab
+ * 支持多tab的窗格，
  */
-public class MainTabPane extends JTabbedPane {
+public class TabPane extends JTabbedPane {
 
     private final AtomicInteger counter = new AtomicInteger(0);
     private final EditorStatusBar editorStatusBar;
@@ -28,7 +28,7 @@ public class MainTabPane extends JTabbedPane {
     private ScrollTextPane selectedScrollTextPane;
     private Map<ActionName, Action> actions;
 
-    public MainTabPane(EditorStatusBar editorStatusBar) {
+    public TabPane(EditorStatusBar editorStatusBar) {
         this.editorStatusBar = editorStatusBar;
         this.addedFileTabbedIndex = new HashMap<>();
 

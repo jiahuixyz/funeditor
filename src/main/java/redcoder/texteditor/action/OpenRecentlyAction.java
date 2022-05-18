@@ -1,7 +1,7 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.file.FileProcessor;
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -9,17 +9,17 @@ import java.io.File;
 
 public class OpenRecentlyAction extends AbstractAction {
 
-    private MainTabPane mainTabPane;
+    private TabPane tabPane;
     private File file;
 
-    public OpenRecentlyAction(MainTabPane mainTabPane, File file) {
+    public OpenRecentlyAction(TabPane tabPane, File file) {
         super(file.getAbsolutePath());
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
         this.file = file;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        FileProcessor.openFile(mainTabPane, file, false);
+        FileProcessor.openFile(tabPane, file, false);
     }
 }

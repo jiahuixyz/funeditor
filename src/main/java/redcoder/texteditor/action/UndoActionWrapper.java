@@ -1,6 +1,6 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.tabpane.MainTabPane;
+import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
@@ -9,17 +9,17 @@ import java.util.Optional;
 
 public class UndoActionWrapper extends AbstractAction {
 
-    private MainTabPane mainTabPane;
+    private TabPane tabPane;
 
-    public UndoActionWrapper(MainTabPane mainTabPane) {
+    public UndoActionWrapper(TabPane tabPane) {
         super("Undo");
-        this.mainTabPane = mainTabPane;
+        this.tabPane = tabPane;
         Optional.ofNullable(ToolbarIconResource.getImageIcon("Undo24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mainTabPane.getSelectedTextPane().undo(e);
+        tabPane.getSelectedTextPane().undo(e);
     }
 }
