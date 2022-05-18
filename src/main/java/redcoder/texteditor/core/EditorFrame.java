@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,37 +32,38 @@ public class EditorFrame extends JFrame {
 
     private EditorToolbar toolBar;
     private TabPane tabPane;
-    private EditorStatusBar editorStatusBar;
+    private EditorStatusBar statusBar;
 
     public EditorFrame() {
         super(TITLE);
     }
 
     public void init() {
-        // 创建状态栏
-        editorStatusBar = new EditorStatusBar();
-        // 创建主窗格
-        tabPane = new TabPane(editorStatusBar);
-        // 创建工具栏
-        toolBar = new EditorToolbar(tabPane);
-
-        Map<ActionName, KeyStroke> keyStrokes = Framework.getFrameworkShareKeyStrokes();
-        Map<ActionName, Action> mergedAction = new HashMap<>();
-        mergedAction.putAll(Framework.getFrameworkSharedAction());
-        mergedAction.putAll(tabPane.getActions());
-
-        // 添加菜单
-        addMenu(keyStrokes, mergedAction);
-
-        // 组装工具栏、主窗格和状态栏
-        JPanel rootPane = new JPanel(new BorderLayout());
-        rootPane.add(toolBar, BorderLayout.NORTH);
-        rootPane.add(tabPane, BorderLayout.CENTER);
-        rootPane.add(editorStatusBar, BorderLayout.SOUTH);
+        JPanel rootPane = new JPanel();
+        rootPane.setLayout(new BorderLayout());
         setContentPane(rootPane);
 
+        // 创建工具栏
+        toolBar = new EditorToolbar();
+        // 创建状态栏
+        statusBar = new EditorStatusBar();
+        // 创建主窗格
+        // TODO: 2022/5/18 remove constructor param?
+        tabPane = new TabPane(statusBar);
+
+        Map<ActionName, KeyStroke> keyStrokes = Framework.getKeyStrokes();
+        Map<ActionName, Action> action = Framework.getActions();
+
+        // 添加菜单
+        addMenu(keyStrokes, action);
+
+        // 组装工具栏、主窗格和状态栏
+        rootPane.add(toolBar, BorderLayout.NORTH);
+        rootPane.add(tabPane, BorderLayout.CENTER);
+        rootPane.add(statusBar, BorderLayout.SOUTH);
+
         // add key bindings
-        addKeyBinding(rootPane, keyStrokes, mergedAction);
+        addKeyBinding(rootPane, keyStrokes, action);
 
         // 加载未保存的新建文件
         tabPane.loadUnSavedNewTextPane();
@@ -120,23 +120,15 @@ public class EditorFrame extends JFrame {
         return textPaneList;
     }
 
-    public EditorStatusBar getStatusBar() {
-        return editorStatusBar;
-    }
-
-    public TabPane getMainTabPane() {
-        return tabPane;
-    }
-
     // ---------- 创建菜单
     private void addMenu(Map<ActionName, KeyStroke> keyStrokes,
-                         Map<ActionName, Action> mergedAction) {
+                         Map<ActionName, Action> action) {
         // create 'File' menu
-        JMenu fileMenu = createFileMenu(keyStrokes, mergedAction);
+        JMenu fileMenu = createFileMenu(keyStrokes, action);
         // create 'Edit' menu
-        JMenu editMenu = createEditMenu(keyStrokes, mergedAction);
+        JMenu editMenu = createEditMenu(keyStrokes, action);
         // create 'View' menu
-        JMenu viewMenu = createViewMenu(keyStrokes, mergedAction);
+        JMenu viewMenu = createViewMenu(keyStrokes, action);
         // create 'Theme' menu
         JMenu themeMenu = createThemeMenu();
 
@@ -150,73 +142,77 @@ public class EditorFrame extends JFrame {
     }
 
     private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes,
-                                 Map<ActionName, Action> mergedAction) {
+                                 Map<ActionName, Action> action) {
         JMenu menu = new JMenu("File");
         menu.setFont(MENU_DEFAULT_FONT);
 
         // new file
-        addMenuItem(menu, keyStrokes.get(NEW_FILE), mergedAction.get(NEW_FILE));
+        addMenuItem(menu, keyStrokes.get(NEW_FILE), action.get(NEW_FILE));
 
         // open file
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(OPEN_FILE), mergedAction.get(OPEN_FILE));
+        addMenuItem(menu, keyStrokes.get(OPEN_FILE), action.get(OPEN_FILE));
         // open recently
         OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(tabPane);
         menu.add(recentlyMenu);
 
         // save & save as & save all
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(SAVE_FILE), mergedAction.get(SAVE_FILE),
-                keyStrokes.get(SAVE_AS_FILE), mergedAction.get(SAVE_AS_FILE),
-                keyStrokes.get(SAVE_ALL), mergedAction.get(SAVE_ALL));
+        addMenuItem(menu, keyStrokes.get(SAVE_FILE), action.get(SAVE_FILE),
+                keyStrokes.get(SAVE_AS_FILE), action.get(SAVE_AS_FILE),
+                keyStrokes.get(SAVE_ALL), action.get(SAVE_ALL));
 
         // close & close all
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(CLOSE), mergedAction.get(CLOSE),
-                keyStrokes.get(CLOSE_ALL), mergedAction.get(CLOSE_ALL));
+        addMenuItem(menu, keyStrokes.get(CLOSE), action.get(CLOSE),
+                keyStrokes.get(CLOSE_ALL), action.get(CLOSE_ALL));
 
         // new window & close window
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(NEW_WINDOW), mergedAction.get(NEW_WINDOW),
-                keyStrokes.get(CLOSE_WINDOW), mergedAction.get(CLOSE_WINDOW));
+        addMenuItem(menu, keyStrokes.get(NEW_WINDOW), action.get(NEW_WINDOW),
+                keyStrokes.get(CLOSE_WINDOW), action.get(CLOSE_WINDOW));
 
         // exit
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(EXIT), mergedAction.get(EXIT));
+        addMenuItem(menu, keyStrokes.get(EXIT), action.get(EXIT));
 
         return menu;
     }
 
     private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes,
-                                 Map<ActionName, Action> mergedAction) {
+                                 Map<ActionName, Action> action) {
         JMenu menu = new JMenu("Edit");
         menu.setFont(MENU_DEFAULT_FONT);
 
         // undo & redo
-        addMenuItem(menu, keyStrokes.get(UNDO), mergedAction.get(UNDO),
-                keyStrokes.get(REDO), mergedAction.get(REDO));
+        addMenuItem(menu, keyStrokes.get(UNDO), action.get(UNDO),
+                keyStrokes.get(REDO), action.get(REDO));
 
         // cut, copy, paste
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(CUT), mergedAction.get(CUT),
-                keyStrokes.get(COPY), mergedAction.get(COPY),
-                keyStrokes.get(PASTE), mergedAction.get(PASTE));
+        addMenuItem(menu, keyStrokes.get(CUT), action.get(CUT),
+                keyStrokes.get(COPY), action.get(COPY),
+                keyStrokes.get(PASTE), action.get(PASTE));
+
+        // find, replace
+        menu.addSeparator();
+        addMenuItem(menu, keyStrokes.get(FIND), action.get(FIND));
 
         return menu;
     }
 
     private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes,
-                                 Map<ActionName, Action> mergedAction) {
+                                 Map<ActionName, Action> action) {
         JMenu menu = new JMenu("View");
         menu.setFont(MENU_DEFAULT_FONT);
 
         // zoom in & zoom out
-        addMenuItem(menu, keyStrokes.get(ZOOM_IN), mergedAction.get(ZOOM_IN),
-                keyStrokes.get(ZOOM_OUT), mergedAction.get(ZOOM_OUT));
+        addMenuItem(menu, keyStrokes.get(ZOOM_IN), action.get(ZOOM_IN),
+                keyStrokes.get(ZOOM_OUT), action.get(ZOOM_OUT));
 
         // line wrap
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(LINE_WRAP), mergedAction.get(LINE_WRAP));
+        addMenuItem(menu, keyStrokes.get(LINE_WRAP), action.get(LINE_WRAP));
 
         return menu;
     }
@@ -246,12 +242,12 @@ public class EditorFrame extends JFrame {
         }
     }
 
-    private void addKeyBinding(JPanel rootPane,
+    private void addKeyBinding(JComponent rootPane,
                                Map<ActionName, KeyStroke> keyStrokes,
-                               Map<ActionName, Action> mergedAction) {
+                               Map<ActionName, Action> action) {
         // register action
         ActionMap actionMap = rootPane.getActionMap();
-        for (Map.Entry<ActionName, Action> entry : mergedAction.entrySet()) {
+        for (Map.Entry<ActionName, Action> entry : action.entrySet()) {
             actionMap.put(entry.getKey(), entry.getValue());
         }
         // add key binding
@@ -268,5 +264,17 @@ public class EditorFrame extends JFrame {
         inputMap.put(keyStrokes.get(LINE_WRAP), LINE_WRAP);
         inputMap.put(keyStrokes.get(NEW_WINDOW), NEW_WINDOW);
         inputMap.put(keyStrokes.get(CLOSE_WINDOW), CLOSE_WINDOW);
+    }
+
+    public EditorToolbar getToolBar() {
+        return toolBar;
+    }
+
+    public TabPane getTabPane() {
+        return tabPane;
+    }
+
+    public EditorStatusBar getStatusBar() {
+        return statusBar;
     }
 }

@@ -1,5 +1,6 @@
 package redcoder.texteditor.action;
 
+import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.toolbar.ToolbarIconResource;
@@ -10,11 +11,8 @@ import java.util.Optional;
 
 public class OpenAction extends AbstractAction {
 
-    private final TabPane tabPane;
-
-    public OpenAction(TabPane tabPane) {
+    public OpenAction() {
         super("Open File");
-        this.tabPane = tabPane;
         Optional.ofNullable(ToolbarIconResource.getImageIcon("Open24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
@@ -22,6 +20,7 @@ public class OpenAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
+            TabPane tabPane = Framework.getActivatedFrame().getTabPane();
             FileProcessor.openFile(tabPane);
         } catch (Exception ex) {
             ex.printStackTrace();

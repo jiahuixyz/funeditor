@@ -2,11 +2,9 @@ package redcoder.texteditor.core.toolbar;
 
 import redcoder.texteditor.action.ActionName;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.tabpane.TabPane;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.Map;
 
 import static redcoder.texteditor.action.ActionName.*;
@@ -16,39 +14,37 @@ import static redcoder.texteditor.action.ActionName.*;
  */
 public class EditorToolbar extends JPanel {
 
-    public EditorToolbar(TabPane tabPane) {
+    public EditorToolbar() {
         setLayout(new BorderLayout());
-        init(tabPane);
+        init();
     }
 
-    private void init(TabPane tabPane) {
-        Map<ActionName, Action> mergedAction = new HashMap<>();
-        mergedAction.putAll(Framework.getFrameworkSharedAction());
-        mergedAction.putAll(tabPane.getActions());
+    private void init() {
+        Map<ActionName, Action> actions = Framework.getActions();
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         // new file, open file, save file, save all
-        addButtonToToolBar(mergedAction.get(NEW_FILE), toolBar);
-        addButtonToToolBar(mergedAction.get(OPEN_FILE), toolBar);
-        addButtonToToolBar(mergedAction.get(SAVE_FILE), toolBar);
-        addButtonToToolBar(mergedAction.get(SAVE_ALL), toolBar);
+        addButtonToToolBar(actions.get(NEW_FILE), toolBar);
+        addButtonToToolBar(actions.get(OPEN_FILE), toolBar);
+        addButtonToToolBar(actions.get(SAVE_FILE), toolBar);
+        addButtonToToolBar(actions.get(SAVE_ALL), toolBar);
         toolBar.addSeparator();
 
         // cut, copy, paste
-        addButtonToToolBar(mergedAction.get(CUT), toolBar);
-        addButtonToToolBar(mergedAction.get(COPY), toolBar);
-        addButtonToToolBar(mergedAction.get(PASTE), toolBar);
+        addButtonToToolBar(actions.get(CUT), toolBar);
+        addButtonToToolBar(actions.get(COPY), toolBar);
+        addButtonToToolBar(actions.get(PASTE), toolBar);
         toolBar.addSeparator();
 
         // undo, redo
-        addButtonToToolBar(mergedAction.get(UNDO), toolBar);
-        addButtonToToolBar(mergedAction.get(REDO), toolBar);
+        addButtonToToolBar(actions.get(UNDO), toolBar);
+        addButtonToToolBar(actions.get(REDO), toolBar);
         toolBar.addSeparator();
 
         // undo, redo
-        addButtonToToolBar(mergedAction.get(ZOOM_IN), toolBar);
-        addButtonToToolBar(mergedAction.get(ZOOM_OUT), toolBar);
+        addButtonToToolBar(actions.get(ZOOM_IN), toolBar);
+        addButtonToToolBar(actions.get(ZOOM_OUT), toolBar);
 
         add(toolBar, BorderLayout.LINE_START);
     }
@@ -60,6 +56,6 @@ public class EditorToolbar extends JPanel {
             button.setToolTipText(action.getValue(Action.NAME).toString());
         }
         toolBar.add(button);
-        toolBar.addSeparator(new Dimension(1,toolBar.getHeight()));
+        toolBar.addSeparator(new Dimension(1, toolBar.getHeight()));
     }
 }

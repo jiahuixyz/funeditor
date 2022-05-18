@@ -6,6 +6,7 @@ public enum ActionName {
     CUT,
     COPY,
     PASTE,
+    FIND,
     ZOOM_IN,
     ZOOM_OUT,
     NEW_FILE,

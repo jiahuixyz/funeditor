@@ -55,15 +55,15 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
     private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
 
-    public ScrollTextPane(TabPane tabPane, String filename) {
-        this(tabPane, filename, false, true, null);
+    public ScrollTextPane(String filename) {
+        this(filename, false, true, null);
     }
 
-    public ScrollTextPane(TabPane tabPane, File file) {
-        this(tabPane, file.getName(), false, true, file);
+    public ScrollTextPane(File file) {
+        this(file.getName(), false, true, file);
     }
 
-    public ScrollTextPane(TabPane tabPane, String filename, boolean modified, boolean modifyAware, File file) {
+    public ScrollTextPane(String filename, boolean modified, boolean modifyAware, File file) {
         this.listenerList = new ArrayList<>();
         this.filename = filename;
         this.modified = modified;
@@ -78,7 +78,7 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
 
         this.textArea = new JTextArea();
         this.lineNumberComponent = createLineNumComponent();
-        initTextArea(tabPane);
+        initTextArea();
         this.setRowHeaderView(lineNumberComponent);
         this.setViewportView(textArea);
 
@@ -248,10 +248,10 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
         return closed;
     }
 
-    private void initTextArea(TabPane tabPane) {
+    private void initTextArea() {
         textArea.setFont(FontChangeProcessor.getSharedFont());
         // 绑定快捷键
-        addKeyBinding(Framework.getFrameworkShareKeyStrokes(), tabPane.getActions(), textArea);
+        addKeyBinding(Framework.getKeyStrokes(), Framework.getActions(), textArea);
         // 添加CaretListener，用于更新编辑器底部的状态栏
         textArea.addCaretListener(e -> fireTextPaneChangeEvent());
 
