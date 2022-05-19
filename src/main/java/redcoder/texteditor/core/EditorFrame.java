@@ -38,7 +38,7 @@ public class EditorFrame extends JFrame {
         super(TITLE);
     }
 
-    public void init() {
+    public void createAndShowGUI() {
         JPanel rootPane = new JPanel();
         rootPane.setLayout(new BorderLayout());
         setContentPane(rootPane);
@@ -196,7 +196,8 @@ public class EditorFrame extends JFrame {
 
         // find, replace
         menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(FIND), action.get(FIND));
+        addMenuItem(menu, keyStrokes.get(FIND), action.get(FIND),
+                keyStrokes.get(REPLACE), action.get(REPLACE));
 
         return menu;
     }

@@ -46,6 +46,7 @@ public class Framework extends WindowAdapter {
         SHARED_KEY_STROKES.put(REDO, KeyStroke.getKeyStroke(VK_Z, CTRL_DOWN_MASK | SHIFT_DOWN_MASK));
         SHARED_KEY_STROKES.put(LINE_WRAP, KeyStroke.getKeyStroke(VK_Z, ALT_DOWN_MASK));
         SHARED_KEY_STROKES.put(FIND, KeyStroke.getKeyStroke(VK_F, CTRL_DOWN_MASK));
+        SHARED_KEY_STROKES.put(REPLACE, KeyStroke.getKeyStroke(VK_R, CTRL_DOWN_MASK));
 
         SHARED_ACTION = new HashMap<>();
         SHARED_ACTION.put(ZOOM_IN, new ZoomInAction());
@@ -53,7 +54,6 @@ public class Framework extends WindowAdapter {
         SHARED_ACTION.put(CUT, new CutAction());
         SHARED_ACTION.put(COPY, new CopyAction());
         SHARED_ACTION.put(PASTE, new PasteAction());
-        SHARED_ACTION.put(FIND, new FindAction());
         SHARED_ACTION.put(EXIT, new ExitAction());
         SHARED_ACTION.put(NEW_WINDOW, new NewWindowAction());
         SHARED_ACTION.put(CLOSE_WINDOW, new CloseWindowAction());
@@ -67,6 +67,8 @@ public class Framework extends WindowAdapter {
         SHARED_ACTION.put(CLOSE, new CloseAction());
         SHARED_ACTION.put(CLOSE_ALL, new CloseAllAction());
         SHARED_ACTION.put(LINE_WRAP, new LineWrapAction());
+        SHARED_ACTION.put(FIND, new FindAction());
+        SHARED_ACTION.put(REPLACE, new ReplaceAction());
     }
 
     private Framework() {
@@ -77,7 +79,7 @@ public class Framework extends WindowAdapter {
         numWindows++;
         frames.add(frame);
 
-        frame.init();
+        frame.createAndShowGUI();
         frame.addWindowListener(INSTANCE);
         if (lastLocation != null) {
             lastLocation.translate(40, 40);

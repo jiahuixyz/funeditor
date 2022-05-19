@@ -8,17 +8,17 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.Optional;
 
-public class FindAction extends AbstractAction {
+public class ReplaceAction extends AbstractAction {
 
-    public FindAction() {
-        super("Find");
-        Optional.ofNullable(IconResource.getImageIcon("Find24.gif"))
+    public ReplaceAction() {
+        super("Replace");
+        Optional.ofNullable(IconResource.getImageIcon("Replace24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         EditorFrame activatedFrame = Framework.getActivatedFrame();
-        FindReplace.showFindDialog(activatedFrame);
+        FindReplace.showReplaceDialog(activatedFrame);
     }
 }

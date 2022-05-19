@@ -3,7 +3,7 @@ package redcoder.texteditor.core.findreplace;
 import javax.swing.text.DefaultHighlighter;
 import java.awt.*;
 
-public class FindHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
+class FindHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
 
     public FindHighlightPainter() {
         super(Color.GREEN);
