@@ -37,6 +37,11 @@ public class EditorToolbar extends JPanel {
         addButtonToToolBar(actions.get(PASTE), toolBar);
         toolBar.addSeparator();
 
+        // find, replace
+        addButtonToToolBar(actions.get(FIND), toolBar);
+        addButtonToToolBar(actions.get(REPLACE), toolBar);
+        toolBar.addSeparator();
+
         // undo, redo
         addButtonToToolBar(actions.get(UNDO), toolBar);
         addButtonToToolBar(actions.get(REDO), toolBar);
