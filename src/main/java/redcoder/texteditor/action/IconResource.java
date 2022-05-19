@@ -1,4 +1,4 @@
-package redcoder.texteditor.core.toolbar;
+package redcoder.texteditor.action;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class ToolbarIconResource {
+class IconResource {
 
     private static final Map<String, ImageIcon> ICONS = new HashMap<>();
 
@@ -25,12 +25,12 @@ public class ToolbarIconResource {
      * @param iconName 图标名称
      * @return 图标资源
      */
-    public static ImageIcon getImageIcon(String iconName) {
+    static ImageIcon getImageIcon(String iconName) {
         ImageIcon imageIcon = ICONS.get(iconName);
         if (imageIcon == null) {
-            URL url = ToolbarIconResource.class.getResource(iconName);
+            URL url = IconResource.class.getResource(iconName);
             if (url == null) {
-                url = ToolbarIconResource.class.getClassLoader().getResource(iconName);
+                url = IconResource.class.getClassLoader().getResource(iconName);
             }
             if (url != null) {
                 imageIcon = new ImageIcon(url);
@@ -42,7 +42,7 @@ public class ToolbarIconResource {
 
     private static void loadDefaultIcon() {
         try {
-            ClassLoader classLoader = ToolbarIconResource.class.getClassLoader();
+            ClassLoader classLoader = IconResource.class.getClassLoader();
             URL url = classLoader.getResource("toolbarButtonGraphics");
             if (url == null) {
                 return;

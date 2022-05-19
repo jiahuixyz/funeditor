@@ -1,7 +1,6 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.font.FontChangeProcessor;
-import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +13,7 @@ public class ZoomInAction extends AbstractAction {
 
     public ZoomInAction() {
         super("Zoom In");
-        Optional.ofNullable(ToolbarIconResource.getImageIcon("ZoomIn24.gif"))
+        Optional.ofNullable(IconResource.getImageIcon("ZoomIn24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 

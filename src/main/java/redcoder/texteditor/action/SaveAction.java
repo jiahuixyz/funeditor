@@ -2,7 +2,6 @@ package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.TabPane;
-import redcoder.texteditor.core.toolbar.ToolbarIconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +11,7 @@ public class SaveAction extends AbstractAction {
 
     public SaveAction() {
         super("Save File");
-        Optional.ofNullable(ToolbarIconResource.getImageIcon("Save24.gif"))
+        Optional.ofNullable(IconResource.getImageIcon("Save24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 
