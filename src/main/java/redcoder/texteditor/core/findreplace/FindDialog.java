@@ -1,9 +1,11 @@
-package redcoder.texteditor.core.find;
+package redcoder.texteditor.core.findreplace;
 
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.utils.StringUtils;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
@@ -12,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.Objects;
 
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -40,7 +43,6 @@ public class FindDialog extends JDialog implements ActionListener {
         dialog.setLayout(new BorderLayout());
         dialog.setLocationRelativeTo(frame);
         dialog.setResizable(true);
-        dialog.setPreferredSize(new Dimension(320, 160));
 
         dialog.initDialog();
 
@@ -49,40 +51,54 @@ public class FindDialog extends JDialog implements ActionListener {
     }
 
     private void initDialog() {
+        JLabel fwLabel = new JLabel("Find What:");
         textField = new JTextField();
 
         caseCheckBox = new JCheckBox("Match Case");
-        caseCheckBox.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        caseCheckBox.addChangeListener(e -> {
-            try {
-                reset();
-            } catch (BadLocationException ex) {
-                ex.printStackTrace();
-            }
-        });
+        caseCheckBox.addChangeListener(new CheckBoxSelectedStateChangeListener(caseCheckBox));
 
         wholeCheckBox = new JCheckBox("Whole Words");
-        wholeCheckBox.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        wholeCheckBox.addChangeListener(e -> {
-            try {
-                reset();
-            } catch (BadLocationException ex) {
-                ex.printStackTrace();
-            }
-        });
+        wholeCheckBox.addChangeListener(new CheckBoxSelectedStateChangeListener(wholeCheckBox));
 
-        countLabel = new JLabel("0 result");
+        countLabel = new JLabel("0 results");
         countLabel.setForeground(Color.BLUE);
-        countLabel.setBorder(BorderFactory.createEmptyBorder(3, 2, 3, 2));
 
-        JPanel panel1 = new JPanel();
-        JPanel panel2 = new JPanel();
-        initPanel1(panel1);
-        initPanel2(panel2);
+        JButton prevButton = createButton(UP_CMD);
+        JButton nextButton = createButton(DOWN_CMD);
 
-        add(panel1, BorderLayout.CENTER);
-        add(panel2, BorderLayout.SOUTH);
+        // specify layout
+        Container rootPane = getContentPane();
+        GroupLayout layout = new GroupLayout(rootPane);
+        rootPane.setLayout(layout);
 
+        // enable auto gap
+        layout.setAutoCreateContainerGaps(true);
+        layout.setAutoCreateGaps(true);
+
+        // layout child component
+        layout.setHorizontalGroup(layout.createSequentialGroup()
+                .addComponent(fwLabel)
+                .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(textField)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(caseCheckBox)
+                                .addComponent(wholeCheckBox)))
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(countLabel)
+                        .addComponent(prevButton, 20, 20, 20)
+                        .addComponent(nextButton, 20, 20, 20)));
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                        .addComponent(fwLabel)
+                        .addComponent(textField)
+                        .addComponent(countLabel)
+                        .addComponent(prevButton, 20, 20, 20)
+                        .addComponent(nextButton, 20, 20, 20))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(caseCheckBox)
+                        .addComponent(wholeCheckBox)));
+
+        // add window listener
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -91,51 +107,18 @@ public class FindDialog extends JDialog implements ActionListener {
         });
     }
 
-    private void initPanel1(JPanel panel1) {
-        JLabel label = new JLabel("Find What:");
-        JButton prevButton = new JButton("Find Prev");
-        JButton nextButton = new JButton("Find Next");
-        prevButton.addActionListener(this);
-        nextButton.addActionListener(this);
-
-        GroupLayout layout = new GroupLayout(panel1);
-        panel1.setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-        // horizontal group
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-                .addComponent(label)
-                .addGroup(layout.createParallelGroup(LEADING)
-                        .addComponent(textField)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(LEADING)
-                                        .addComponent(caseCheckBox)
-                                        .addComponent(wholeCheckBox))))
-                .addGroup(layout.createParallelGroup(LEADING)
-                        .addComponent(prevButton)
-                        .addComponent(nextButton))
-        );
-        // fixed size
-        layout.linkSize(SwingConstants.HORIZONTAL, prevButton, nextButton);
-        // vertical group
-        layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(BASELINE)
-                        .addComponent(label)
-                        .addComponent(textField)
-                        .addComponent(prevButton))
-                .addGroup(layout.createParallelGroup(LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(BASELINE)
-                                        .addComponent(caseCheckBox))
-                                .addGroup(layout.createParallelGroup(BASELINE)
-                                        .addComponent(wholeCheckBox)))
-                        .addComponent(nextButton))
-        );
-    }
-
-    private void initPanel2(JPanel panel2) {
-        panel2.setLayout(new BorderLayout());
-        panel2.add(countLabel, BorderLayout.LINE_START);
+    private JButton createButton(String command) {
+        JButton button = new JButton();
+        if (Objects.equals(command, UP_CMD) && UP != null) {
+            button.setIcon(UP);
+        } else if (Objects.equals(command, DOWN_CMD) && DOWN != null) {
+            button.setIcon(DOWN);
+        } else {
+            button.setText(command);
+        }
+        button.setActionCommand(command);
+        button.addActionListener(this);
+        return button;
     }
 
     @Override
@@ -157,9 +140,9 @@ public class FindDialog extends JDialog implements ActionListener {
                 pattern = pattern.toLowerCase();
             }
             Highlighter highlighter = textArea.getHighlighter();
-            if (Objects.equals("Find Prev", command)) {
+            if (Objects.equals(UP_CMD, command)) {
                 findPrev(length, text, pattern, highlighter);
-            } else if (Objects.equals("Find Next", command)) {
+            } else if (Objects.equals(DOWN_CMD, command)) {
                 findNext(length, text, pattern, highlighter);
             }
             countLabel.setText(String.format("%d/%d", cursor, totalMatch));
@@ -174,6 +157,7 @@ public class FindDialog extends JDialog implements ActionListener {
         position = -1;
         cursor = 0;
         totalMatch = countMatch();
+        countLabel.setText("0 results");
     }
 
     private int countMatch() throws BadLocationException {
@@ -287,4 +271,53 @@ public class FindDialog extends JDialog implements ActionListener {
 
         return isWord1 && isWord2;
     }
+
+
+    private class CheckBoxSelectedStateChangeListener implements ChangeListener {
+
+        private final JCheckBox checkBox;
+        private boolean selected;
+
+        public CheckBoxSelectedStateChangeListener(JCheckBox checkBox) {
+            this.checkBox = checkBox;
+            selected = checkBox.isSelected();
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            Object source = e.getSource();
+            if (source == checkBox) {
+                if (selected != checkBox.isSelected()) {
+                    try {
+                        reset();
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    selected = checkBox.isSelected();
+                }
+            }
+        }
+    }
+
+    static final String UP_CMD = "UP";
+    static final String DOWN_CMD = "DOWN";
+    static final ImageIcon UP;
+    static final ImageIcon DOWN;
+
+    static {
+        URL url = FindDialog.class.getClassLoader().getResource("images/find_up.png");
+        if (url != null) {
+            UP = new ImageIcon(url);
+        } else {
+            UP = null;
+        }
+
+        url = FindDialog.class.getClassLoader().getResource("images/find_down.png");
+        if (url != null) {
+            DOWN = new ImageIcon(url);
+        } else {
+            DOWN = null;
+        }
+    }
+
 }

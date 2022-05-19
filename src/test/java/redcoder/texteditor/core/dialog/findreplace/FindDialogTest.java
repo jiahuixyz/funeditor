@@ -1,7 +1,7 @@
-package redcoder.texteditor.core.dialog.find;
+package redcoder.texteditor.core.dialog.findreplace;
 
 import org.junit.Test;
-import redcoder.texteditor.core.find.FindDialog;
+import redcoder.texteditor.core.findreplace.FindDialog;
 
 import javax.swing.*;
 import java.util.concurrent.TimeUnit;

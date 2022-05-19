@@ -2,8 +2,7 @@ package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
-import redcoder.texteditor.core.find.FindDialog;
-import redcoder.texteditor.core.toolbar.ToolbarIconResource;
+import redcoder.texteditor.core.findreplace.FindDialog;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +12,7 @@ public class FindAction extends AbstractAction {
 
     public FindAction() {
         super("Find");
-        Optional.ofNullable(ToolbarIconResource.getImageIcon("Find24.gif"))
+        Optional.ofNullable(IconResource.getImageIcon("Find24.gif"))
                 .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
     }
 

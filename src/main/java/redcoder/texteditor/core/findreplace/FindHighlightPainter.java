@@ -1,4 +1,4 @@
-package redcoder.texteditor.core.find;
+package redcoder.texteditor.core.findreplace;
 
 import javax.swing.text.DefaultHighlighter;
 import java.awt.*;
