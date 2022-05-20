@@ -85,15 +85,13 @@ public class EditorFrame extends JFrame {
 
     public boolean shouldClose() {
         if (Framework.getNumWindows() > 1) {
-            List<ScrollTextPane> list = getModifiedTextPane();
-            if (!list.isEmpty()) {
-                String message = String.format("Do you want to save the changes to the following %d files?", list.size());
-                String filenames = StringUtils.join(list.stream().map(ScrollTextPane::getFilename).collect(toList()), "\n");
-                message = message + "\n\n" + filenames + "\n\n" + "Your changes will be lost if you don't save them.";
+            List<ScrollTextPane> textPanes = getModifiedTextPane();
+            if (!textPanes.isEmpty()) {
+                String message = createDialogMessage(textPanes);
                 int state = JOptionPane.showOptionDialog(tabPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
                 if (state == JOptionPane.YES_OPTION) {
-                    for (ScrollTextPane pane : list) {
+                    for (ScrollTextPane pane : textPanes) {
                         if (!pane.saveTextPane()) {
                             return false;
                         }
@@ -121,6 +119,28 @@ public class EditorFrame extends JFrame {
             }
         }
         return textPaneList;
+    }
+
+    private String createDialogMessage(List<ScrollTextPane> textPanes) {
+        StringBuilder message = new StringBuilder();
+        message.append(String.format("Do you want to save the changes to the following %d files?", textPanes.size()))
+                .append("\n\n");
+
+        List<String> filenames = textPanes.stream().map(ScrollTextPane::getFilename).collect(toList());
+        if (filenames.size() > 5) {
+            int i = filenames.size() - 5;
+            message.append(StringUtils.join(filenames.subList(0, 5), "\n"))
+                    .append("\n")
+                    .append(String.format("...%d additional files not shown", i))
+                    .append("\n\n");
+        } else {
+            message.append(StringUtils.join(filenames, "\n"))
+                    .append("\n\n");
+        }
+
+        message.append("Your changes will be lost if you don't save them.");
+
+        return message.toString();
     }
 
     // ---------- 创建菜单
