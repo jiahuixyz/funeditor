@@ -43,6 +43,22 @@ public class FindReplace implements ActionListener {
     private int cursor = 0;
     private int totalMatch = 0;
 
+    public static void showFindDialog(EditorFrame frame) {
+        if (frame.getFindDialog() != null) {
+            return;
+        }
+        FindReplace findReplace = new FindReplace(frame, Type.FIND);
+        findReplace.createDialog(frame, Type.FIND);
+    }
+
+    public static void showReplaceDialog(EditorFrame frame) {
+        if (frame.getReplaceDialog() != null) {
+            return;
+        }
+        FindReplace findReplace = new FindReplace(frame, Type.REPLACE);
+        findReplace.createDialog(frame, Type.REPLACE);
+    }
+
     private FindReplace(EditorFrame frame, Type type) {
         textArea = frame.getTabPane().getSelectedTextPane().getTextArea();
         findTextField = new JTextField();
@@ -79,37 +95,33 @@ public class FindReplace implements ActionListener {
         return button;
     }
 
-    public static void showFindDialog(EditorFrame frame) {
-        // FIXME: 2022/5/19 限制数量
-        FindReplace findReplace = new FindReplace(frame, Type.FIND);
-        findReplace.createDialog(frame, Type.FIND);
-    }
-
-    public static void showReplaceDialog(EditorFrame frame) {
-        // FIXME: 2022/5/19 限制数量
-        FindReplace findReplace = new FindReplace(frame, Type.REPLACE);
-        findReplace.createDialog(frame, Type.REPLACE);
-    }
-
     private void createDialog(EditorFrame frame, Type type) {
         JDialog dialog = new JDialog(frame, type.title);
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dialog.setLocationRelativeTo(frame);
         dialog.setResizable(true);
+
+        // init dialog
+        if (type == Type.FIND) {
+            initFindDialog(dialog);
+            frame.setFindDialog(dialog);
+        } else {
+            initReplaceDialog(dialog);
+            frame.setReplaceDialog(dialog);
+        }
+
         // add window listener
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 removeOldHighlights(textArea);
+                if (type == Type.FIND) {
+                    frame.setFindDialog(null);
+                } else {
+                    frame.setReplaceDialog(null);
+                }
             }
         });
-
-        // init dialog
-        if (type == Type.FIND) {
-            initFindDialog(dialog);
-        } else {
-            initReplaceDialog(dialog);
-        }
 
         dialog.pack();
         dialog.setVisible(true);

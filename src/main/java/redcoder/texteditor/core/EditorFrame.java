@@ -34,6 +34,9 @@ public class EditorFrame extends JFrame {
     private TabPane tabPane;
     private EditorStatusBar statusBar;
 
+    private JDialog findDialog;
+    private JDialog replaceDialog;
+
     public EditorFrame() {
         super(TITLE);
     }
@@ -277,5 +280,21 @@ public class EditorFrame extends JFrame {
 
     public EditorStatusBar getStatusBar() {
         return statusBar;
+    }
+
+    public JDialog getFindDialog() {
+        return findDialog;
+    }
+
+    public void setFindDialog(JDialog findDialog) {
+        this.findDialog = findDialog;
+    }
+
+    public JDialog getReplaceDialog() {
+        return replaceDialog;
+    }
+
+    public void setReplaceDialog(JDialog replaceDialog) {
+        this.replaceDialog = replaceDialog;
     }
 }

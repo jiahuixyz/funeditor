@@ -19,6 +19,8 @@ public class FindAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         EditorFrame activatedFrame = Framework.getActivatedFrame();
-        FindReplace.showFindDialog(activatedFrame);
+        if (activatedFrame.getTabPane().getSelectedTextPane() != null) {
+            FindReplace.showFindDialog(activatedFrame);
+        }
     }
 }
