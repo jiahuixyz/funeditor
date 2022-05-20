@@ -1,9 +1,8 @@
-package redcoder.texteditor.core.dialog.findreplace;
+package redcoder.texteditor.core.findreplace;
 
 import org.junit.Before;
 import org.junit.Test;
 import redcoder.texteditor.core.EditorFrame;
-import redcoder.texteditor.core.findreplace.FindReplace;
 
 import javax.swing.*;
 import java.util.concurrent.TimeUnit;

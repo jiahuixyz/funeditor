@@ -24,7 +24,7 @@ import static redcoder.texteditor.action.ActionName.*;
 
 public class EditorFrame extends JFrame {
 
-    public static final String TITLE = "A Simple Text Editor";
+    public static final String TITLE = "Rc Text Editor";
     public static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
     public static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
 
@@ -154,6 +154,8 @@ public class EditorFrame extends JFrame {
         JMenu viewMenu = createViewMenu(keyStrokes, action);
         // create 'Theme' menu
         JMenu themeMenu = createThemeMenu();
+        // create 'Help' menu
+        JMenu helpMenu = createHelpMenu(action);
 
         // set menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -161,13 +163,13 @@ public class EditorFrame extends JFrame {
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
         menuBar.add(themeMenu);
+        menuBar.add(helpMenu);
         setJMenuBar(menuBar);
     }
 
     private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes,
                                  Map<ActionName, Action> action) {
-        JMenu menu = new JMenu("File");
-        menu.setFont(MENU_DEFAULT_FONT);
+        JMenu menu = createMenu("File");
 
         // new file
         addMenuItem(menu, keyStrokes.get(NEW_FILE), action.get(NEW_FILE));
@@ -204,8 +206,7 @@ public class EditorFrame extends JFrame {
 
     private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes,
                                  Map<ActionName, Action> action) {
-        JMenu menu = new JMenu("Edit");
-        menu.setFont(MENU_DEFAULT_FONT);
+        JMenu menu = createMenu("Edit");
 
         // undo & redo
         addMenuItem(menu, keyStrokes.get(UNDO), action.get(UNDO),
@@ -227,8 +228,7 @@ public class EditorFrame extends JFrame {
 
     private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes,
                                  Map<ActionName, Action> action) {
-        JMenu menu = new JMenu("View");
-        menu.setFont(MENU_DEFAULT_FONT);
+        JMenu menu = createMenu("View");
 
         // zoom in & zoom out
         addMenuItem(menu, keyStrokes.get(ZOOM_IN), action.get(ZOOM_IN),
@@ -242,9 +242,20 @@ public class EditorFrame extends JFrame {
     }
 
     private JMenu createThemeMenu() {
-        JMenu menu = new JMenu("Theme");
-        menu.setFont(MENU_DEFAULT_FONT);
+        JMenu menu = createMenu("Theme");
         addMenuItem(menu, new ThemeAction(Theme.JAVA_METAL), new ThemeAction(Theme.FOLLOW_SYSTEM));
+        return menu;
+    }
+
+    private JMenu createHelpMenu(Map<ActionName, Action> action){
+        JMenu menu = createMenu("Help");
+        addMenuItem(menu, action.get(ABOUT));
+        return menu;
+    }
+
+    private JMenu createMenu(String menuName) {
+        JMenu menu = new JMenu(menuName);
+        menu.setFont(MENU_DEFAULT_FONT);
         return menu;
     }
 

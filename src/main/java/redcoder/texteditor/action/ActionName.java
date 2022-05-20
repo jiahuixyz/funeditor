@@ -21,5 +21,6 @@ public enum ActionName {
     LINE_WRAP,
     OPEN_RECENTLY,
     NEW_WINDOW,
-    CLOSE_WINDOW
+    CLOSE_WINDOW,
+    ABOUT
 }

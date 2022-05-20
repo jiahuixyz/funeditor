@@ -69,6 +69,7 @@ public class Framework extends WindowAdapter {
         SHARED_ACTION.put(LINE_WRAP, new LineWrapAction());
         SHARED_ACTION.put(FIND, new FindAction());
         SHARED_ACTION.put(REPLACE, new ReplaceAction());
+        SHARED_ACTION.put(ABOUT, new AboutAction());
     }
 
     private Framework() {
