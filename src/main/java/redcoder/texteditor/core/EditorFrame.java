@@ -10,10 +10,13 @@ import redcoder.texteditor.core.toolbar.EditorToolbar;
 import redcoder.texteditor.theme.Theme;
 import redcoder.texteditor.utils.StringUtils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +84,10 @@ public class EditorFrame extends JFrame {
                 Framework.closeWindow();
             }
         });
+
+        if (LOGO != null) {
+            setIconImage(LOGO);
+        }
     }
 
     public boolean shouldClose() {
@@ -244,12 +251,12 @@ public class EditorFrame extends JFrame {
     private JMenu createThemeMenu() {
         JMenu menu = createMenu("Theme");
         for (Theme theme : Theme.values()) {
-            addMenuItem(menu,new ThemeAction(theme));
+            addMenuItem(menu, new ThemeAction(theme));
         }
         return menu;
     }
 
-    private JMenu createHelpMenu(Map<ActionName, Action> action){
+    private JMenu createHelpMenu(Map<ActionName, Action> action) {
         JMenu menu = createMenu("Help");
         addMenuItem(menu, action.get(ABOUT));
         return menu;
@@ -329,5 +336,18 @@ public class EditorFrame extends JFrame {
 
     public void setReplaceDialog(JDialog replaceDialog) {
         this.replaceDialog = replaceDialog;
+    }
+
+    private static Image LOGO = null;
+
+    static {
+        try {
+            URL url = EditorFrame.class.getClassLoader().getResource("images/logo.png");
+            if (url != null) {
+                LOGO = ImageIO.read(url);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
