@@ -1,6 +1,7 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.*;
+import redcoder.texteditor.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +25,7 @@ public class Framework extends WindowAdapter {
     private static Point lastLocation;
     private static EditorFrame activatedFrame;
     private static final List<EditorFrame> frames= new ArrayList<>();
+    private static ThemeAction currentThemeAction;
 
     static {
         SHARED_KEY_STROKES = new HashMap<>();
@@ -129,18 +131,31 @@ public class Framework extends WindowAdapter {
         return activatedFrame;
     }
 
-    public static void switchTheme(String themeName) {
-        try {
-            if (UIManager.getLookAndFeel().getClass().getName().equals(themeName)) {
-                return;
-            }
+    public static ThemeAction getCurrentThemeAction() {
+        return currentThemeAction;
+    }
 
-            UIManager.setLookAndFeel(themeName);
+    public static void setCurrentThemeAction(ThemeAction currentThemeAction) {
+        Framework.currentThemeAction = currentThemeAction;
+    }
+
+    public static void switchTheme(ThemeAction action) {
+        Theme theme = action.getTheme();
+        if (UIManager.getLookAndFeel().getClass().getName().equals(theme.clazz)) {
+            return;
+        }
+
+        try {
+            UIManager.setLookAndFeel(theme.clazz);
             for (EditorFrame frame : frames) {
                 SwingUtilities.updateComponentTreeUI(frame);
             }
+            action.selected();
+
+            currentThemeAction.unselected();
+            currentThemeAction = action;
         } catch (Exception e) {
-            System.err.printf("Failed to switch %s theme%n", themeName);
+            System.err.printf("Failed to switch %s theme%n", theme.name);
             e.printStackTrace();
         }
     }

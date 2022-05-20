@@ -60,6 +60,9 @@ class IconResource {
                             });
                 }
             }
+
+            Optional.ofNullable(classLoader.getResource("images/selected.png"))
+                    .ifPresent(icon -> ICONS.put("selected.png", new ImageIcon(icon)));
         } catch (IOException e) {
             e.printStackTrace();
         }

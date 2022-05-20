@@ -243,7 +243,9 @@ public class EditorFrame extends JFrame {
 
     private JMenu createThemeMenu() {
         JMenu menu = createMenu("Theme");
-        addMenuItem(menu, new ThemeAction(Theme.JAVA_METAL), new ThemeAction(Theme.FOLLOW_SYSTEM));
+        for (Theme theme : Theme.values()) {
+            addMenuItem(menu,new ThemeAction(theme));
+        }
         return menu;
     }
 
