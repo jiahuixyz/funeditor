@@ -4,7 +4,7 @@
 
 A simple text editor which implements the basic functions of most text editors:
 
-- undo, redo, zoom in, zoom out, new file, save file, close file, and other functions.
+- copy, paste, cut, undo, redo, auto wrap line, find, replace, zoom in, zoom out, new file, save file, close file, toolbar, status bar and other functions.
 - shortcut keys for various common functions
 
 ## How to use
