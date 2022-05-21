@@ -1,25 +1,32 @@
 package redcoder.texteditor.core.tabpane;
 
+import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 import redcoder.texteditor.core.font.FontChangeProcessor;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.utils.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * 支持多tab的窗格，
  */
 public class TabPane extends JTabbedPane {
 
+    private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
     private final EditorStatusBar statusBar;
     private final AtomicInteger counter = new AtomicInteger(0);
     private final Map<String, ScrollTextPane> addedFileTabbedIndex;
@@ -33,7 +40,7 @@ public class TabPane extends JTabbedPane {
         // 添加监听器-记录选中的tab，更新底部状态信息
         addChangeListener(e -> {
             if (this.getTabCount() == 0) {
-               statusBar.hideIndicator();
+                statusBar.hideIndicator();
             } else {
                 if (this.getTabCount() == 1) {
                     statusBar.displayIndicator();
@@ -262,7 +269,65 @@ public class TabPane extends JTabbedPane {
         return true;
     }
 
-    // ----------- getter setter
+    /**
+     * 当前tab窗格是否可以关闭
+     */
+    public boolean canCloseNormally() {
+        List<ScrollTextPane> textPanes = getModifiedTextPane();
+        if (!textPanes.isEmpty()) {
+            String message = createDialogMessage(textPanes);
+            int state = JOptionPane.showOptionDialog(this, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
+            if (state == JOptionPane.YES_OPTION) {
+                for (ScrollTextPane pane : textPanes) {
+                    if (!pane.saveTextPane()) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return state == JOptionPane.NO_OPTION;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private List<ScrollTextPane> getModifiedTextPane() {
+        List<ScrollTextPane> textPaneList = new ArrayList<>();
+        for (int i = 0; i < getTabCount(); i++) {
+            Component component = getComponentAt(i);
+            if (component instanceof ScrollTextPane) {
+                if (((ScrollTextPane) component).isModified()) {
+                    textPaneList.add((ScrollTextPane) component);
+                }
+            }
+        }
+        return textPaneList;
+    }
+
+    private String createDialogMessage(List<ScrollTextPane> textPanes) {
+        StringBuilder message = new StringBuilder();
+        message.append(String.format("Do you want to save the changes to the following %d files?", textPanes.size()))
+                .append("\n\n");
+
+        List<String> filenames = textPanes.stream().map(ScrollTextPane::getFilename).collect(toList());
+        if (filenames.size() > 5) {
+            int i = filenames.size() - 5;
+            message.append(StringUtils.join(filenames.subList(0, 5), "\n"))
+                    .append("\n")
+                    .append(String.format("...%d additional files not shown", i))
+                    .append("\n\n");
+        } else {
+            message.append(StringUtils.join(filenames, "\n"))
+                    .append("\n\n");
+        }
+
+        message.append("Your changes will be lost if you don't save them.");
+
+        return message.toString();
+    }
+
 
     /**
      * 返回当前tab下的文本窗

@@ -4,18 +4,17 @@ import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
+import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Optional;
 
 public class SaveAsAction extends AbstractAction {
 
     public SaveAsAction() {
         super("Save As");
-        Optional.ofNullable(IconResource.getImageIcon("SaveAs24.gif"))
-                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("SaveAs24.gif"));
     }
 
     @Override

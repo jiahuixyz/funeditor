@@ -1,17 +1,17 @@
 package redcoder.texteditor.action;
 
+import redcoder.texteditor.resources.IconResource;
+
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import java.awt.event.ActionEvent;
-import java.util.Optional;
 
 public class CopyAction extends TextAction {
 
     public CopyAction() {
         super("Copy");
-        Optional.ofNullable(IconResource.getImageIcon("Copy24.gif"))
-                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("Copy24.gif"));
     }
 
     @Override

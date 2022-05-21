@@ -2,17 +2,16 @@ package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.TabPane;
+import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Optional;
 
 public class NewAction extends AbstractAction {
 
     public NewAction() {
         super("New File");
-        Optional.ofNullable(IconResource.getImageIcon("New24.gif"))
-                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("New24.gif"));
     }
 
     @Override

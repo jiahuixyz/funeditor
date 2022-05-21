@@ -24,11 +24,17 @@ public class EditorToolbar extends JPanel {
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
+
         // new file, open file, save file, save all
         addButtonToToolBar(actions.get(NEW_FILE), toolBar);
         addButtonToToolBar(actions.get(OPEN_FILE), toolBar);
         addButtonToToolBar(actions.get(SAVE_FILE), toolBar);
         addButtonToToolBar(actions.get(SAVE_ALL), toolBar);
+        toolBar.addSeparator();
+
+        // close file, close all file
+        addButtonToToolBar(actions.get(CLOSE), toolBar);
+        addButtonToToolBar(actions.get(CLOSE_ALL), toolBar);
         toolBar.addSeparator();
 
         // cut, copy, paste

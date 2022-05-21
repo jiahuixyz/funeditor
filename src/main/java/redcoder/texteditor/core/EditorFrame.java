@@ -5,23 +5,17 @@ import redcoder.texteditor.action.ThemeAction;
 import redcoder.texteditor.core.menu.OpenRecentlyMenu;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.TabPane;
-import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.core.toolbar.EditorToolbar;
 import redcoder.texteditor.theme.Theme;
-import redcoder.texteditor.utils.StringUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import static redcoder.texteditor.action.ActionName.*;
 
@@ -30,8 +24,6 @@ public class EditorFrame extends JFrame {
     public static final String TITLE = "Rc Text Editor";
     public static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
     public static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
-
-    private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
 
     private EditorToolbar toolBar;
     private TabPane tabPane;
@@ -90,64 +82,11 @@ public class EditorFrame extends JFrame {
         }
     }
 
-    public boolean shouldClose() {
-        if (Framework.getNumWindows() > 1) {
-            List<ScrollTextPane> textPanes = getModifiedTextPane();
-            if (!textPanes.isEmpty()) {
-                String message = createDialogMessage(textPanes);
-                int state = JOptionPane.showOptionDialog(tabPane, message, EditorFrame.TITLE, JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null, CLOSE_OPTIONS, CLOSE_OPTIONS[0]);
-                if (state == JOptionPane.YES_OPTION) {
-                    for (ScrollTextPane pane : textPanes) {
-                        if (!pane.saveTextPane()) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    return state == JOptionPane.NO_OPTION;
-                }
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
-    private List<ScrollTextPane> getModifiedTextPane() {
-        List<ScrollTextPane> textPaneList = new ArrayList<>();
-        for (int i = 0; i < tabPane.getTabCount(); i++) {
-            Component component = tabPane.getComponentAt(i);
-            if (component instanceof ScrollTextPane) {
-                if (((ScrollTextPane) component).isModified()) {
-                    textPaneList.add((ScrollTextPane) component);
-                }
-            }
-        }
-        return textPaneList;
-    }
-
-    private String createDialogMessage(List<ScrollTextPane> textPanes) {
-        StringBuilder message = new StringBuilder();
-        message.append(String.format("Do you want to save the changes to the following %d files?", textPanes.size()))
-                .append("\n\n");
-
-        List<String> filenames = textPanes.stream().map(ScrollTextPane::getFilename).collect(toList());
-        if (filenames.size() > 5) {
-            int i = filenames.size() - 5;
-            message.append(StringUtils.join(filenames.subList(0, 5), "\n"))
-                    .append("\n")
-                    .append(String.format("...%d additional files not shown", i))
-                    .append("\n\n");
-        } else {
-            message.append(StringUtils.join(filenames, "\n"))
-                    .append("\n\n");
-        }
-
-        message.append("Your changes will be lost if you don't save them.");
-
-        return message.toString();
+    /**
+     * 当前窗口是否可以关闭
+     */
+    public boolean canCloseNormally() {
+        return Framework.getNumWindows() <= 1 || tabPane.canCloseNormally();
     }
 
     // ---------- 创建菜单

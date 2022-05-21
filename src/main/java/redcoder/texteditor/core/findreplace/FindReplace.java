@@ -1,6 +1,7 @@
 package redcoder.texteditor.core.findreplace;
 
 import redcoder.texteditor.core.EditorFrame;
+import redcoder.texteditor.resources.IconResource;
 import redcoder.texteditor.utils.StringUtils;
 
 import javax.swing.*;
@@ -15,12 +16,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
 import java.util.Objects;
 
 import static javax.swing.GroupLayout.Alignment.*;
 
 public class FindReplace implements ActionListener {
+
+    private static final String UP_CMD = "Up";
+    private static final String DOWN_CMD = "Down";
+    private static final String REPLACE_CMD = "Replace";
+    private static final String REPLACE_ALL_CMD = "Replace All";
 
     private final JTextArea textArea;
 
@@ -83,10 +88,10 @@ public class FindReplace implements ActionListener {
 
     private JButton createButton(String command) {
         JButton button = new JButton();
-        if (Objects.equals(command, UP_CMD) && UP != null) {
-            button.setIcon(UP);
-        } else if (Objects.equals(command, DOWN_CMD) && DOWN != null) {
-            button.setIcon(DOWN);
+        if (Objects.equals(command, UP_CMD)) {
+            button.setIcon(IconResource.getImageIcon("find_up.png"));
+        } else if (Objects.equals(command, DOWN_CMD)) {
+            button.setIcon(IconResource.getImageIcon("find_down.png"));
         } else {
             button.setText(command);
         }
@@ -427,28 +432,4 @@ public class FindReplace implements ActionListener {
             }
         }
     }
-
-    static final String UP_CMD = "Up";
-    static final String DOWN_CMD = "Down";
-    static final String REPLACE_CMD = "Replace";
-    static final String REPLACE_ALL_CMD = "Replace All";
-    static final ImageIcon UP;
-    static final ImageIcon DOWN;
-
-    static {
-        URL url = FindReplace.class.getClassLoader().getResource("images/find_up.png");
-        if (url != null) {
-            UP = new ImageIcon(url);
-        } else {
-            UP = null;
-        }
-
-        url = FindReplace.class.getClassLoader().getResource("images/find_down.png");
-        if (url != null) {
-            DOWN = new ImageIcon(url);
-        } else {
-            DOWN = null;
-        }
-    }
-
 }

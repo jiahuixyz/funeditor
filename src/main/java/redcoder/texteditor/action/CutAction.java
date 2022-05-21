@@ -1,17 +1,17 @@
 package redcoder.texteditor.action;
 
+import redcoder.texteditor.resources.IconResource;
+
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import java.awt.event.ActionEvent;
-import java.util.Optional;
 
 public class CutAction extends TextAction {
 
     public CutAction() {
         super("Cut");
-        Optional.ofNullable(IconResource.getImageIcon("Cut24.gif"))
-                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("Cut24.gif"));
     }
 
     @Override

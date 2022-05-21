@@ -62,7 +62,6 @@ public class AboutDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         Button okButton = new Button("OK");
-        okButton.setBackground(Color.WHITE);
         okButton.setFont(F3);
         okButton.addActionListener(new AbstractAction() {
             @Override
@@ -73,7 +72,6 @@ public class AboutDialog extends JDialog {
         });
 
         Button copyButton = new Button("Copy");
-        copyButton.setBackground(Color.WHITE);
         copyButton.setFont(F3);
         copyButton.addActionListener(new AbstractAction() {
             @Override

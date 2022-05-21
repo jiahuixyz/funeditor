@@ -1,7 +1,8 @@
 package redcoder.texteditor.action;
 
-import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.resources.IconResource;
 import redcoder.texteditor.theme.Theme;
+import redcoder.texteditor.theme.ThemeManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -15,14 +16,14 @@ public class ThemeAction extends AbstractAction {
         this.theme = theme;
 
         if (theme == Theme.FLAT_LIGHT_LAF) {
-            Framework.setCurrentThemeAction(this);
+            ThemeManager.setCurrentThemeAction(this);
             selected();
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Framework.switchTheme(this);
+        ThemeManager.switchTheme(this);
     }
 
     public Theme getTheme() {

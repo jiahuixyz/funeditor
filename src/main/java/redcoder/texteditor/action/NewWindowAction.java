@@ -1,17 +1,16 @@
 package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Optional;
 
 public class NewWindowAction extends AbstractAction {
 
     public NewWindowAction() {
         super("New Window");
-        Optional.ofNullable(IconResource.getImageIcon("Add24.gif"))
-                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("new_window24.png"));
     }
 
     @Override

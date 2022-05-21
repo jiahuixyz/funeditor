@@ -1,7 +1,6 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.*;
-import redcoder.texteditor.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +23,7 @@ public class Framework extends WindowAdapter {
     private static int numWindows = 0;
     private static Point lastLocation;
     private static EditorFrame activatedFrame;
-    private static final List<EditorFrame> frames= new ArrayList<>();
-    private static ThemeAction currentThemeAction;
+    private static final List<EditorFrame> openedFrame = new ArrayList<>();
 
     static {
         SHARED_KEY_STROKES = new HashMap<>();
@@ -80,7 +78,7 @@ public class Framework extends WindowAdapter {
     public static void makeNewWindow() {
         EditorFrame frame = new EditorFrame();
         numWindows++;
-        frames.add(frame);
+        openedFrame.add(frame);
 
         frame.createAndShowGUI();
         frame.addWindowListener(INSTANCE);
@@ -94,11 +92,11 @@ public class Framework extends WindowAdapter {
     }
 
     public static void closeWindow() {
-        if (activatedFrame.shouldClose()) {
+        if (activatedFrame.canCloseNormally()) {
             activatedFrame.setVisible(false);
             activatedFrame.dispose();
             numWindows--;
-            frames.remove(activatedFrame);
+            openedFrame.remove(activatedFrame);
         }
     }
 
@@ -131,32 +129,7 @@ public class Framework extends WindowAdapter {
         return activatedFrame;
     }
 
-    public static ThemeAction getCurrentThemeAction() {
-        return currentThemeAction;
-    }
-
-    public static void setCurrentThemeAction(ThemeAction currentThemeAction) {
-        Framework.currentThemeAction = currentThemeAction;
-    }
-
-    public static void switchTheme(ThemeAction action) {
-        Theme theme = action.getTheme();
-        if (UIManager.getLookAndFeel().getClass().getName().equals(theme.clazz)) {
-            return;
-        }
-
-        try {
-            UIManager.setLookAndFeel(theme.clazz);
-            for (EditorFrame frame : frames) {
-                SwingUtilities.updateComponentTreeUI(frame);
-            }
-            action.selected();
-
-            currentThemeAction.unselected();
-            currentThemeAction = action;
-        } catch (Exception e) {
-            System.err.printf("Failed to switch %s theme%n", theme.name);
-            e.printStackTrace();
-        }
+    public static List<EditorFrame> getOpenedFrame() {
+        return openedFrame;
     }
 }

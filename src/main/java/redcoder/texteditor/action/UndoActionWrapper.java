@@ -2,17 +2,16 @@ package redcoder.texteditor.action;
 
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.TabPane;
+import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Optional;
 
 public class UndoActionWrapper extends AbstractAction {
 
     public UndoActionWrapper() {
         super("Undo");
-        Optional.ofNullable(IconResource.getImageIcon("Undo24.gif"))
-                .ifPresent(icon -> putValue(Action.SMALL_ICON, icon));
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("Undo24.gif"));
     }
 
     @Override

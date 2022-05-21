@@ -7,6 +7,7 @@ import redcoder.texteditor.core.file.FileOpenListener;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.file.RecentlyOpenedFiles;
 import redcoder.texteditor.core.tabpane.TabPane;
+import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
 import java.io.File;
@@ -22,6 +23,7 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
 
         initMenuItem();
         setFont(EditorFrame.MENU_ITEM_DEFAULT_FONT);
+        setIcon(IconResource.getImageIcon("open_recently24.png"));
         FileProcessor.addFileOpenListener(this);
     }
 
