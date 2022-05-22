@@ -10,11 +10,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.awt.event.KeyEvent.*;
 import static redcoder.texteditor.action.ActionName.*;
 
 public class Framework extends WindowAdapter {
+
+    private static final Logger LOGGER = Logger.getLogger(Framework.class.getName());
 
     private static final Framework INSTANCE = new Framework();
     private static final Map<ActionName, KeyStroke> SHARED_KEY_STROKES;
@@ -24,6 +28,75 @@ public class Framework extends WindowAdapter {
     private static Point lastLocation;
     private static EditorFrame activatedFrame;
     private static final List<EditorFrame> openedFrame = new ArrayList<>();
+
+    private Framework() {
+    }
+
+    public static void makeNewWindow() {
+        try {
+            EditorFrame frame = new EditorFrame();
+            numWindows++;
+            openedFrame.add(frame);
+
+            frame.createAndShowGUI();
+            frame.addWindowListener(INSTANCE);
+            if (lastLocation != null) {
+                lastLocation.translate(40, 40);
+                frame.setLocation(lastLocation);
+            } else {
+                lastLocation = frame.getLocation();
+            }
+            frame.setVisible(true);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "new window error", e);
+        }
+    }
+
+    public static void closeWindow() {
+        try {
+            if (activatedFrame.canCloseNormally()) {
+                activatedFrame.setVisible(false);
+                activatedFrame.dispose();
+                numWindows--;
+                openedFrame.remove(activatedFrame);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "close window error", e);
+        }
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+        Object source = e.getSource();
+        activatedFrame = (EditorFrame) source;
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+        if (numWindows == 0) {
+            System.exit(0);
+        }
+    }
+
+    public static Map<ActionName, KeyStroke> getKeyStrokes() {
+        return SHARED_KEY_STROKES;
+    }
+
+    public static Map<ActionName, Action> getActions() {
+        return SHARED_ACTION;
+    }
+
+    public static int getNumWindows() {
+        return numWindows;
+    }
+
+    public static EditorFrame getActivatedFrame() {
+        return activatedFrame;
+    }
+
+    public static List<EditorFrame> getOpenedFrame() {
+        return openedFrame;
+    }
 
     static {
         SHARED_KEY_STROKES = new HashMap<>();
@@ -70,66 +143,5 @@ public class Framework extends WindowAdapter {
         SHARED_ACTION.put(FIND, new FindAction());
         SHARED_ACTION.put(REPLACE, new ReplaceAction());
         SHARED_ACTION.put(ABOUT, new AboutAction());
-    }
-
-    private Framework() {
-    }
-
-    public static void makeNewWindow() {
-        EditorFrame frame = new EditorFrame();
-        numWindows++;
-        openedFrame.add(frame);
-
-        frame.createAndShowGUI();
-        frame.addWindowListener(INSTANCE);
-        if (lastLocation != null) {
-            lastLocation.translate(40, 40);
-            frame.setLocation(lastLocation);
-        } else {
-            lastLocation = frame.getLocation();
-        }
-        frame.setVisible(true);
-    }
-
-    public static void closeWindow() {
-        if (activatedFrame.canCloseNormally()) {
-            activatedFrame.setVisible(false);
-            activatedFrame.dispose();
-            numWindows--;
-            openedFrame.remove(activatedFrame);
-        }
-    }
-
-    @Override
-    public void windowActivated(WindowEvent e) {
-        Object source = e.getSource();
-        activatedFrame = (EditorFrame) source;
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-        if (numWindows == 0) {
-            System.exit(0);
-        }
-    }
-
-    public static Map<ActionName, KeyStroke> getKeyStrokes() {
-        return SHARED_KEY_STROKES;
-    }
-
-    public static Map<ActionName, Action> getActions() {
-        return SHARED_ACTION;
-    }
-
-    public static int getNumWindows() {
-        return numWindows;
-    }
-
-    public static EditorFrame getActivatedFrame() {
-        return activatedFrame;
-    }
-
-    public static List<EditorFrame> getOpenedFrame() {
-        return openedFrame;
     }
 }

@@ -9,9 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IconResource {
 
+    private static final Logger LOGGER = Logger.getLogger(IconResource.class.getName());
     private static final Map<String, ImageIcon> ICONS = new HashMap<>();
 
     static {
@@ -44,7 +47,7 @@ public class IconResource {
             loadImageIcon("images/icons");
             loadImageIcon("toolbarButtonGraphics/general");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "IconResource.loadDefaultIcon", e);
         }
     }
 
@@ -60,7 +63,7 @@ public class IconResource {
         } else if (str.startsWith("jar")) {
             loadJarFile(classLoader, url);
         } else {
-            System.err.println("Unknown URL[ " + str + "], we can't handle it.");
+            LOGGER.log(Level.WARNING, "Unknown URL[ " + str + "], we can't handle it.");
         }
     }
 

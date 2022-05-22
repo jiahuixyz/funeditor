@@ -17,10 +17,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static javax.swing.GroupLayout.Alignment.*;
 
 public class FindReplace implements ActionListener {
+
+    private static final Logger LOGGER = Logger.getLogger(FindReplace.class.getName());
 
     private static final String UP_CMD = "Up";
     private static final String DOWN_CMD = "Down";
@@ -249,7 +253,7 @@ public class FindReplace implements ActionListener {
             }
             countLabel.setText(String.format("%d/%d", cursor, totalMatch));
         } catch (BadLocationException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.SEVERE, "FindReplace", e);
         }
     }
 
@@ -425,7 +429,7 @@ public class FindReplace implements ActionListener {
                     try {
                         reset();
                     } catch (BadLocationException ex) {
-                        ex.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "FindReplace", e);
                     }
                     selected = checkBox.isSelected();
                 }

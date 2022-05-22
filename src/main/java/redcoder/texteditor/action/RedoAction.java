@@ -4,8 +4,12 @@ import javax.swing.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.UndoManager;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RedoAction extends AbstractAction {
+
+    private static final Logger LOGGER = Logger.getLogger(RedoAction.class.getName());
 
     private UndoManager undoManager;
     private UndoAction undoAction;
@@ -21,8 +25,7 @@ public class RedoAction extends AbstractAction {
         try {
             undoManager.redo();
         } catch (CannotRedoException ex) {
-            // System.err.println("Unable to redo: " + ex);
-            // ex.printStackTrace();
+            LOGGER.log(Level.SEVERE, "RedoAction", e);
         }
         updateRedoState();
         undoAction.updateUndoState();

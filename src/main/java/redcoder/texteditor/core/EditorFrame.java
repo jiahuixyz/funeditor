@@ -15,11 +15,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import static redcoder.texteditor.action.ActionName.*;
 
 public class EditorFrame extends JFrame {
+
+    private static final Logger LOGGER = Logger.getLogger(EditorFrame.class.getName());
 
     public static final String TITLE = "Rc Text Editor";
     public static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
@@ -286,7 +290,7 @@ public class EditorFrame extends JFrame {
                 LOGO = ImageIO.read(url);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "load logo error", e);
         }
     }
 }

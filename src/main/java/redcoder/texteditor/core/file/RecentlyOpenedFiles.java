@@ -11,8 +11,12 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RecentlyOpenedFiles {
+
+    private static final Logger LOGGER = Logger.getLogger(RecentlyOpenedFiles.class.getName());
 
     private static final String FILENAME = "rof.rc";
     private static final List<File> recentlyFiles = new ArrayList<>();
@@ -61,7 +65,7 @@ public class RecentlyOpenedFiles {
                     FileUtils.writeFile(content, target, false);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "RecentlyOpenedFiles", e);
             }
         }, 1, 5, TimeUnit.MINUTES);
     }
@@ -79,7 +83,7 @@ public class RecentlyOpenedFiles {
         } catch (FileNotFoundException e) {
             // ignore
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "RecentlyOpenedFiles.loadRecentFilesFromLocal", e);
         }
     }
 

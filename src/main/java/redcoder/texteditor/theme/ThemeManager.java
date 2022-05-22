@@ -5,8 +5,12 @@ import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 
 import javax.swing.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ThemeManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ThemeManager.class.getName());
 
     private static ThemeAction currentThemeAction;
 
@@ -34,8 +38,7 @@ public class ThemeManager {
             currentThemeAction.unselected();
             currentThemeAction = action;
         } catch (Exception e) {
-            System.err.printf("Failed to switch %s theme%n", theme.name);
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, String.format("Failed to switch %s theme", theme.name), e);
         }
     }
 }

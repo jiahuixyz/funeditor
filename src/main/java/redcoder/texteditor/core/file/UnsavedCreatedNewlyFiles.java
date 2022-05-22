@@ -10,11 +10,15 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 管理未保存的且新创建的文件
  */
 public class UnsavedCreatedNewlyFiles {
+
+    private static final Logger LOGGER = Logger.getLogger(UnsavedCreatedNewlyFiles.class.getName());
 
     private static final String DIR_NAME = "ucnf";
     private static final Map<String, ScrollTextPane> textPanes;
@@ -35,7 +39,7 @@ public class UnsavedCreatedNewlyFiles {
                     FileUtils.writeFile(entry.getValue().getTextArea().getText(), f);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "UnsavedCreatedNewlyFiles", e);
             }
         }, 1, 3, TimeUnit.MINUTES);
     }

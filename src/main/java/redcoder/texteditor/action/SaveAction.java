@@ -6,8 +6,12 @@ import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SaveAction extends AbstractAction {
+
+    private static final Logger LOGGER = Logger.getLogger(SaveAction.class.getName());
 
     public SaveAction() {
         super("Save File");
@@ -21,7 +25,7 @@ public class SaveAction extends AbstractAction {
             TabPane tabPane = Framework.getActivatedFrame().getTabPane();
             tabPane.saveSelectedTab();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.SEVERE, "SaveAction", e);
         }
     }
 
