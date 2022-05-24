@@ -9,7 +9,7 @@ import java.util.logging.LogRecord;
 
 public class LogMessageFormatter extends Formatter {
 
-    private final static String DEFAULT_FORMAT = "%1$tF %1$tT.%1$tL %2$s %3$s --- [%4$s] %5$s : %6$s%7$s";
+    private final static String DEFAULT_FORMAT = "%1$tF %1$tT.%1$tL %2$s %3$s --- [%4$s] %5$s : %6$s%7$s%n";
     private String format = DEFAULT_FORMAT;
     private final Date dat = new Date();
 
