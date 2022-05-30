@@ -1,8 +1,6 @@
 package redcoder.texteditor.core.textpane;
 
 import redcoder.texteditor.action.ActionName;
-import redcoder.texteditor.action.RedoAction;
-import redcoder.texteditor.action.UndoAction;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileProcessor;
@@ -21,6 +19,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,6 +28,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static redcoder.texteditor.action.ActionName.REDO;
 import static redcoder.texteditor.action.ActionName.UNDO;
@@ -37,6 +39,7 @@ import static redcoder.texteditor.action.ActionName.UNDO;
  */
 public class ScrollTextPane extends JScrollPane implements FontChangeListener {
 
+    private static final Logger LOGGER = Logger.getLogger(ScrollTextPane.class.getName());
     private static final Object[] CLOSE_OPTIONS = {"Save", "Don't Save", "Cancel"};
 
     private String filename;
@@ -50,8 +53,6 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
     private final List<TextPaneChangeListener> listenerList;
     private final JTextArea textArea;
     private final UndoManager undoManager;
-    private final UndoAction undoAction;
-    private final RedoAction redoAction;
     private final LineNumberComponent lineNumberComponent;
     private ButtonTabComponent buttonTabComponent;
 
@@ -71,10 +72,6 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
         this.file = file;
 
         this.undoManager = new UndoManager();
-        this.undoAction = new UndoAction(undoManager);
-        this.redoAction = new RedoAction(undoManager);
-        this.undoAction.setRedoAction(redoAction);
-        this.redoAction.setUndoAction(undoAction);
 
         this.textArea = new JTextArea();
         this.lineNumberComponent = createLineNumComponent();
@@ -115,14 +112,22 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
      * 执行undo操作
      */
     public void undo(ActionEvent e) {
-        undoAction.actionPerformed(e);
+        try {
+            undoManager.undo();
+        } catch (CannotUndoException ex) {
+            LOGGER.log(Level.WARNING, "UndoAction", e);
+        }
     }
 
     /**
      * 执行redo操作
      */
     public void redo(ActionEvent e) {
-        redoAction.actionPerformed(e);
+        try {
+            undoManager.redo();
+        } catch (CannotRedoException ex) {
+            LOGGER.log(Level.WARNING, "RedoAction", e);
+        }
     }
 
     /**
@@ -302,8 +307,6 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
         // 处理undo，redo的监听器
         doc.addUndoableEditListener(e -> {
             undoManager.addEdit(e.getEdit());
-            undoAction.updateUndoState();
-            redoAction.updateRedoState();
         });
         // 用于更新编辑器底部的状态栏的监听器
         doc.addDocumentListener(new DocumentListener() {
@@ -326,12 +329,11 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
     }
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,
-                               Map<ActionName, Action> textPaneSharedAction,
+                               Map<ActionName, Action> actions,
                                JTextArea textPane) {
         ActionMap actionMap = textPane.getActionMap();
-        for (Map.Entry<ActionName, Action> entry : textPaneSharedAction.entrySet()) {
-            actionMap.put(entry.getKey(), entry.getValue());
-        }
+        actionMap.put(UNDO, actions.get(UNDO));
+        actionMap.put(REDO, actions.get(REDO));
 
         InputMap inputMap = textPane.getInputMap();
         inputMap.put(keyStrokes.get(UNDO), UNDO);

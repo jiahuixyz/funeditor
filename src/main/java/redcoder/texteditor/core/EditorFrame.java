@@ -1,12 +1,10 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.ActionName;
-import redcoder.texteditor.action.ThemeAction;
-import redcoder.texteditor.core.menu.OpenRecentlyMenu;
+import redcoder.texteditor.core.menu.EditorMenuBar;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.toolbar.EditorToolbar;
-import redcoder.texteditor.theme.Theme;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,10 +22,7 @@ import static redcoder.texteditor.action.ActionName.*;
 public class EditorFrame extends JFrame {
 
     private static final Logger LOGGER = Logger.getLogger(EditorFrame.class.getName());
-
     public static final String TITLE = "Rc Text Editor";
-    public static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
-    public static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
 
     private EditorToolbar toolBar;
     private TabPane tabPane;
@@ -56,8 +51,9 @@ public class EditorFrame extends JFrame {
         Map<ActionName, KeyStroke> keyStrokes = Framework.getKeyStrokes();
         Map<ActionName, Action> action = Framework.getActions();
 
-        // 添加菜单
-        addMenu(keyStrokes, action);
+        // 添加菜单栏
+        EditorMenuBar menuBar = new EditorMenuBar(keyStrokes, action, tabPane);
+        setJMenuBar(menuBar);
 
         // 组装工具栏、主窗格和状态栏
         rootPane.add(toolBar, BorderLayout.NORTH);
@@ -93,141 +89,6 @@ public class EditorFrame extends JFrame {
         return Framework.getNumWindows() <= 1 || tabPane.canCloseNormally();
     }
 
-    // ---------- 创建菜单
-    private void addMenu(Map<ActionName, KeyStroke> keyStrokes,
-                         Map<ActionName, Action> action) {
-        // create 'File' menu
-        JMenu fileMenu = createFileMenu(keyStrokes, action);
-        // create 'Edit' menu
-        JMenu editMenu = createEditMenu(keyStrokes, action);
-        // create 'View' menu
-        JMenu viewMenu = createViewMenu(keyStrokes, action);
-        // create 'Theme' menu
-        JMenu themeMenu = createThemeMenu();
-        // create 'Help' menu
-        JMenu helpMenu = createHelpMenu(action);
-
-        // set menu bar
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(viewMenu);
-        menuBar.add(themeMenu);
-        menuBar.add(helpMenu);
-        setJMenuBar(menuBar);
-    }
-
-    private JMenu createFileMenu(Map<ActionName, KeyStroke> keyStrokes,
-                                 Map<ActionName, Action> action) {
-        JMenu menu = createMenu("File");
-
-        // new file
-        addMenuItem(menu, keyStrokes.get(NEW_FILE), action.get(NEW_FILE));
-
-        // open file
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(OPEN_FILE), action.get(OPEN_FILE));
-        // open recently
-        OpenRecentlyMenu recentlyMenu = new OpenRecentlyMenu(tabPane);
-        menu.add(recentlyMenu);
-
-        // save & save as & save all
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(SAVE_FILE), action.get(SAVE_FILE),
-                keyStrokes.get(SAVE_AS_FILE), action.get(SAVE_AS_FILE),
-                keyStrokes.get(SAVE_ALL), action.get(SAVE_ALL));
-
-        // close & close all
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(CLOSE), action.get(CLOSE),
-                keyStrokes.get(CLOSE_ALL), action.get(CLOSE_ALL));
-
-        // new window & close window
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(NEW_WINDOW), action.get(NEW_WINDOW),
-                keyStrokes.get(CLOSE_WINDOW), action.get(CLOSE_WINDOW));
-
-        // exit
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(EXIT), action.get(EXIT));
-
-        return menu;
-    }
-
-    private JMenu createEditMenu(Map<ActionName, KeyStroke> keyStrokes,
-                                 Map<ActionName, Action> action) {
-        JMenu menu = createMenu("Edit");
-
-        // undo & redo
-        addMenuItem(menu, keyStrokes.get(UNDO), action.get(UNDO),
-                keyStrokes.get(REDO), action.get(REDO));
-
-        // cut, copy, paste
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(CUT), action.get(CUT),
-                keyStrokes.get(COPY), action.get(COPY),
-                keyStrokes.get(PASTE), action.get(PASTE));
-
-        // find, replace
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(FIND), action.get(FIND),
-                keyStrokes.get(REPLACE), action.get(REPLACE));
-
-        return menu;
-    }
-
-    private JMenu createViewMenu(Map<ActionName, KeyStroke> keyStrokes,
-                                 Map<ActionName, Action> action) {
-        JMenu menu = createMenu("View");
-
-        // zoom in & zoom out
-        addMenuItem(menu, keyStrokes.get(ZOOM_IN), action.get(ZOOM_IN),
-                keyStrokes.get(ZOOM_OUT), action.get(ZOOM_OUT));
-
-        // line wrap
-        menu.addSeparator();
-        addMenuItem(menu, keyStrokes.get(LINE_WRAP), action.get(LINE_WRAP));
-
-        return menu;
-    }
-
-    private JMenu createThemeMenu() {
-        JMenu menu = createMenu("Theme");
-        for (Theme theme : Theme.values()) {
-            addMenuItem(menu, new ThemeAction(theme));
-        }
-        return menu;
-    }
-
-    private JMenu createHelpMenu(Map<ActionName, Action> action) {
-        JMenu menu = createMenu("Help");
-        addMenuItem(menu, action.get(ABOUT));
-        return menu;
-    }
-
-    private JMenu createMenu(String menuName) {
-        JMenu menu = new JMenu(menuName);
-        menu.setFont(MENU_DEFAULT_FONT);
-        return menu;
-    }
-
-    private void addMenuItem(JMenu menu, Object... objs) {
-        for (int i = 0; i < objs.length; i++) {
-            KeyStroke keyStroke = (KeyStroke) objs[i++];
-            Action action = (Action) objs[i];
-
-            JMenuItem menuItem = menu.add(action);
-            menuItem.setAccelerator(keyStroke);
-            menuItem.setFont(MENU_ITEM_DEFAULT_FONT);
-        }
-    }
-
-    private void addMenuItem(JMenu menu, Action... actions) {
-        for (Action action : actions) {
-            JMenuItem menuItem = menu.add(action);
-            menuItem.setFont(MENU_ITEM_DEFAULT_FONT);
-        }
-    }
 
     private void addKeyBinding(JComponent rootPane,
                                Map<ActionName, KeyStroke> keyStrokes,

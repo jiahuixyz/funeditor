@@ -130,8 +130,8 @@ public class Framework extends WindowAdapter {
         SHARED_ACTION.put(EXIT, new ExitAction());
         SHARED_ACTION.put(NEW_WINDOW, new NewWindowAction());
         SHARED_ACTION.put(CLOSE_WINDOW, new CloseWindowAction());
-        SHARED_ACTION.put(UNDO, new UndoActionWrapper());
-        SHARED_ACTION.put(REDO, new RedoActionWrapper());
+        SHARED_ACTION.put(UNDO, new UndoAction());
+        SHARED_ACTION.put(REDO, new RedoAction());
         SHARED_ACTION.put(NEW_FILE, new NewAction());
         SHARED_ACTION.put(OPEN_FILE, new OpenAction());
         SHARED_ACTION.put(SAVE_FILE, new SaveAction());
