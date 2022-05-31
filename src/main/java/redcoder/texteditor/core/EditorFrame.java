@@ -1,6 +1,7 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.core.action.ActionName;
+import redcoder.texteditor.core.dnd.FileTransferHandler;
 import redcoder.texteditor.core.menu.EditorMenuBar;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.TabPane;
@@ -80,6 +81,8 @@ public class EditorFrame extends JFrame {
         if (LOGO != null) {
             setIconImage(LOGO);
         }
+
+        setTransferHandler(FileTransferHandler.TRANSFER_HANDLER);
     }
 
     /**

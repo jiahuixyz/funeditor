@@ -53,8 +53,8 @@ public class FileProcessor {
      * 打开指定的文件
      *
      * @param tabPane 编辑器主窗格
-     * @param file        要打开的文件
-     * @param ucnf        是否是新创建的且未保存的文件
+     * @param file    要打开的文件
+     * @param ucnf    是否是新创建的且未保存的文件
      * @return true：打开成功，false：打开失败
      */
     public static boolean openFile(TabPane tabPane, File file, boolean ucnf) {

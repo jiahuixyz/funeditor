@@ -3,7 +3,7 @@ package redcoder.texteditor.core.textpane;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.action.ActionName;
-import redcoder.texteditor.core.dnd.TextTransferHandler;
+import redcoder.texteditor.core.dnd.FileTextTransferHandler;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 import redcoder.texteditor.core.font.FontChangeEvent;
@@ -301,7 +301,7 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
         // enable DnD
         textArea.setDragEnabled(true);
         textArea.setDropMode(DropMode.INSERT);
-        textArea.setTransferHandler(new TextTransferHandler());
+        textArea.setTransferHandler(new FileTextTransferHandler());
     }
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,

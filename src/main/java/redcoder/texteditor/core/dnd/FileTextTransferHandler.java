@@ -12,12 +12,53 @@ import java.awt.datatransfer.Transferable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TextTransferHandler extends TransferHandler {
+/**
+ * transfer handler for file and text
+ */
+public class FileTextTransferHandler extends TransferHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(TextTransferHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileTextTransferHandler.class.getName());
 
     private Position startPos;
     private Position endPos;
+
+    @Override
+    public boolean importData(TransferSupport support) {
+        if (!canImport(support)) {
+            return false;
+        }
+
+        if (support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                Transferable transferable = support.getTransferable();
+                JTextComponent textComponent = (JTextComponent) support.getComponent();
+                Point point = support.getDropLocation().getDropPoint();
+
+                int offset = textComponent.viewToModel(point);
+                if (offset >= startPos.getOffset() && offset <= endPos.getOffset()) {
+                    startPos = null;
+                    endPos = null;
+                    return false;
+                }
+
+                String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                Document document = textComponent.getDocument();
+                document.insertString(offset, data, null);
+                return true;
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Failed to import data!", e);
+                return false;
+            }
+        } else {
+            return FileTransferHandler.TRANSFER_HANDLER.importData(support);
+        }
+    }
+
+    @Override
+    public boolean canImport(TransferSupport support) {
+        return support.isDrop()
+                && (support.isDataFlavorSupported(DataFlavor.stringFlavor) || support.isDataFlavorSupported(DataFlavor.javaFileListFlavor));
+    }
 
     @Override
     public int getSourceActions(JComponent c) {
@@ -26,6 +67,9 @@ public class TextTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
+        if (!(c instanceof JTextComponent)) {
+            return null;
+        }
         JTextComponent textComponent = (JTextComponent) c;
         int start = textComponent.getSelectionStart();
         int end = textComponent.getSelectionEnd();
@@ -45,6 +89,9 @@ public class TextTransferHandler extends TransferHandler {
 
     @Override
     protected void exportDone(JComponent source, Transferable data, int action) {
+        if (!(source instanceof JTextComponent)) {
+            return;
+        }
         if (action != MOVE) {
             return;
         }
@@ -55,40 +102,6 @@ public class TextTransferHandler extends TransferHandler {
             } catch (BadLocationException e) {
                 LOGGER.log(Level.WARNING, "Failed to remove exported content.", e);
             }
-        }
-    }
-
-    @Override
-    public boolean canImport(TransferSupport support) {
-        return support.isDrop()
-                && support.isDataFlavorSupported(DataFlavor.stringFlavor)
-                && support.getComponent() instanceof JTextComponent;
-    }
-
-    @Override
-    public boolean importData(TransferSupport support) {
-        if (!canImport(support)) {
-            return false;
-        }
-        try {
-            Transferable transferable = support.getTransferable();
-            JTextComponent textComponent = (JTextComponent) support.getComponent();
-            Point point = support.getDropLocation().getDropPoint();
-
-            int offset = textComponent.viewToModel(point);
-            if (offset >= startPos.getOffset() && offset <= endPos.getOffset()) {
-                startPos = null;
-                endPos = null;
-                return false;
-            }
-
-            String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-            Document document = textComponent.getDocument();
-            document.insertString(offset, data, null);
-            return true;
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to import data!", e);
-            return false;
         }
     }
 }
