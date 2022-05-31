@@ -1,6 +1,5 @@
 package redcoder.texteditor.core;
 
-import redcoder.texteditor.action.*;
 import redcoder.texteditor.core.action.*;
 
 import javax.swing.*;

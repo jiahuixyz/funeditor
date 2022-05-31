@@ -1,8 +1,9 @@
 package redcoder.texteditor.core.textpane;
 
-import redcoder.texteditor.core.action.ActionName;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
+import redcoder.texteditor.core.action.ActionName;
+import redcoder.texteditor.core.dnd.TextTransferHandler;
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.file.UnsavedCreatedNewlyFiles;
 import redcoder.texteditor.core.font.FontChangeEvent;
@@ -18,7 +19,9 @@ import redcoder.texteditor.utils.FileUtils;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.Position;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -326,6 +329,43 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
             }
 
         });
+        // doc.addDocumentListener(new DocumentListener() {
+        //
+        //     private Position position;
+        //
+        //     @Override
+        //     public void insertUpdate(DocumentEvent e) {
+        //         func(e);
+        //     }
+        //
+        //     @Override
+        //     public void removeUpdate(DocumentEvent e) {
+        //         func(e);
+        //     }
+        //
+        //     @Override
+        //     public void changedUpdate(DocumentEvent e) {
+        //         func(e);
+        //     }
+        //
+        //     private void func(DocumentEvent e) {
+        //         int length = e.getDocument().getLength();
+        //         if (length > 2 && position == null) {
+        //             try {
+        //                 position = e.getDocument().createPosition(1);
+        //             } catch (BadLocationException ex) {
+        //                 ex.printStackTrace();
+        //             }
+        //         }
+        //         if (position != null) {
+        //             System.out.println(position);
+        //         }
+        //     }
+        // });
+        // enable DnD
+        textArea.setDragEnabled(true);
+        textArea.setDropMode(DropMode.INSERT);
+        textArea.setTransferHandler(new TextTransferHandler());
     }
 
     private void addKeyBinding(Map<ActionName, KeyStroke> keyStrokes,

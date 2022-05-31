@@ -19,7 +19,7 @@ public class RowColumnUtils {
                 row++;
             }
         } catch (BadLocationException e) {
-            LOGGER.log(Level.WARNING, "getRow error", e);
+            // LOGGER.log(Level.WARNING, "getRow error", e);
         }
         return row;
     }
@@ -28,7 +28,7 @@ public class RowColumnUtils {
         try {
             return caretDot - Utilities.getRowStart(editor, caretDot) + 1;
         } catch (BadLocationException e) {
-            LOGGER.log(Level.WARNING, "getColumn error", e);
+            // LOGGER.log(Level.WARNING, "getColumn error", e);
         }
         return -1;
     }
