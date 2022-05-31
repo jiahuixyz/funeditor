@@ -19,9 +19,7 @@ import redcoder.texteditor.utils.FileUtils;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.Position;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -260,108 +258,46 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
         textArea.setFont(FontChangeProcessor.getSharedFont());
         // 绑定快捷键
         addKeyBinding(Framework.getKeyStrokes(), Framework.getActions(), textArea);
-        // 添加CaretListener，用于更新编辑器底部的状态栏
+
+        // 当插入符号变化时，通知TextPaneChangeListener
         textArea.addCaretListener(e -> fireTextPaneChangeEvent());
 
-        // 添加几个文档监听器
+        // 添加文档监听器
         Document doc = this.textArea.getDocument();
-        // 处理文本内容变化的监听器
+        doc.addUndoableEditListener(e -> {
+            undoManager.addEdit(e.getEdit());
+        });
         doc.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                doAware();
+                onDocumentChange();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                doAware();
+                onDocumentChange();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                doAware();
+                onDocumentChange();
             }
 
-            private void doAware() {
+            private void onDocumentChange() {
+                // update tab title
                 if (modifyAware) {
                     modified = true;
                     updateTabbedTitle("* " + filename);
                 }
-            }
-        });
-        // 渲染文本行号的监听器
-        doc.addDocumentListener(new DocumentListener() {
 
-            @Override
-            public void insertUpdate(DocumentEvent e) {
+                // update line number
                 lineNumberComponent.adjustWidth();
-            }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                lineNumberComponent.adjustWidth();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                lineNumberComponent.adjustWidth();
-            }
-        });
-        // 处理undo，redo的监听器
-        doc.addUndoableEditListener(e -> {
-            undoManager.addEdit(e.getEdit());
-        });
-        // 用于更新编辑器底部的状态栏的监听器
-        doc.addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
+                // notice TextPaneChangeListener
                 fireTextPaneChangeEvent();
             }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                fireTextPaneChangeEvent();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                fireTextPaneChangeEvent();
-            }
-
         });
-        // doc.addDocumentListener(new DocumentListener() {
-        //
-        //     private Position position;
-        //
-        //     @Override
-        //     public void insertUpdate(DocumentEvent e) {
-        //         func(e);
-        //     }
-        //
-        //     @Override
-        //     public void removeUpdate(DocumentEvent e) {
-        //         func(e);
-        //     }
-        //
-        //     @Override
-        //     public void changedUpdate(DocumentEvent e) {
-        //         func(e);
-        //     }
-        //
-        //     private void func(DocumentEvent e) {
-        //         int length = e.getDocument().getLength();
-        //         if (length > 2 && position == null) {
-        //             try {
-        //                 position = e.getDocument().createPosition(1);
-        //             } catch (BadLocationException ex) {
-        //                 ex.printStackTrace();
-        //             }
-        //         }
-        //         if (position != null) {
-        //             System.out.println(position);
-        //         }
-        //     }
-        // });
+
         // enable DnD
         textArea.setDragEnabled(true);
         textArea.setDropMode(DropMode.INSERT);
