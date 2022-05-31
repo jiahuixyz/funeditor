@@ -1,4 +1,4 @@
-package redcoder.texteditor.action;
+package redcoder.texteditor.core.action;
 
 import redcoder.texteditor.resources.IconResource;
 
@@ -7,18 +7,18 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import java.awt.event.ActionEvent;
 
-public class PasteAction extends TextAction {
+public class CutAction extends TextAction {
 
-    public PasteAction() {
-        super("Paste");
-        putValue(Action.SMALL_ICON, IconResource.getImageIcon("Paste24.gif"));
+    public CutAction() {
+        super("Cut");
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("Cut24.gif"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         JTextComponent target = getTextComponent(e);
         if (target != null) {
-            target.paste();
+            target.cut();
         }
     }
 }

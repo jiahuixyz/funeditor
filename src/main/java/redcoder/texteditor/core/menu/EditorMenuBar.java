@@ -1,7 +1,7 @@
 package redcoder.texteditor.core.menu;
 
-import redcoder.texteditor.action.ActionName;
-import redcoder.texteditor.action.ThemeAction;
+import redcoder.texteditor.core.action.ActionName;
+import redcoder.texteditor.core.action.ThemeAction;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.theme.Theme;
 
@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-import static redcoder.texteditor.action.ActionName.*;
+import static redcoder.texteditor.core.action.ActionName.*;
 
 public class EditorMenuBar extends JMenuBar {
 

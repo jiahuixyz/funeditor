@@ -1,4 +1,4 @@
-package redcoder.texteditor.action;
+package redcoder.texteditor.core.action;
 
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.TabPane;
@@ -7,16 +7,16 @@ import redcoder.texteditor.resources.IconResource;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class RedoAction extends AbstractAction {
+public class CloseAllAction extends AbstractAction {
 
-    public RedoAction() {
-        super("Redo");
-        putValue(Action.SMALL_ICON, IconResource.getImageIcon("Redo24.gif"));
+    public CloseAllAction(){
+        super("Close All");
+        putValue(Action.SMALL_ICON, IconResource.getImageIcon("close_all24.png"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         TabPane tabPane = Framework.getActivatedFrame().getTabPane();
-        tabPane.getSelectedTextPane().redo(e);
+        tabPane.closeAllTab();
     }
 }

@@ -1,6 +1,6 @@
 package redcoder.texteditor.core;
 
-import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.core.action.ActionName;
 import redcoder.texteditor.core.menu.EditorMenuBar;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.TabPane;
@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
-import static redcoder.texteditor.action.ActionName.*;
+import static redcoder.texteditor.core.action.ActionName.*;
 
 public class EditorFrame extends JFrame {
 

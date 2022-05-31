@@ -1,4 +1,4 @@
-package redcoder.texteditor.action;
+package redcoder.texteditor.core.action;
 
 import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.tabpane.TabPane;

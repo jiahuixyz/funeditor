@@ -1,6 +1,6 @@
 package redcoder.texteditor.theme;
 
-import redcoder.texteditor.action.ThemeAction;
+import redcoder.texteditor.core.action.ThemeAction;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 

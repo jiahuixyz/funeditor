@@ -1,13 +1,13 @@
 package redcoder.texteditor.core.toolbar;
 
-import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.core.action.ActionName;
 import redcoder.texteditor.core.Framework;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-import static redcoder.texteditor.action.ActionName.*;
+import static redcoder.texteditor.core.action.ActionName.*;
 
 /**
  * 工具栏

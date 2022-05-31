@@ -1,6 +1,6 @@
 package redcoder.texteditor.core.textpane;
 
-import redcoder.texteditor.action.ActionName;
+import redcoder.texteditor.core.action.ActionName;
 import redcoder.texteditor.core.EditorFrame;
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.file.FileProcessor;
@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static redcoder.texteditor.action.ActionName.REDO;
-import static redcoder.texteditor.action.ActionName.UNDO;
+import static redcoder.texteditor.core.action.ActionName.REDO;
+import static redcoder.texteditor.core.action.ActionName.UNDO;
 
 /**
  * 支持滚动的文本窗格

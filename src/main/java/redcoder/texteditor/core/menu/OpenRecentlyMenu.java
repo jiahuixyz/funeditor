@@ -1,6 +1,6 @@
 package redcoder.texteditor.core.menu;
 
-import redcoder.texteditor.action.OpenRecentlyAction;
+import redcoder.texteditor.core.action.OpenRecentlyAction;
 import redcoder.texteditor.core.file.FileOpenEvent;
 import redcoder.texteditor.core.file.FileOpenListener;
 import redcoder.texteditor.core.file.FileProcessor;

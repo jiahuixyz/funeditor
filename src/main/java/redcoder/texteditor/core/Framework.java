@@ -1,6 +1,7 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.action.*;
+import redcoder.texteditor.core.action.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.awt.event.KeyEvent.*;
-import static redcoder.texteditor.action.ActionName.*;
+import static redcoder.texteditor.core.action.ActionName.*;
 
 public class Framework extends WindowAdapter {
 

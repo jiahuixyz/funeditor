@@ -1,4 +1,4 @@
-package redcoder.texteditor.action;
+package redcoder.texteditor.core.action;
 
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.help.AboutDialog;
