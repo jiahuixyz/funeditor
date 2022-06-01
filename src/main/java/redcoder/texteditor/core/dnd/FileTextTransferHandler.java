@@ -82,7 +82,7 @@ public class FileTextTransferHandler extends TransferHandler {
             startPos = doc.createPosition(start);
             endPos = doc.createPosition(end);
         } catch (BadLocationException e) {
-            LOGGER.log(Level.WARNING, "Can't create position - unable to remove text from source.");
+            LOGGER.log(Level.WARNING, "Can't create position.");
         }
         String selectedText = textComponent.getSelectedText();
         return new StringSelection(selectedText);
