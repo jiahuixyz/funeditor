@@ -1,10 +1,7 @@
 package redcoder.texteditor.core.dnd;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.Position;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -42,6 +39,13 @@ public class FileTextTransferHandler extends TransferHandler {
                     document.insertString(offset, str, null);
                 } else {
                     // paste
+                    Caret caret = textComponent.getCaret();
+                    int dot = caret.getDot();
+                    int mark = caret.getMark();
+                    if (dot != mark) {
+                        // remove selected text
+                        document.remove(Math.min(dot, mark), Math.abs(dot - mark));
+                    }
                     document.insertString(textComponent.getCaretPosition(),str,null);
                 }
 
