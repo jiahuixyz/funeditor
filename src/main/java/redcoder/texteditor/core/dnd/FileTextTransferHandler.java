@@ -37,8 +37,6 @@ public class FileTextTransferHandler extends TransferHandler {
                 if (support.isDrop()) {
                     int offset = textComponent.viewToModel(support.getDropLocation().getDropPoint());
                     if (offset >= startPos.getOffset() && offset <= endPos.getOffset()) {
-                        startPos = null;
-                        endPos = null;
                         return false;
                     }
                     document.insertString(offset, str, null);
