@@ -7,10 +7,12 @@ import redcoder.texteditor.core.file.FileProcessor;
 import redcoder.texteditor.core.file.RecentlyOpenedFiles;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.resources.IconResource;
+import redcoder.texteditor.utils.ScheduledUtils;
 
 import javax.swing.*;
 import java.io.File;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static redcoder.texteditor.core.menu.EditorMenuBar.MENU_ITEM_DEFAULT_FONT;
 
@@ -22,10 +24,11 @@ public class OpenRecentlyMenu extends JMenu implements FileOpenListener {
         super("Open Recently");
         this.tabPane = tabPane;
 
-        initMenuItem();
         setFont(MENU_ITEM_DEFAULT_FONT);
         setIcon(IconResource.getImageIcon("open_recently24.png"));
         FileProcessor.addFileOpenListener(this);
+
+        ScheduledUtils.schedule(this::initMenuItem, 0, TimeUnit.SECONDS);
     }
 
     @Override

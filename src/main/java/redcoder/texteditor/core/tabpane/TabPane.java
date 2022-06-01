@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,6 +28,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class TabPane extends JTabbedPane {
 
+    private static final Logger LOGGER = Logger.getLogger(TabPane.class.getName());
     private static final Object[] CLOSE_OPTIONS = {"Save All", "Don't Save", "Cancel"};
     private final EditorStatusBar statusBar;
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -85,8 +88,12 @@ public class TabPane extends JTabbedPane {
      * 加载新创建的且未保存的文件
      */
     public void loadUnSavedNewTextPane() {
-        int i = UnsavedCreatedNewlyFiles.load(this);
-        counter.set(i);
+        try {
+            int i = UnsavedCreatedNewlyFiles.load(this);
+            counter.set(i);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed to load unsaved created file newly", e);
+        }
     }
 
     /**

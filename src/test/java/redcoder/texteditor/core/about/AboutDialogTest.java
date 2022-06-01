@@ -15,7 +15,7 @@ public class AboutDialogTest {
     @Before
     public void before(){
         editorFrame = new EditorFrame();
-        editorFrame.createAndShowGUI();
+        editorFrame.init();
     }
 
     @Test

@@ -6,14 +6,15 @@ import redcoder.texteditor.core.menu.EditorMenuBar;
 import redcoder.texteditor.core.statusbar.EditorStatusBar;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.toolbar.EditorToolbar;
+import redcoder.texteditor.utils.ScheduledUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,9 +35,16 @@ public class EditorFrame extends JFrame {
 
     public EditorFrame() {
         super(TITLE);
+        setMinimumSize(new Dimension(700, 432));
+        setSize(900, 600);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(Framework.INSTANCE);
+        Optional.ofNullable(LOGO).ifPresent(this::setIconImage);
+        setTransferHandler(FileTransferHandler.TRANSFER_HANDLER);
+        setLocationRelativeTo(null);
     }
 
-    public void createAndShowGUI() {
+    public void init() {
         JPanel rootPane = new JPanel();
         rootPane.setLayout(new BorderLayout());
         setContentPane(rootPane);
@@ -66,23 +74,6 @@ public class EditorFrame extends JFrame {
 
         // 加载未保存的新建文件
         tabPane.loadUnSavedNewTextPane();
-
-        setMinimumSize(new Dimension(700, 432));
-        setSize(900, 600);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setLocationRelativeTo(null);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                Framework.closeWindow();
-            }
-        });
-
-        if (LOGO != null) {
-            setIconImage(LOGO);
-        }
-
-        setTransferHandler(FileTransferHandler.TRANSFER_HANDLER);
     }
 
     /**

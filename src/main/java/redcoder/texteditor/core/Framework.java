@@ -18,9 +18,9 @@ import static redcoder.texteditor.core.action.ActionName.*;
 
 public class Framework extends WindowAdapter {
 
-    private static final Logger LOGGER = Logger.getLogger(Framework.class.getName());
+    public static final Framework INSTANCE = new Framework();
 
-    private static final Framework INSTANCE = new Framework();
+    private static final Logger LOGGER = Logger.getLogger(Framework.class.getName());
     private static final Map<ActionName, KeyStroke> SHARED_KEY_STROKES;
     private static final Map<ActionName, Action> SHARED_ACTION;
 
@@ -38,8 +38,7 @@ public class Framework extends WindowAdapter {
             numWindows++;
             openedFrame.add(frame);
 
-            frame.createAndShowGUI();
-            frame.addWindowListener(INSTANCE);
+            frame.init();
             if (lastLocation != null) {
                 lastLocation.translate(40, 40);
                 frame.setLocation(lastLocation);
@@ -69,6 +68,11 @@ public class Framework extends WindowAdapter {
     public void windowActivated(WindowEvent e) {
         Object source = e.getSource();
         activatedFrame = (EditorFrame) source;
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        closeWindow();
     }
 
     @Override

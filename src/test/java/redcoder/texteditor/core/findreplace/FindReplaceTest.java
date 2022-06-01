@@ -14,7 +14,7 @@ public class FindReplaceTest {
     @Before
     public void before(){
         editorFrame = new EditorFrame();
-        editorFrame.createAndShowGUI();
+        editorFrame.init();
     }
 
     @Test
