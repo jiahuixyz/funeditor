@@ -32,18 +32,21 @@ public class FileTextTransferHandler extends TransferHandler {
             try {
                 Transferable transferable = support.getTransferable();
                 JTextComponent textComponent = (JTextComponent) support.getComponent();
-                Point point = support.getDropLocation().getDropPoint();
-
-                int offset = textComponent.viewToModel(point);
-                if (offset >= startPos.getOffset() && offset <= endPos.getOffset()) {
-                    startPos = null;
-                    endPos = null;
-                    return false;
+                String str = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                Document document = textComponent.getDocument();
+                if (support.isDrop()) {
+                    int offset = textComponent.viewToModel(support.getDropLocation().getDropPoint());
+                    if (offset >= startPos.getOffset() && offset <= endPos.getOffset()) {
+                        startPos = null;
+                        endPos = null;
+                        return false;
+                    }
+                    document.insertString(offset, str, null);
+                } else {
+                    // paste
+                    document.insertString(textComponent.getCaretPosition(),str,null);
                 }
 
-                String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                Document document = textComponent.getDocument();
-                document.insertString(offset, data, null);
                 return true;
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Failed to import data!", e);
@@ -56,8 +59,8 @@ public class FileTextTransferHandler extends TransferHandler {
 
     @Override
     public boolean canImport(TransferSupport support) {
-        return support.isDrop()
-                && (support.isDataFlavorSupported(DataFlavor.stringFlavor) || support.isDataFlavorSupported(DataFlavor.javaFileListFlavor));
+        return support.isDataFlavorSupported(DataFlavor.stringFlavor)
+                || support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
     }
 
     @Override
