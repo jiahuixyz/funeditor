@@ -27,7 +27,7 @@ public class UnsavedCreatedNewlyFiles {
 
     static {
         textPanes = new HashMap<>();
-        targetDir = new File(SystemUtils.getUserDir(), DIR_NAME);
+        targetDir = new File(SystemUtils.getUserHome(), DIR_NAME);
         if (!targetDir.exists()) {
             targetDir.mkdir();
         }

@@ -23,7 +23,7 @@ public class RecentlyOpenedFiles {
     private static final File target;
 
     static {
-        target = new File(SystemUtils.getUserDir(), FILENAME);
+        target = new File(SystemUtils.getUserHome(), FILENAME);
         init();
     }
 
