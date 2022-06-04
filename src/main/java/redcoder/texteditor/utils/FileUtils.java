@@ -38,4 +38,10 @@ public class FileUtils {
             throw new RuntimeException("Writing to file failed", e);
         }
     }
+
+    public static void ensureDirExist(File dir) {
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
 }

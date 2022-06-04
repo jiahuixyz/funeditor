@@ -1,8 +1,8 @@
 package redcoder.texteditor.core.file;
 
+import redcoder.texteditor.core.RcFileSupport;
 import redcoder.texteditor.utils.FileUtils;
 import redcoder.texteditor.utils.ScheduledUtils;
-import redcoder.texteditor.utils.SystemUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,7 +23,7 @@ public class RecentlyOpenedFiles {
     private static final File target;
 
     static {
-        target = new File(SystemUtils.getUserHome(), FILENAME);
+        target = new File(RcFileSupport.getParentDir(), FILENAME);
         init();
     }
 

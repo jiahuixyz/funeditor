@@ -1,0 +1,1 @@
+To launch the application double click the text-editor-0.0.1-SNAPSHOT.exe

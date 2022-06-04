@@ -1,5 +1,6 @@
 package redcoder.texteditor.core.file;
 
+import redcoder.texteditor.core.RcFileSupport;
 import redcoder.texteditor.core.tabpane.TabPane;
 import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.utils.FileUtils;
@@ -27,7 +28,7 @@ public class UnsavedCreatedNewlyFiles {
 
     static {
         textPanes = new HashMap<>();
-        targetDir = new File(SystemUtils.getUserHome(), DIR_NAME);
+        targetDir = new File(RcFileSupport.getParentDir(), DIR_NAME);
         if (!targetDir.exists()) {
             targetDir.mkdir();
         }

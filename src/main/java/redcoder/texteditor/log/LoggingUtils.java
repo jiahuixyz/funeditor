@@ -1,6 +1,6 @@
 package redcoder.texteditor.log;
 
-import redcoder.texteditor.utils.SystemUtils;
+import redcoder.texteditor.core.RcFileSupport;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,8 +18,7 @@ public class LoggingUtils {
     }
 
     private static void ensureLogDirExist() {
-        String home = SystemUtils.getUserHome();
-        File dir = new File(home, "rc-log");
+        File dir = new File(RcFileSupport.getParentDir(), "log");
         if (dir.exists()) {
             return;
         }
