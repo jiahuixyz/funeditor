@@ -1,6 +1,6 @@
 # Rc Text Editor
 
-[中文文档](README_zh.md)
+[简体中文](README_zh.md)
 
 A simple text editor which implements the basic functions of most text editors:
 
