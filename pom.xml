@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <name>text-editor</name>
-    <description>一个简单的文本编辑器</description>
+    <description>基于Swing实现的文本编辑器</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

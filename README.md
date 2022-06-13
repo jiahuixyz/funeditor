@@ -1,4 +1,4 @@
-# Rc Text Editor
+# Text editor based on swing implementation
 
 [简体中文](README_zh.md)
 

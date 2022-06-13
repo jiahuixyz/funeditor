@@ -24,7 +24,7 @@ import static redcoder.texteditor.core.action.ActionName.*;
 public class EditorFrame extends JFrame {
 
     private static final Logger LOGGER = Logger.getLogger(EditorFrame.class.getName());
-    public static final String TITLE = "Rc Text Editor";
+    public static final String TITLE = "Text Editor";
 
     private EditorToolbar toolBar;
     private TabPane tabPane;
