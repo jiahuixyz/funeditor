@@ -253,7 +253,7 @@ public class FindReplace implements ActionListener {
             }
             countLabel.setText(String.format("%d/%d", cursor, totalMatch));
         } catch (BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "FindReplace", e);
+            LOGGER.log(Level.SEVERE, "FindReplace", ex);
         }
     }
 
@@ -301,7 +301,7 @@ public class FindReplace implements ActionListener {
                 position = length - 1;
                 cursor = totalMatch + 1;
             }
-            String subText = text.substring(0, position);
+            String subText = text.substring(0, position + 1);
             int matchIndex = subText.lastIndexOf(pattern);
             if (matchIndex >= 0) {
                 if (wholeCheckBox.isSelected()) {
@@ -429,7 +429,7 @@ public class FindReplace implements ActionListener {
                     try {
                         reset();
                     } catch (BadLocationException ex) {
-                        LOGGER.log(Level.SEVERE, "FindReplace", e);
+                        LOGGER.log(Level.SEVERE, "FindReplace", ex);
                     }
                     selected = checkBox.isSelected();
                 }
