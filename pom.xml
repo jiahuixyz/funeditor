@@ -97,6 +97,7 @@
                                 <opts>
                                     <!-- Run time arguments can be passed using <opt> as below -->
                                     <!--<opt>-Dparam=value</opt>-->
+                                    <opt>-Dfile.encoding=UTF-8</opt>
                                 </opts>
                             </jre>
                         </configuration>
