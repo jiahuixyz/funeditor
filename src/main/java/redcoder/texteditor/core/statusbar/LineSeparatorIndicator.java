@@ -1,7 +1,5 @@
 package redcoder.texteditor.core.statusbar;
 
-import redcoder.texteditor.utils.SystemUtils;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,8 +8,8 @@ import java.awt.*;
  */
 public class LineSeparatorIndicator extends JPanel implements Indicator {
 
-    private static final String TEMPLATE_TEXT1 = "  Windows (CR LF)";
-    private static final String TEMPLATE_TEXT2 = "  UNIX (LF)";
+    // private static final String TEMPLATE_TEXT1 = "  Windows (CRLF)";
+    // private static final String TEMPLATE_TEXT2 = "  UNIX (LF)";
 
     private final JLabel label = new JLabel();
 
@@ -33,11 +31,12 @@ public class LineSeparatorIndicator extends JPanel implements Indicator {
     }
 
     private void init() {
-        if (SystemUtils.isWindowsOS()) {
-            label.setText(TEMPLATE_TEXT1);
-        } else {
-            label.setText(TEMPLATE_TEXT2);
-        }
+        // if (SystemUtils.isWindowsOS()) {
+        //     label.setText(TEMPLATE_TEXT1);
+        // } else {
+        //     label.setText(TEMPLATE_TEXT2);
+        // }
+        label.setText("  LF");
         this.add(label);
     }
 }
