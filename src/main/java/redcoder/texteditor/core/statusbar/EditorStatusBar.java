@@ -38,7 +38,7 @@ public class EditorStatusBar extends JPanel implements TextPaneChangeListener {
         // left part
         Box leftBox = Box.createHorizontalBox();
         leftBox.add(Box.createRigidArea(new Dimension(10, STATUS_BAR_HEIGHT)));
-        leftBox.add(new JLabel("status bar"));
+//        leftBox.add(new JLabel("status bar"));
 
         // right part
         Box rightBox = Box.createHorizontalBox();

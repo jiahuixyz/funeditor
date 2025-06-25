@@ -22,7 +22,7 @@ public class ButtonTabComponent extends JPanel {
         setOpaque(false);
 
         label = new JLabel(title);
-        label.setFont(new Font(null, Font.PLAIN, 20));
+        label.setFont(new Font(null, Font.PLAIN, 14));
         add(label);
         //  add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));

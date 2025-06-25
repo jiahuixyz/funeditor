@@ -13,8 +13,8 @@ import static redcoder.texteditor.core.action.ActionName.*;
 
 public class EditorMenuBar extends JMenuBar {
 
-    static final Font MENU_DEFAULT_FONT = new Font(null, Font.BOLD, 18);
-    static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.ITALIC, 16);
+    static final Font MENU_DEFAULT_FONT = new Font(null, Font.PLAIN, 14);
+    static final Font MENU_ITEM_DEFAULT_FONT = new Font(null, Font.PLAIN, 14);
 
     public EditorMenuBar(Map<ActionName, KeyStroke> keyStrokes,
                          Map<ActionName, Action> action,

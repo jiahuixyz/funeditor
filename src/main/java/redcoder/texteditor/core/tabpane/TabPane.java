@@ -101,7 +101,7 @@ public class TabPane extends JTabbedPane {
      */
     public void createTextPane() {
         int i = counter.getAndIncrement();
-        String filename = "new-" + i;
+        String filename = "new" + i;
 
         ScrollTextPane scrollTextPane = new ScrollTextPane(filename);
         scrollTextPane.addTextPaneChangeListener(statusBar);
