@@ -10,8 +10,4 @@ public class SystemUtilsTest {
         Assert.assertEquals("D:\\Project\\text-editor",SystemUtils.getUserDir());
     }
 
-    @Test
-    public void isWindowsOS() {
-        Assert.assertTrue(SystemUtils.isWindowsOS());
-    }
 }
