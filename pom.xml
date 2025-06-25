@@ -13,10 +13,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- Refers to the JDK on the system. The JRE in the final zip will be bundled from the system's JDK -->
-        <sys.java.home>${env.JAVA_HOME}</sys.java.home>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -67,66 +65,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.25</version>
-                <executions>
-                    <execution>
-                        <id>jar-to-exe</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <headerType>gui</headerType>
-                            <stayAlive>true</stayAlive>
-                            <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
-                            <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
-                            <manifest>${project.basedir}/src/main/resources/${project.artifactId}.manifest</manifest>
-                            <classPath>
-                                <!-- The main class to invoke on executing the .exe -->
-                                <mainClass>redcoder.texteditor.Bootstrap</mainClass>
-                            </classPath>
-                            <jre>
-                                <minVersion>1.8.0</minVersion>
-                                <jdkPreference>preferJre</jdkPreference>
-                                <!-- Relative path to the JRE in the final zip bundle, to launch the exe/jar-->
-                                <path>./lib/jre</path>
-                                <!-- Runtime arguments -->
-                                <opts>
-                                    <!-- Run time arguments can be passed using <opt> as below -->
-                                    <!--<opt>-Dparam=value</opt>-->
-                                    <opt>-Dfile.encoding=UTF-8</opt>
-                                </opts>
-                            </jre>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Bundles the .exe and JRE in a zip file -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <!-- Bundle the .exe and jre into a final release zip -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <!-- Defines the files that need to be bundled in the final zip-->
-                                <descriptor>${project.basedir}/src/main/resources/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>
