@@ -108,7 +108,7 @@ public class LineNumberComponent extends JComponent {
         }
 
         if (width > getPreferredSize().width || width < getPreferredSize().width) {
-            setPreferredSize(new Dimension(width + 2 * HORIZONTAL_PADDING, dimension.height));
+            setPreferredSize(new Dimension(width + 2 * HORIZONTAL_PADDING + 10, dimension.height));
             revalidate();
             repaint();
         }
@@ -139,7 +139,7 @@ public class LineNumberComponent extends JComponent {
 
             switch (alignment) {
                 case RIGHT_ALIGNMENT:
-                    xPosition = getPreferredSize().width - g.getFontMetrics().stringWidth(text) - HORIZONTAL_PADDING;
+                    xPosition = getPreferredSize().width - g.getFontMetrics().stringWidth(text) - HORIZONTAL_PADDING - 10;
                     break;
                 case CENTER_ALIGNMENT:
                     xPosition = getPreferredSize().width / 2 - g.getFontMetrics().stringWidth(text) / 2;
