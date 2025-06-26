@@ -24,7 +24,7 @@ import static redcoder.texteditor.core.action.ActionName.*;
 public class EditorFrame extends JFrame {
 
     private static final Logger LOGGER = Logger.getLogger(EditorFrame.class.getName());
-    public static final String TITLE = "Text Editor";
+    public static final String TITLE = "Funeditor";
 
     private EditorToolbar toolBar;
     private TabPane tabPane;
@@ -36,7 +36,7 @@ public class EditorFrame extends JFrame {
     public EditorFrame() {
         super(TITLE);
         setMinimumSize(new Dimension(700, 432));
-        setSize(900, 600);
+        setSize(600, 600);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(Framework.INSTANCE);
         Optional.ofNullable(LOGO).ifPresent(this::setIconImage);
