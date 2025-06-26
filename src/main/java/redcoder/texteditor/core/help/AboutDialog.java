@@ -10,9 +10,9 @@ import java.awt.event.ActionEvent;
 
 public class AboutDialog extends JDialog {
 
-    private static final Font F1 = new Font(null, Font.BOLD, 25);
-    private static final Font F2 = new Font(null, Font.PLAIN, 18);
-    private static final Font F3 = new Font(null, Font.PLAIN, 20);
+    private static final Font F1 = new Font(null, Font.PLAIN, 16);
+    private static final Font F2 = new Font(null, Font.PLAIN, 16);
+    private static final Font F3 = new Font(null, Font.PLAIN, 16);
 
     public static void showAbout(EditorFrame frame) {
         JDialog dialog = new AboutDialog(frame);
