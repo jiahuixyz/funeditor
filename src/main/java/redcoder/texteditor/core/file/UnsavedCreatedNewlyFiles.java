@@ -42,7 +42,7 @@ public class UnsavedCreatedNewlyFiles {
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "UnsavedCreatedNewlyFiles", e);
             }
-        }, 1, 3, TimeUnit.MINUTES);
+        }, 1, 5, TimeUnit.SECONDS);
     }
 
     private UnsavedCreatedNewlyFiles() {
