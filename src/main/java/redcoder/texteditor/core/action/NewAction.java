@@ -2,6 +2,7 @@ package redcoder.texteditor.core.action;
 
 import redcoder.texteditor.core.Framework;
 import redcoder.texteditor.core.tabpane.TabPane;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
 import redcoder.texteditor.resources.IconResource;
 
 import javax.swing.*;
@@ -18,6 +19,10 @@ public class NewAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         TabPane tabPane = Framework.getActivatedFrame().getTabPane();
         tabPane.createTextPane();
+
+        // 新建文件后触发绘制行号
+        ScrollTextPane selectedTextPane = tabPane.getSelectedTextPane();
+        selectedTextPane.paintLineNumber();
     }
 
 }

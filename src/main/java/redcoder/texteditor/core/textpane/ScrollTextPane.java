@@ -88,6 +88,14 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
     }
 
     /**
+     * 为编辑区绘制行号
+     */
+    public void paintLineNumber(){
+        // update line number
+        lineNumberComponent.adjustWidth();
+    }
+
+    /**
      * 添加文本窗格变化监听器
      */
     public void addTextPaneChangeListener(TextPaneChangeListener listener) {
@@ -107,6 +115,9 @@ public class ScrollTextPane extends JScrollPane implements FontChangeListener {
      */
     public void touch() {
         fireTextPaneChangeEvent();
+
+        // 切换tab后触发绘制行号
+        paintLineNumber();
     }
 
     /**

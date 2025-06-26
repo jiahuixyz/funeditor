@@ -1,6 +1,8 @@
 package redcoder.texteditor.core;
 
 import redcoder.texteditor.core.action.*;
+import redcoder.texteditor.core.tabpane.TabPane;
+import redcoder.texteditor.core.textpane.ScrollTextPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,6 +48,13 @@ public class Framework extends WindowAdapter {
                 lastLocation = frame.getLocation();
             }
             frame.setVisible(true);
+
+            // setVisible之后触发绘制行号
+            TabPane tabPane = frame.getTabPane();
+            ScrollTextPane selectedTextPane = tabPane.getSelectedTextPane();
+            if(selectedTextPane != null){
+                selectedTextPane.paintLineNumber();
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "new window error", e);
         }
