@@ -6,7 +6,7 @@ import java.util.List;
 
 public class FontChangeProcessor {
 
-    private static final Font DEFAULT_FONT = new Font(null, Font.PLAIN, 20);
+    private static final Font DEFAULT_FONT = new Font("Monospaced", Font.PLAIN, 16);
     private static final List<FontChangeListener> LISTENERS = new ArrayList<>();
     private static final int FONT_SIZE_MINIMUM = 10;
     private static final int FONT_SIZE_MAXIMUM = 100;
